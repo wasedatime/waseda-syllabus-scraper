@@ -6,9 +6,10 @@ class CourseInfoSpider(scrapy.Spider):
     name = 'course_info'
     allowed_domains = ['wsl.waseda.jp/syllabus']
     start_urls = [('https://www.wsl.waseda.jp/syllabus/'
-        'JAA104.php?pKey=210CO14300032017210CO1430021&pLng=en')]
+        'JAA104.php?pKey=1200000007012017120000000712&pLng=jp')]
 
-    #Info Design 'JAA104.php?pKey=26GF02200201201726GF02200226&pLng=en')]
+    # Spanish II 'JAA104.php?pKey=210CO14300032017210CO1430021&pLng=en')]
+    # Info Design 'JAA104.php?pKey=26GF02200201201726GF02200226&pLng=en')]
     base_xpath = '//*[@class="ct-common ct-sirabasu"]/tbody/tr'
 
     def parse(self, response):
@@ -47,6 +48,6 @@ class CourseInfoSpider(scrapy.Spider):
         course_dict['Classroom'] = classroom_campus[0]
 
         for key, value in course_dict.items():
-            value = value.replace('\xa0', ' ').encode('utf-8')
+            value = value.replace(u'\xa0', u' ')
 
         yield course_dict
