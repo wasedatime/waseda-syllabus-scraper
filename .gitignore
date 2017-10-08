@@ -1,0 +1,20 @@
+.DS_STORE
+
+# Virtualenv related
+bin/
+include/
+share/
+pip-selfcheck.json
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+.Python
+build/
+lib/
+
+#IDE
+.idea/
