@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 import os
 import tempfile
+from time import sleep
 
 from scrapy.http import FormRequest
 from scrapy.spiders import Spider
 from scrapy.utils.python import to_bytes
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 
 
 class SearchSpider(Spider):
@@ -65,9 +67,22 @@ class SearchSpider(Spider):
 
     def after_search(self, response):
 
-        return self.open_in_driver(response)
+        fname = self.get_temp_html_path(response)
+        self.driver.get("file://%s" % fname)
 
-    def open_in_driver(self, response):
+        while True:
+            try:
+                next_page = self.driver.find_element_by_xpath('//table[@class="t-btn"]/tbody/tr/td/div/div/p/a[text()="Next>"]')
+                sleep(3)
+                self.logger.info('Sleeping for 3 seconds.')
+                next_page.click()
+
+            except NoSuchElementException:
+                self.logger.info('No more pages to load.')
+                self.driver.quit()
+                break
+
+    def get_temp_html_path(self, response):
 
         from scrapy.http import HtmlResponse
         # XXX: this implementation is modified from scrapy.util.response.open_in_browser
@@ -84,4 +99,4 @@ class SearchSpider(Spider):
         fd, fname = tempfile.mkstemp(ext)
         os.write(fd, body)
         os.close(fd)
-        return self.driver.get("file://%s" % fname)
+        return fname
