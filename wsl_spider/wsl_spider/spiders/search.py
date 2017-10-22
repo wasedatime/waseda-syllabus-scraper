@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import json
 import re
 import tempfile
 from time import sleep
@@ -16,7 +17,7 @@ class SearchSpider(Spider):
     name = 'search'
     allowed_domains = ['wsl.waseda.jp']
     start_urls = ['https://www.wsl.waseda.jp/syllabus/JAA101.php?pLng=en']
-    target = 'Art/Architecture Schl'
+    semester_dict = {'Spring': "1", 'Fall': "2"}
     school_dict = {
         'Art/Architecture Schl': "712001",
         'Sports Sci': "202003",
@@ -25,49 +26,31 @@ class SearchSpider(Spider):
         'Cre Sci/Eng': "272006",
         'Adv Sci/Eng': "282006"
     }
-    form_data = {
-        'keyword': "",
-        "s_bunya1_hid": "Please select the First Academic disciplines.",
-        "s_bunya2_hid": "Please select the Second Academic disciplines.",
-        "s_bunya3_hid": "Please select the Third Academic disciplines.",
-        "area_type": "",
-        "area_value": "",
-        "s_level_hid": "",
-        "kamoku": "",
-        "kyoin": "",
-        "p_gakki": "2",
-        "p_youbi": "",
-        "p_jigen": "",
-        "p_gengo": "",
-        "p_gakubu": school_dict[target],
-        "p_keya": "",
-        "p_searcha": "a",
-        "p_keyb": "",
-        "p_searchb": "b",
-        "hidreset": "",
-        "pfrontPage": "now",
-        "pchgFlg": "",
-        "bunya1_hid": "",
-        "bunya2_hid": "",
-        "bunya3_hid": "",
-        "level_hid": "",
-        "ControllerParameters": "JAA103SubCon",
-        "pOcw": "",
-        "pType": "",
-        "pLng": "en"
-    }
+
+    target_semester = 'Spring'
+    target_school = 'Art/Architecture Schl'
+
+    abs_script_path = os.path.abspath(os.path.dirname(__file__))
+    abs_data_path = os.path.join(abs_script_path, "../data/form_data.json")
+    with open(abs_data_path) as data_file:
+        form_data = json.load(data_file)
+
+    form_data['p_gakki'] = semester_dict[target_semester]
+    form_data['p_gakubu'] = school_dict[target_school]
 
     def __init__(self):
         self.driver = webdriver.Chrome('/Users/oscar/chromedriver')
         return
 
+    # POST request to the syllabus search page
     def parse(self, response):
-        return FormRequest.from_response(
+        yield FormRequest.from_response(
             response,
             formdata=self.form_data,
             callback=self.after_search
         )
 
+    # after the server respond, parse through each result page
     def after_search(self, response):
 
         fname = self.get_temp_html_path(response)
@@ -76,6 +59,7 @@ class SearchSpider(Spider):
         while True:
 
             sel = Selector(text=self.driver.page_source, type="html")
+
             c_infos = sel.xpath('//table[@class="ct-vh"]/tbody/tr[not(@class="c-vh-title")]')
             for c_info in c_infos:
 
@@ -89,7 +73,7 @@ class SearchSpider(Spider):
                     day_period_match = re.match(
                         r'(\d{2}:)?(?P<value>.*)', day_period_elem
                     )
-                    day_period += day_period_match.group('value') + " "
+                    day_period += " d/" + day_period_match.group('value')
 
                 classrooms = c_info.xpath('td[8]/text()').extract()
                 classroom = ""
@@ -97,7 +81,7 @@ class SearchSpider(Spider):
                     classroom_match = re.match(
                         r'(\d{2}:)?(?P<value>.*)', classroom_elem
                     )
-                    classroom += classroom_match.group('value') + " "
+                    classroom += " c/" + classroom_match.group('value')
 
                 print(course_title, instructor, school, term, "\n", day_period, classroom)
 
@@ -117,8 +101,8 @@ class SearchSpider(Spider):
     def get_temp_html_path(self, response):
 
         from scrapy.http import HtmlResponse
-        # XXX: this implementation is modified from scrapy.util.response.open_in_browser
-        # according to the source code, it is a bit dirty and could be improved
+        # The implementation below is modified from scrapy.util.response.open_in_browser
+        # According to the source code, it is a bit dirty and could be improved
         body = response.body
         if isinstance(response, HtmlResponse):
             if b'<base' not in body:
