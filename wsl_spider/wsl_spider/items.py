@@ -10,6 +10,19 @@ from scrapy.loader import ItemLoader
 from scrapy.loader.processors import Identity, TakeFirst, MapCompose
 
 
+def weekday_to_number(day):
+    w_t_n = {
+        'Sun': 0,
+        'Mon': 1,
+        'Tues': 2,
+        'Wed': 3,
+        'Thur': 4,
+        'Fri': 5,
+        'Sat': 6
+    }
+    return w_t_n[day]
+
+
 class Course(Item):
     title = Field()
     instructor = Field()
@@ -56,7 +69,7 @@ class OccurrenceLoader(ItemLoader):
     default_item_class = Occurrence
     default_output_processor = TakeFirst()
 
-    day_in = MapCompose(str.strip)
+    day_in = MapCompose(str.strip, weekday_to_number)
     day_out = TakeFirst()
 
     period_in = MapCompose(str.strip)
