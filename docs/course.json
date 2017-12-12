@@ -1,0 +1,23 @@
+{
+  "_id" : "ObjectID('CCCC')",
+  "title" : "Calculus A",
+  "instructor" : "",
+  "year" : "",
+  "term" : "",
+  "school" : "",
+  "occurences" : [
+    {
+      "day" : "",
+      "period" : "",
+      "building" : "",
+      "classroom" : ""
+    },
+    {
+      "day" : "",
+      "period" : "",
+      "building" : "",
+      "classroom" : ""
+    }
+  ],
+    "code" : "",
+}

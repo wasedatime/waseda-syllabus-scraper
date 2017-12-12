@@ -1,0 +1,9 @@
+{
+  "_id" : "ObjectID('BBBB')",
+  "name": "302",
+  "courses" : [
+    { "id" : "ObjectID('CCCC')", "title" : "Calculus A" }
+    { "id" : "ObjectID('CCCD')", "title" : "Vector Calculus" }
+    { "id" : "ObjectID('CCCE')", "title" : "Discrete Mathematics" }
+  ]
+}
