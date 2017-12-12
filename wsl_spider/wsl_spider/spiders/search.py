@@ -78,10 +78,16 @@ class SearchSpider(Spider):
                 for day_period, location in zip(day_periods, locations):
                     ol = OccurrenceLoader()
                     day_period_match = re.match(
-                        r'(\d{2}:)?(?P<day>[A-Z][a-z]*).(?P<period>.*)', day_period
+                        r'(\d{2}:)?(?P<day>[A-Z][a-z]*).(?P<start>\d)?-?(?P<end>\d)', day_period
                     )
                     ol.add_value(field_name='day', value=day_period_match.group('day'))
-                    ol.add_value(field_name='period', value=day_period_match.group('period'))
+
+                    if day_period_match.group('start') is None:
+                        ol.add_value(field_name='start_period', value=day_period_match.group('end'))
+                    else:
+                        ol.add_value(field_name='start_period', value=day_period_match.group('start'))
+
+                    ol.add_value(field_name='end_period', value=day_period_match.group('end'))
 
                     location_match = re.match(
                         r'(\d{2}:)?(?P<building>\d+)-(?P<classroom>\d+)', location
