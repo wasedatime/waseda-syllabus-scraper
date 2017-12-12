@@ -35,7 +35,8 @@ class Course(Item):
 
 class Occurrence(Item):
     day = Field()
-    period = Field()
+    start_period = Field()
+    end_period = Field()
     building = Field()
     classroom = Field()
 
@@ -72,8 +73,11 @@ class OccurrenceLoader(ItemLoader):
     day_in = MapCompose(str.strip, weekday_to_number)
     day_out = TakeFirst()
 
-    period_in = MapCompose(str.strip)
-    period_out = TakeFirst()
+    start_period_in = MapCompose(str.strip)
+    start_period_out = TakeFirst()
+
+    end_period_in = MapCompose(str.strip)
+    end_period_out = TakeFirst()
 
     building_in = MapCompose(str.strip)
     building_out = TakeFirst()
