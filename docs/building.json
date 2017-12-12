@@ -1,0 +1,9 @@
+{
+  "_id" : "ObjectID('AAAA')",
+  "name" : "52",
+  "classrooms" : [
+    "ObjectID('BBBB')",
+    "ObjectID('BBBC')",
+    "ObjectID('BBBD')"
+  ]
+}
