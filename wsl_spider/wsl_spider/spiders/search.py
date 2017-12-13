@@ -30,7 +30,7 @@ class SearchSpider(Spider):
     }
 
     target_semester = 'Spring'
-    target_school = 'Art/Architecture Schl'
+    target_school = 'Fund Sci/Eng'
 
     abs_script_path = os.path.abspath(os.path.dirname(__file__))
     abs_data_path = os.path.join(abs_script_path, "../data/form_data.json")
@@ -80,17 +80,24 @@ class SearchSpider(Spider):
                     day_period_match = re.match(
                         r'(\d{2}:)?(?P<day>[A-Z][a-z]*).(?P<start>\d)?-?(?P<end>\d)', day_period
                     )
-                    ol.add_value(field_name='day', value=day_period_match.group('day'))
 
-                    if day_period_match.group('start') is None:
-                        ol.add_value(field_name='start_period', value=day_period_match.group('end'))
+                    if day_period_match is None:
+                        day_period_match = re.match(
+                            r'(\d{2}:)?(?P<value>.*)', day_period
+                        )
+                        ol.add_value(field_name='day', value=day_period_match.group('value'))
+                        ol.add_value(field_name='start_period', value=day_period_match.group('value'))
+                        ol.add_value(field_name='end_period', value=day_period_match.group('value'))
                     else:
-                        ol.add_value(field_name='start_period', value=day_period_match.group('start'))
-
-                    ol.add_value(field_name='end_period', value=day_period_match.group('end'))
+                        ol.add_value(field_name='day', value=day_period_match.group('day'))
+                        ol.add_value(field_name='end_period', value=day_period_match.group('end'))
+                        if day_period_match.group('start') is None:
+                            ol.add_value(field_name='start_period', value=day_period_match.group('end'))
+                        else:
+                            ol.add_value(field_name='start_period', value=day_period_match.group('start'))
 
                     location_match = re.match(
-                        r'(\d{2}:)?(?P<building>\d+)-(?P<classroom>\d+)', location
+                        r'(\d{2}:)?(?P<building>\d+)-(?P<classroom>.*)', location
                     )
 
                     if location_match is None:

@@ -20,7 +20,10 @@ def weekday_to_number(day):
         'Fri': 5,
         'Sat': 6
     }
-    return w_t_n[day]
+    try:
+        return w_t_n[day]
+    except KeyError:
+        return 7
 
 
 class Course(Item):
