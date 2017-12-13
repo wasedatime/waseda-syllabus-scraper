@@ -85,16 +85,26 @@ class SearchSpider(Spider):
                         day_period_match = re.match(
                             r'(\d{2}:)?(?P<value>.*)', day_period
                         )
-                        ol.add_value(field_name='day', value=day_period_match.group('value'))
-                        ol.add_value(field_name='start_period', value=day_period_match.group('value'))
-                        ol.add_value(field_name='end_period', value=day_period_match.group('value'))
+                        value = day_period_match.group('value')
+                        day = value
+                        start_period = value
+                        end_period = value
+                        start_time = self.period_to_minutes(value)
+                        end_time = self.period_to_minutes(value)
                     else:
-                        ol.add_value(field_name='day', value=day_period_match.group('day'))
-                        ol.add_value(field_name='end_period', value=day_period_match.group('end'))
-                        if day_period_match.group('start') is None:
-                            ol.add_value(field_name='start_period', value=day_period_match.group('end'))
-                        else:
-                            ol.add_value(field_name='start_period', value=day_period_match.group('start'))
+                        day = day_period_match.group('day')
+                        start_period = day_period_match.group('start')
+                        end_period = day_period_match.group('end')
+                        if start_period is None:
+                            start_period = end_period
+                        start_time = self.period_to_minutes(start_period + 's')
+                        end_time = self.period_to_minutes(end_period + 'e')
+
+                    ol.add_value(field_name='day', value=day)
+                    ol.add_value(field_name='start_period', value=start_period)
+                    ol.add_value(field_name='end_period', value=end_period)
+                    ol.add_value(field_name='start_time', value=start_time)
+                    ol.add_value(field_name='end_time', value=end_time)
 
                     location_match = re.match(
                         r'(\d{2}:)?(?P<building>\d+)-(?P<classroom>.*)', location
@@ -130,6 +140,28 @@ class SearchSpider(Spider):
                 self.logger.info('No more pages to load.')
                 self.driver.quit()
                 break
+
+    def period_to_minutes(self, period):
+        p_t_m = {
+            '1s': 540,
+            '1e': 630,
+            '2s': 640,
+            '2e': 730,
+            '3s': 780,
+            '3e': 870,
+            '4s': 885,
+            '4e': 975,
+            '5s': 990,
+            '5e': 1080,
+            '6s': 1095,
+            '6e': 1185,
+            '7s': 1195,
+            '7e': 1285
+        }
+        try:
+            return p_t_m[period]
+        except KeyError:
+            return -1
 
     def get_temp_html_path(self, response):
 
