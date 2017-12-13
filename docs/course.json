@@ -10,6 +10,7 @@
       "day" : "",
       "start_period" : "",
       "end_period" : "",
+      "location" : "",
       "building" : "",
       "classroom" : ""
     },
@@ -17,6 +18,7 @@
       "day" : "",
       "start_period" : "",
       "end_period" : "",
+      "location" : "",
       "building" : "",
       "classroom" : ""
     }

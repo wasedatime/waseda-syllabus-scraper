@@ -1,6 +1,7 @@
 {
   "_id" : "ObjectID('BBBB')",
   "name": "302",
+  "building": "54",
   "courses" : [
     { "id" : "ObjectID('CCCC')",
       "title" : "Calculus A",
@@ -17,7 +18,20 @@
         }
       ]
     },
-    { "id" : "ObjectID('CCCD')", "title" : "Vector Calculus" },
-    { "id" : "ObjectID('CCCE')", "title" : "Discrete Mathematics" }
+    { "id" : "ObjectID('CCCD')",
+      "title" : "Vector Calculus",
+      "occurrences" : [
+        {
+          "day" : "",
+          "start_period" : "",
+          "end_period" : ""
+        },
+        {
+          "day" : "",
+          "start_period" : "",
+          "end_period" : ""
+        }
+      ]
+    }
   ]
 }
