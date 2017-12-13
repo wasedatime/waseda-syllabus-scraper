@@ -5,16 +5,18 @@
   "year" : "",
   "term" : "",
   "school" : "",
-  "occurences" : [
+  "occurrences" : [
     {
       "day" : "",
-      "period" : "",
+      "start_period" : "",
+      "end_period" : "",
       "building" : "",
       "classroom" : ""
     },
     {
       "day" : "",
-      "period" : "",
+      "start_period" : "",
+      "end_period" : "",
       "building" : "",
       "classroom" : ""
     }

@@ -2,8 +2,22 @@
   "_id" : "ObjectID('BBBB')",
   "name": "302",
   "courses" : [
-    { "id" : "ObjectID('CCCC')", "title" : "Calculus A" }
-    { "id" : "ObjectID('CCCD')", "title" : "Vector Calculus" }
+    { "id" : "ObjectID('CCCC')",
+      "title" : "Calculus A",
+      "occurrences" : [
+        {
+          "day" : "",
+          "start_period" : "",
+          "end_period" : ""
+        },
+        {
+          "day" : "",
+          "start_period" : "",
+          "end_period" : ""
+        }
+      ]
+    },
+    { "id" : "ObjectID('CCCD')", "title" : "Vector Calculus" },
     { "id" : "ObjectID('CCCE')", "title" : "Discrete Mathematics" }
   ]
 }
