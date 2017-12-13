@@ -40,6 +40,7 @@ class Occurrence(Item):
     day = Field()
     start_period = Field()
     end_period = Field()
+    location = Field()
     building = Field()
     classroom = Field()
 
