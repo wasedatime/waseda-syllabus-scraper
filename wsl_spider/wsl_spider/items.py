@@ -23,7 +23,7 @@ def weekday_to_number(day):
     try:
         return w_t_n[day]
     except KeyError:
-        return 7
+        return -1
 
 
 class Course(Item):
@@ -40,6 +40,8 @@ class Occurrence(Item):
     day = Field()
     start_period = Field()
     end_period = Field()
+    start_time = Field()
+    end_time = Field()
     location = Field()
     building = Field()
     classroom = Field()
