@@ -29,7 +29,7 @@ class SearchSpider(Spider):
         'Adv Sci/Eng': "282006"
     }
 
-    target_semester = 'Spring'
+    target_semester = 'Fall'
     target_school = 'Fund Sci/Eng'
 
     abs_script_path = os.path.abspath(os.path.dirname(__file__))
@@ -104,13 +104,16 @@ class SearchSpider(Spider):
                         location_match = re.match(
                             r'(\d{2}:)?(?P<value>.*)', location
                         )
-                        ol.add_value(field_name='building', value='999')
-                        ol.add_value(field_name='classroom', value=location_match.group('value'))
+                        bldg = '999'
+                        clsrm = location_match.group('value')
 
                     else:
-                        ol.add_value(field_name='building', value=location_match.group('building'))
-                        ol.add_value(field_name='classroom', value=location_match.group('classroom'))
+                        bldg = location_match.group('building')
+                        clsrm = location_match.group('classroom')
 
+                    ol.add_value(field_name='building', value=bldg)
+                    ol.add_value(field_name='classroom', value=clsrm)
+                    ol.add_value(field_name='location', value=bldg + '-' + clsrm)
                     cl.add_value(field_name='occurrences', value=ol.load_item())
 
                 yield(cl.load_item())
