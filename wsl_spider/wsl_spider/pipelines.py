@@ -31,6 +31,5 @@ class MongoPipeline(object):
 
     def process_item(self, item, spider):
         self.col.insert_one(dict(item))
-        logging.log(logging.INFO, "Course '{}' is added to MongoDB".format(item['title']))
-
+        logging.log(logging.INFO, "Course '{}' is added to collection {}".format(item['title'], self.mongo_col))
         return item
