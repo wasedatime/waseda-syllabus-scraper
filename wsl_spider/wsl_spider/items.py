@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-
-# Define here the models for your scraped items
-#
-# See documentation in:
-# http://doc.scrapy.org/en/latest/topics/items.html
+import unicodedata
 
 from scrapy.item import Item, Field
 from scrapy.loader import ItemLoader
 from scrapy.loader.processors import Identity, TakeFirst, MapCompose
+
+
+def normalize_characters(value):
+    return unicodedata.normalize('NFKC', value)
 
 
 def weekday_to_number(day):
@@ -51,24 +51,24 @@ class CourseLoader(ItemLoader):
     default_item_class = Course
     default_output_processor = TakeFirst()
 
-    title_in = MapCompose(str.strip)
+    title_in = MapCompose(str.strip, normalize_characters)
     title_out = TakeFirst()
 
-    instructor_in = MapCompose(str.strip)
+    instructor_in = MapCompose(str.strip, normalize_characters)
     instructor_out = TakeFirst()
 
-    year_in = MapCompose(str.strip)
+    year_in = MapCompose(str.strip, normalize_characters)
     year_out = TakeFirst()
 
-    term_in = MapCompose(str.strip)
+    term_in = MapCompose(str.strip, normalize_characters)
     term_out = TakeFirst()
 
-    school_in = MapCompose(str.strip)
+    school_in = MapCompose(str.strip, normalize_characters)
     school_out = TakeFirst()
 
     occurrences_out = Identity()
 
-    code_in = MapCompose(str.strip)
+    code_in = MapCompose(str.strip, normalize_characters)
     code_out = TakeFirst()
 
 
@@ -76,18 +76,18 @@ class OccurrenceLoader(ItemLoader):
     default_item_class = Occurrence
     default_output_processor = TakeFirst()
 
-    day_in = MapCompose(str.strip, weekday_to_number)
+    day_in = MapCompose(str.strip, normalize_characters, weekday_to_number)
     day_out = TakeFirst()
 
-    start_period_in = MapCompose(str.strip)
+    start_period_in = MapCompose(str.strip, normalize_characters)
     start_period_out = TakeFirst()
 
-    end_period_in = MapCompose(str.strip)
+    end_period_in = MapCompose(str.strip, normalize_characters)
     end_period_out = TakeFirst()
 
-    building_in = MapCompose(str.strip)
+    building_in = MapCompose(str.strip, normalize_characters)
     building_out = TakeFirst()
 
-    classroom_in = MapCompose(str.strip)
+    classroom_in = MapCompose(str.strip, normalize_characters)
     classroom_out = TakeFirst()
 
