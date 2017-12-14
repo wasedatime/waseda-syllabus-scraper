@@ -52,11 +52,22 @@ class SearchSpider(Spider):
             callback=self.after_search
         )
 
-    # after the server responded, parse through each result page
     def after_search(self, response):
-
         fname = self.get_temp_html_path(response)
         self.driver.get("file://%s" % fname)
+        return self.expand_results_per_page()
+
+    def expand_results_per_page(self):
+        next_page = self.driver.find_element_by_xpath(
+            '//table[@class="t-btn"]/tbody/tr/td/div/div/p/a[text()="Next>"]'
+        )
+        next_page.click()
+
+        hundred_items = self.driver.find_element_by_xpath('id("cHeader")/div[3]/a[3]')
+        hundred_items.click()
+        return self.parse_each_results_page()
+
+    def parse_each_results_page(self):
 
         while True:
 
@@ -114,7 +125,7 @@ class SearchSpider(Spider):
                         location_match = re.match(
                             r'(\d{2}:)?(?P<value>.*)', location
                         )
-                        bldg = '999'
+                        bldg = '-1'
                         clsrm = location_match.group('value')
 
                     else:
