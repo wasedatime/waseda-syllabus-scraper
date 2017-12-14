@@ -2,6 +2,24 @@
 import logging
 import pymongo
 
+from scrapy.exceptions import DropItem
+
+
+class DuplicatesPipeline(object):
+
+    drop_item_msg = "Dropping duplicate course, title: {}, instructor: {}"
+
+    def __init__(self):
+        self.hashes_seen = set()
+
+    def process_item(self, item, spider):
+        item_hash = hash((item['title'], item['instructor'], item['year'], item['term'], item['school']))
+        if item_hash in self.hashes_seen:
+            raise DropItem(self.drop_item_msg.format(item['title'], item['instructor']))
+        else:
+            self.hashes_seen.add(item_hash)
+            return item
+
 
 class MongoPipeline(object):
 
