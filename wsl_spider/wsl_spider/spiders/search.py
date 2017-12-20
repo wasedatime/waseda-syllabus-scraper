@@ -31,7 +31,7 @@ class SearchSpider(Spider):
     }
 
     target_semester = 'Fall'
-    target_school = ''
+    target_school = 'Fund Sci/Eng'
 
     abs_script_path = os.path.abspath(os.path.dirname(__file__))
     abs_data_path = os.path.join(abs_script_path, "../data/form_data.json")
