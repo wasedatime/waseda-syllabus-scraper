@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import unicodedata
+import re
 
 from scrapy.item import Item, Field
 from scrapy.loader import ItemLoader
@@ -26,6 +27,14 @@ def weekday_to_number(day):
         return -1
 
 
+def onclick_to_link(onclick):
+    onclick_match = re.match(r"post_submit\(\'(?P<php>\w{6})\w*', '(?P<pKey>\w+)'\)", onclick)
+    php = onclick_match.group('php')
+    pKey = onclick_match.group('pKey')
+    url = 'https://www.wsl.waseda.jp/syllabus/{}.php?pKey={}&pLng=en'.format(php, pKey)
+    return url
+
+
 class Course(Item):
     title = Field()
     instructor = Field()
@@ -33,7 +42,9 @@ class Course(Item):
     term = Field()
     school = Field()
     occurrences = Field()
+    link = Field()
     code = Field()
+    hash = Field()
 
 
 class Occurrence(Item):
@@ -67,6 +78,9 @@ class CourseLoader(ItemLoader):
     school_out = TakeFirst()
 
     occurrences_out = Identity()
+
+    link_in = MapCompose(str.strip, normalize_characters, onclick_to_link)
+    link_out = TakeFirst()
 
     code_in = MapCompose(str.strip, normalize_characters)
     code_out = TakeFirst()
