@@ -5,6 +5,20 @@ import pymongo
 from scrapy.exceptions import DropItem
 
 
+class FilterYearPipeline(object):
+
+    drop_item_msg = "Dropping {} course, title: {}, instructor: {}"
+
+    def __init__(self):
+        return
+
+    def process_item(self, item, spider):
+        if item['year'] != '2017':
+            raise DropItem(self.drop_item_msg.format(item['year'], item['title'], item['instructor']))
+        else:
+            return item
+
+
 class DuplicatesPipeline(object):
 
     drop_item_msg = "Dropping duplicate course, title: {}, instructor: {}"
