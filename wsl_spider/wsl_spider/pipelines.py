@@ -21,6 +21,17 @@ class DuplicatesPipeline(object):
             return item
 
 
+class HashPipeline(object):
+
+    def __init__(self):
+        return
+
+    def process_item(self, item, spider):
+        item_hash = hash((item['title'], item['instructor'], item['year'], item['term']))
+        item['hash'] = item_hash
+        return item
+
+
 class MongoPipeline(object):
 
     def __init__(self, mongo_uri, mongo_db, mongo_col):
