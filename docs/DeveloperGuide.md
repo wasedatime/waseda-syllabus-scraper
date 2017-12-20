@@ -1,6 +1,7 @@
 ### MongoDB Aggregation Framework
 
 #### Export aggregation result to a new collection
+
 ```
 db.<collection>.aggregate( [
      { <operation> },
@@ -10,10 +11,44 @@ db.<collection>.aggregate( [
 ] )
 ```
 
+#### Export courses with a particular school
+
+```JavaScript
+db["2017_fall_courses_raw"].aggregate( [
+     { $match: { school: { $in: ['Schl of Fund Sci/Eng', 'Schl Cre Sci/Eng', 'Schl Adv Sci/Eng'] } } },
+     { $out : "2017F_courses_sci_eng_raw" }
+] )
+```
+
+#### Export distinct courses by grouping schools
+
+```JavaScript
+db["2017F_courses_sci_eng_raw"].aggregate( [
+    { $group :
+        { _id : "$hash",
+          year: { $first: "$year" },
+          term: { $first: "$term" },
+          code: { $first: "$code" },
+          title: { $first: "$title" },
+          instructor: { $first: "$instructor" },
+          occurrences: { $first: "$occurrences" },
+          schools: { $push: "$school" },
+          links: { $push: {
+                   school: "$school",
+                   link: "$link"
+                   }         
+                 }
+        }
+    },
+    { $project: { _id: 0 } },
+    { $out : "2017F_courses_sci_eng" }
+] )
+```
+
 #### Export classrooms from courses
 
 ```JavaScript
-db.courses_fund_eng_eng.aggregate( [
+db["2017F_courses_sci_eng"].aggregate( [
     { $unwind : "$occurrences" },
     { $group :
         { _id : "$occurrences.location",
@@ -29,11 +64,11 @@ db.courses_fund_eng_eng.aggregate( [
         }
     },
     { $project : { _id: 0, "courses.occurrences.location": 0, "courses.occurrences.classroom": 0, "courses.occurrences.building": 0} },
-    { $out : "classrooms_fund_eng_eng" }
+    { $out : "2017F_classrooms_sci_eng" }
 ] )
 ```
 
-#### Export buildings from classrooms
+#### Export buildings from classrooms with id being building number 
 
 ```JavaScript
 db.classrooms_fund_eng_eng.aggregate( [
@@ -44,6 +79,37 @@ db.classrooms_fund_eng_eng.aggregate( [
     },
     { $out : "buildings_fund_eng_eng" }
 ] )
+```
+
+
+#### Export buildings from classrooms with id being ObjectId
+
+```JavaScript
+db.classrooms_fund_eng_eng.aggregate( [
+    { $group :
+        { _id : "$building",
+          classrooms: { $push: { id:"$_id", name:"$name" } }
+        }
+    },
+    { $project: { _id: 0, "name": "$_id", "classrooms": 1 }},
+    { $out : "buildings_fund_eng_eng_new" }
+] )
+```
+
+### Find and modify field embedded in an array of documents
+
+Concatenate the array with the embedded field 
+
+```JavaScript
+db.getCollection('2017F_courses_sci_eng').findAndModify({
+    query: { 'occurrences.classroom': "Seminar room 3 50-304" },
+    update: { $set: { 
+        'occurrences.$[elem].location': "50-304 Seminar room 3",
+        'occurrences.$[elem].building': "50",
+        'occurrences.$[elem].classroom': "304 Seminar room 3"
+    } },
+    arrayFilters: [ { "elem.classroom": "Seminar room 3 50-304" } ]
+})
 ```
 
 
