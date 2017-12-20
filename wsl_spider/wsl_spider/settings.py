@@ -69,12 +69,13 @@ COOKIES_ENABLED = False
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     'wsl_spider.pipelines.DuplicatesPipeline': 100,
+    'wsl_spider.pipelines.HashPipeline': 200,
     'wsl_spider.pipelines.MongoPipeline': 300,
 }
 
 MONGO_URI = 'mongodb://localhost:27017/'
 MONGO_DB = "syllabus"
-MONGO_COLLECTION = "courses_fund_eng_eng"
+MONGO_COLLECTION = "2017_fall_courses_raw"
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html
