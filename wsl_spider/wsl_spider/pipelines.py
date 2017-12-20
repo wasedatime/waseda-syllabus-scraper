@@ -4,6 +4,8 @@ import pymongo
 
 from scrapy.exceptions import DropItem
 
+# TODO: use hashlib for stable hash implementation
+
 
 class FilterYearPipeline(object):
 
