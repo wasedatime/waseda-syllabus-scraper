@@ -21,6 +21,7 @@ class SearchSpider(Spider):
     start_urls = ['https://www.wsl.waseda.jp/syllabus/JAA101.php?pLng=en']
     semesters = {'Spring': "1", 'Fall': "2"}
     schools = {
+        '': "",
         'Art/Architecture Schl': "712001",
         'Sports Sci': "202003",
         'Political Sci': "111973",
@@ -30,7 +31,7 @@ class SearchSpider(Spider):
     }
 
     target_semester = 'Fall'
-    target_school = 'Fund Sci/Eng'
+    target_school = ''
 
     abs_script_path = os.path.abspath(os.path.dirname(__file__))
     abs_data_path = os.path.join(abs_script_path, "../data/form_data.json")
@@ -76,12 +77,16 @@ class SearchSpider(Spider):
             c_infos = sel.xpath('//table[@class="ct-vh"]/tbody/tr[not(@class="c-vh-title")]')
             for c_info in c_infos:
                 cl = CourseLoader(selector=c_info)
+
                 cl.add_xpath(field_name='year', xpath='td[1]/text()')
                 cl.add_xpath(field_name='code', xpath='td[2]/text()')
                 cl.add_xpath(field_name='title', xpath='td[3]/a/text()')
                 cl.add_xpath(field_name='instructor', xpath='td[4]/text()')
                 cl.add_xpath(field_name='school', xpath='td[5]/text()')
                 cl.add_xpath(field_name='term', xpath='td[6]/text()')
+
+                link = c_info.xpath('td[3]/a/@onclick').extract()
+                cl.add_value(field_name='link', value=link)
 
                 day_periods = c_info.xpath('td[7]/text()').extract()
                 locations = c_info.xpath('td[8]/text()').extract()
