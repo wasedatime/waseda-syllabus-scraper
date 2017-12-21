@@ -1,17 +1,6 @@
 ### MongoDB Aggregation Framework
 
-#### Export aggregation result to a new collection
-
-```
-db.<collection>.aggregate( [
-     { <operation> },
-     { <operation> },
-     ...,
-     { $out : "<output-collection>" }
-] )
-```
-
-#### Export courses with a particular school
+#### Export courses in some particular schools
 
 ```JavaScript
 db["2017_fall_courses_raw"].aggregate( [
@@ -65,6 +54,15 @@ db["2017F_courses_sci_eng"].aggregate( [
     },
     { $project : { _id: 0, "courses.occurrences.location": 0, "courses.occurrences.classroom": 0, "courses.occurrences.building": 0} },
     { $out : "2017F_classrooms_sci_eng" }
+] )
+```
+
+#### Sort classrooms by building number and name (optional)
+
+```JavaScript
+db["2017F_classrooms_sci_eng"].aggregate( [
+	{ $sort: { building: 1, name: 1} },
+    { $out : "2017F_classrooms_sci_eng_sorted" }
 ] )
 ```
 
