@@ -68,7 +68,7 @@ db["2017F_courses_sci_eng"].aggregate( [
 ] )
 ```
 
-#### Export buildings from classrooms with id being building number 
+#### Export buildings from classrooms with id being ObjectId
 
 ```JavaScript
 db["2017F_classrooms_sci_eng"].aggregate( [
@@ -77,24 +77,28 @@ db["2017F_classrooms_sci_eng"].aggregate( [
           classrooms: { $push: { id:"$_id", name:"$name" } }
         }
     },
+    { $project: { _id: 0, "name": "$_id", "classrooms": 1 }},
+    { $out : "2017F_buildings_sci_eng_unsorted" }
+] )
+```
+
+### Sort buildings by name and sort all classrooms inside by name
+
+```JavaScript
+db["2017F_buildings_sci_eng_unsorted"].aggregate( [
+    { $unwind : "$classrooms" },
+    { $sort: { name: 1, "classrooms.name": 1} },
+    { $group :
+        { _id : "$name",
+          classrooms: { $push: { id:"$classrooms.id", name:"$classrooms.name" } }
+        }
+    },
+    { $sort: { _id: 1 } },
+    { $project: { _id: 0, "name": "$_id", "classrooms": 1 } },
     { $out : "2017F_buildings_sci_eng" }
 ] )
 ```
 
-
-#### Export buildings from classrooms with id being ObjectId
-
-```JavaScript
-db.classrooms_fund_eng_eng.aggregate( [
-    { $group :
-        { _id : "$building",
-          classrooms: { $push: { id:"$_id", name:"$name" } }
-        }
-    },
-    { $project: { _id: 0, "name": "$_id", "classrooms": 1 }},
-    { $out : "buildings_fund_eng_eng_new" }
-] )
-```
 
 ### Find and modify field embedded in an array of documents ONE BY ONE
 
