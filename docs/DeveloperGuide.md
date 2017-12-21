@@ -71,13 +71,13 @@ db["2017F_courses_sci_eng"].aggregate( [
 #### Export buildings from classrooms with id being building number 
 
 ```JavaScript
-db.classrooms_fund_eng_eng.aggregate( [
+db["2017F_classrooms_sci_eng"].aggregate( [
     { $group :
         { _id : "$building",
           classrooms: { $push: { id:"$_id", name:"$name" } }
         }
     },
-    { $out : "buildings_fund_eng_eng" }
+    { $out : "2017F_buildings_sci_eng" }
 ] )
 ```
 
@@ -96,19 +96,19 @@ db.classrooms_fund_eng_eng.aggregate( [
 ] )
 ```
 
-### Find and modify field embedded in an array of documents
+### Find and modify field embedded in an array of documents ONE BY ONE
 
-Concatenate the array with the embedded field 
+Concatenate the array with the embedded field use dot sign
+$ sign only matches the FIRST array element
 
 ```JavaScript
 db.getCollection('2017F_courses_sci_eng').findAndModify({
-    query: { 'occurrences.classroom': "Seminar room 3 50-304" },
+    query: { 'occurrences.$.classroom': "Seminar room 3 50-304" },
     update: { $set: { 
-        'occurrences.$[elem].location': "50-304 Seminar room 3",
-        'occurrences.$[elem].building': "50",
-        'occurrences.$[elem].classroom': "304 Seminar room 3"
-    } },
-    arrayFilters: [ { "elem.classroom": "Seminar room 3 50-304" } ]
+        'occurrences.$.location': "50-304 Seminar room 3",
+        'occurrences.$.building': "50",
+        'occurrences.$.classroom': "304 Seminar room 3"
+    } }
 })
 ```
 
