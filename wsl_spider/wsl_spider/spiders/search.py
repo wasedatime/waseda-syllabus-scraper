@@ -21,7 +21,8 @@ class SearchSpider(Spider):
     start_urls = ['https://www.wsl.waseda.jp/syllabus/JAA101.php?pLng=en']
     semesters = {'Spring': "1", 'Fall': "2"}
     schools = {
-        '': "",
+        'None': "",
+        'SILS': "212004",
         'Art/Architecture Schl': "712001",
         'Sports Sci': "202003",
         'Political Sci': "111973",
@@ -30,6 +31,7 @@ class SearchSpider(Spider):
         'Adv Sci/Eng': "282006"
     }
 
+    # Change the target semester and school here.
     target_semester = 'Fall'
     target_school = 'Fund Sci/Eng'
 
@@ -42,6 +44,7 @@ class SearchSpider(Spider):
     form_data['p_gakubu'] = schools[target_school]
 
     def __init__(self):
+        # Replace /Users/oscar/chromedriver with your own chrome driver path, e.g. /Users/myself/my-chrome-driver
         self.driver = webdriver.Chrome('/Users/oscar/chromedriver')
         return
 

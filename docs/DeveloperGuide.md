@@ -25,7 +25,7 @@ db["2017F_courses_sci_eng_raw"].aggregate( [
           links: { $push: {
                    school: "$school",
                    link: "$link"
-                   }         
+                   }
                  }
         }
     },
@@ -76,6 +76,7 @@ db["2017F_classrooms_sci_eng"].aggregate( [
         }
     },
     { $project: { _id: 0, "name": "$_id", "classrooms": 1 }},
+    { $sort : { name: 1} }, //can add this line to sort by building name
     { $out : "2017F_buildings_sci_eng_unsorted" }
 ] )
 ```
@@ -97,7 +98,6 @@ db["2017F_buildings_sci_eng_unsorted"].aggregate( [
 ] )
 ```
 
-
 ### Find and modify field embedded in an array of documents ONE BY ONE
 
 Concatenate the array with the embedded field use dot sign
@@ -106,7 +106,7 @@ $ sign only matches the FIRST array element
 ```JavaScript
 db.getCollection('2017F_courses_sci_eng').findAndModify({
     query: { 'occurrences.$.classroom': "Seminar room 3 50-304" },
-    update: { $set: { 
+    update: { $set: {
         'occurrences.$.location': "50-304 Seminar room 3",
         'occurrences.$.building': "50",
         'occurrences.$.classroom': "304 Seminar room 3"
@@ -114,11 +114,16 @@ db.getCollection('2017F_courses_sci_eng').findAndModify({
 })
 ```
 
+### Create index 'name' for buildings collection
+
+```JavaScript
+db.getCollection('2017F_buildings_sci_eng').createIndex({ "name" : 1})
+```
 
 ### User Stories
 
-Priority | As a... | I want to... | So that I can...
----|---|---|---
-\*\*\* | user | check the classroom occupancy | select an empty classroom to study
-\*\*\* | user | filter classrooms according to buildings | search more efficiently
-\*\*\* | user | check the daily schedule of each classroom | know what classes are held
+| Priority | As a... | I want to...                               | So that I can...                   |
+| -------- | ------- | ------------------------------------------ | ---------------------------------- |
+| \*\*\*   | user    | check the classroom occupancy              | select an empty classroom to study |
+| \*\*\*   | user    | filter classrooms according to buildings   | search more efficiently            |
+| \*\*\*   | user    | check the daily schedule of each classroom | know what classes are held         |

@@ -76,7 +76,8 @@ ITEM_PIPELINES = {
 
 MONGO_URI = 'mongodb://localhost:27017/'
 MONGO_DB = "syllabus"
-MONGO_COLLECTION = "2017F_courses_raw"
+# Change the name of the output collection here, e.g. "my courses"
+MONGO_COLLECTION = "test"
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html
