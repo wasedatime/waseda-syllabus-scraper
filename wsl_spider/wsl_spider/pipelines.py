@@ -4,7 +4,7 @@ import pymongo
 
 from scrapy.exceptions import DropItem
 
-# TODO: use hashlib for stable hash implementation
+# This pipeline filters courses by its academic year.
 
 
 class FilterYearPipeline(object):
@@ -19,6 +19,9 @@ class FilterYearPipeline(object):
             raise DropItem(self.drop_item_msg.format(item['year'], item['title'], item['instructor']))
         else:
             return item
+
+# This pipeline drops a course if another course with the
+# same title, instructor, year, term, and school is scraped already
 
 
 class DuplicatesPipeline(object):
@@ -36,6 +39,12 @@ class DuplicatesPipeline(object):
             self.hashes_seen.add(item_hash)
             return item
 
+# This pipeline produces a hash according to the title, instructor, year, and term of a course.
+# It's result will be used in MongoDB aggregation framework to group courses together.
+# Currently it uses the default hash() provided by python, which produces a different result every time we rerun.
+# Check out Stack Overflow "hash function in Python 3.3 returns different results between sessions"
+# See https://docs.python.org/3/using/cmdline.html#envvar-PYTHONHASHSEED
+
 
 class HashPipeline(object):
 
@@ -43,9 +52,12 @@ class HashPipeline(object):
         return
 
     def process_item(self, item, spider):
+        # TODO: Set a fixed PYTHONHASHSEED environment variable or use hashlib for stable hashing
         item_hash = hash((item['title'], item['instructor'], item['year'], item['term']))
         item['hash'] = item_hash
         return item
+
+# This pipeline exports the result to MongoDB.
 
 
 class MongoPipeline(object):

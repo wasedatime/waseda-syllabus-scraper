@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import scrapy
 
+# This file is used to scrape a single course page. It is not used currently.
+
 
 class CourseInfoSpider(scrapy.Spider):
     name = 'course_info'
