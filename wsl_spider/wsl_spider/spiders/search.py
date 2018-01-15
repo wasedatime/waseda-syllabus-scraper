@@ -21,14 +21,19 @@ class SearchSpider(Spider):
     start_urls = ['https://www.wsl.waseda.jp/syllabus/JAA101.php?pLng=en']
     semesters = {'Spring': "1", 'Fall': "2"}
     schools = {
-        'None': "",
-        'SILS': "212004",
+        # Returns little results and is good for testing.
         'Art/Architecture Schl': "712001",
         'Sports Sci': "202003",
+
+        'SILS': "212004",
         'Political Sci': "111973",
         'Fund Sci/Eng': "262006",
         'Cre Sci/Eng': "272006",
-        'Adv Sci/Eng': "282006"
+        'Adv Sci/Eng': "282006",
+
+        # Returns results of every school. Only use this when every thing is set.
+        'All': ""
+
     }
 
     # Change the target semester and school here.
