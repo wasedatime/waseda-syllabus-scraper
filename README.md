@@ -156,9 +156,9 @@ load("/path/to/aggregation/script.js")
 
 It should return `true` if the aggregation is successful.
 
-### Congradulations!
+### Congratulations!
 
-If you have obtained the desired results, congradulations! Or
+If you have obtained the desired results, congratulations! Or
 if you encountered some troubles during scraping or aggregating the data, feel free to submit an issue. :)
 
 ## Built With
@@ -175,6 +175,7 @@ Submit an issue or a pull request!
 ## Author
 
 * **Oscar Wang** - _Initial work_ - [OscarWang114](https://github.com/OscarWang114)
+* **Taihei Sato** - _Add a new url_ - [tsato815](https://github.com/tsato815)
 
 ## License
 
