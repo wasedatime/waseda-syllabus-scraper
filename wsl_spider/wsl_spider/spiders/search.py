@@ -21,7 +21,7 @@ class SearchSpider(Spider):
     start_urls = ['https://www.wsl.waseda.jp/syllabus/JAA101.php?pLng=en']
     semesters = {'Spring': "1", 'Fall': "2"}
     schools = {
-        # Returns little results and is good for testing.
+        # These two schools return little course results and are good for testing.
         'Art/Architecture Schl': "712001",
         'Sports Sci': "202003",
 
@@ -31,13 +31,13 @@ class SearchSpider(Spider):
         'Cre Sci/Eng': "272006",
         'Adv Sci/Eng': "282006",
 
-        # Returns results of every school. Only use this when every thing is set.
+        # Returns results of every school.
         'All': ""
 
     }
 
     # Change the target semester and school here.
-    target_semester = 'Spring'
+    target_semester = 'Fall'
     target_school = 'All'
 
     abs_script_path = os.path.abspath(os.path.dirname(__file__))
