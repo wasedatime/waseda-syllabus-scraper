@@ -2,7 +2,7 @@
 import logging
 import pymongo
 
-from scrapy.exceptions import DropItem
+from scrapy.exceptions import DropItem, CloseSpider
 
 # This pipeline filters courses by its academic year.
 
@@ -15,6 +15,8 @@ class FilterYearPipeline(object):
         return
 
     def process_item(self, item, spider):
+        if item['year'] == '2016':
+            raise CloseSpider('Scraped data has gone below target year')
         if item['year'] != '2017':
             raise DropItem(self.drop_item_msg.format(item['year'], item['title'], item['instructor']))
         else:
