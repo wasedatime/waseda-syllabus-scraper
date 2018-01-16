@@ -21,7 +21,7 @@ class SearchSpider(Spider):
     start_urls = ['https://www.wsl.waseda.jp/syllabus/JAA101.php?pLng=en']
     semesters = {'Spring': "1", 'Fall': "2"}
     schools = {
-        # Returns little results and is good for testing.
+        # These two schools return little course results and are good for testing.
         'Art/Architecture Schl': "712001",
         'Sports Sci': "202003",
 
@@ -31,14 +31,14 @@ class SearchSpider(Spider):
         'Cre Sci/Eng': "272006",
         'Adv Sci/Eng': "282006",
 
-        # Returns results of every school. Only use this when every thing is set.
+        # Returns results of every school.
         'All': ""
 
     }
 
     # Change the target semester and school here.
     target_semester = 'Fall'
-    target_school = 'Fund Sci/Eng'
+    target_school = 'All'
 
     abs_script_path = os.path.abspath(os.path.dirname(__file__))
     abs_data_path = os.path.join(abs_script_path, "../data/form_data.json")
@@ -49,7 +49,8 @@ class SearchSpider(Spider):
     form_data['p_gakubu'] = schools[target_school]
 
     def __init__(self):
-        # Replace /Users/oscar/chromedriver with your own chrome driver path, e.g. /Users/myself/my-chrome-driver
+        # Replace /Users/oscar/chromedriver with your own chrome driver path, e.g. /Users/myself/my-chromedriver
+        # For linux, use os.path.expanduser('~/chromedriver')
         self.driver = webdriver.Chrome('/Users/oscar/chromedriver')
         return
 
@@ -124,11 +125,11 @@ class SearchSpider(Spider):
                         start_time = self.period_to_minutes(start_period + 's')
                         end_time = self.period_to_minutes(end_period + 'e')
 
-                    ol.add_value(field_name='day', value=day)
-                    ol.add_value(field_name='start_period', value=start_period)
-                    ol.add_value(field_name='end_period', value=end_period)
-                    ol.add_value(field_name='start_time', value=start_time)
-                    ol.add_value(field_name='end_time', value=end_time)
+                    ol.add_value(field_name='day', value=int(day))
+                    ol.add_value(field_name='start_period', value=int(start_period))
+                    ol.add_value(field_name='end_period', value=int(end_period))
+                    ol.add_value(field_name='start_time', value=int(start_time))
+                    ol.add_value(field_name='end_time', value=int(end_time))
 
                     location_match = re.match(
                         r'(\d{2}:)?(?P<building>\d+)-(?P<classroom>.*)', location

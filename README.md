@@ -61,8 +61,6 @@ git clone https://github.com/wasetime/waseda-syllabus-scraper.git
 pip3 install -r requirements-dev.txt
 ```
 
-End with an example of getting some data out of the system or using it for a little demo
-
 #### MongoDB shell
 
 Run the following command to check if MongoDB shell is available.
@@ -73,19 +71,21 @@ mongo --version
 
 You should see an output like MongoDB shell version v3.6.0.
 
-Run the following command to start the database process.
+Run the following command to start the daemon database process.
 
 ```
 mongod
 ```
 
-Remember that you will need to run this before scraping so that the scraped data can be exported to MongoDB.
+Remember that you will need to start the database before scraping so that the scraped data can be exported to MongoDB.
 
 #### Google Chrome Driver
 
 This project automates Google Chrome to click on links and proceed to the next page of search results. Download the driver [here](https://sites.google.com/a/chromium.org/chromedriver/downloads) and put it somewhere you like.
 
-### Almost there!!
+### Some tweaks before scraping
+
+#### Google Chrome Driver Path
 
 Inside `search.py`, you need to replace the original chrome driver path with your own one.
 
@@ -94,30 +94,72 @@ Inside `search.py`, you need to replace the original chrome driver path with you
 self.driver = webdriver.Chrome('/Users/oscar/chromedriver')
 ```
 
+#### Target Year, Semester, and School
+
 Also, you can specify the courses of a particular semester and school you want to scrape.
 
 ```python
 # Change the target semester and school here.
 target_semester = 'Fall'
-target_school = 'Fund Sci/Eng'
+target_school = 'All'
 ```
 
-At last, inside `settings.py`, change the name of output collection in MongoDB.
+#### Export collection name
+
+At last, if needed feel free to change the name of output MongoDB collection inside `settings.py`.
 
 ```python
-# Change the name of the output collection here, e.g. "my courses"
-MONGO_COLLECTION = "test"
+# Change the name of the output collection here
+MONGO_COLLECTION = "raw_2017F_courses"
 ```
 
-## Start scraping
+### Start scraping
 
-Run the following command
+Type the following command inside your terminal
 
 ```
 python3 run_search.py
 ```
 
-You should see a Google Chrome Icon popped up.
+You should see a new Google Chrome Icon pop up. Open it and it should display
+"Chrome is being controlled by automated test software.". Depends on the target you selected,
+the scraping process may take a few minutes.
+
+After finish scraping, you can deactivate the virtual environment by typing the following command
+
+```
+deactivate
+```
+
+### Data validation
+
+You can use mongo shell (pure CLI) or Robo3T (provides a great GUI) to validate if the interested data is scraped and stored correctly in MongoDB.
+
+### Extract classroom and building collections from courses
+
+The Waseda syllabus database only provides data related to courses. In order to obtain classroom and building information, we have extract and group them into separate collections. This can be done using [MongoDB's Aggregation Framework](https://docs.mongodb.com/manual/aggregation/).
+
+This project contains a `aggregate.js` file that helps automating the entire aggregation process. However, it is necessary to change some variables inside before starting.
+
+### Some tweaks before aggregating
+
+Currently, there is no written guide for this section, but you can follow the comments in `aggregate.js` to tweak and customize your own aggregation process.
+
+### Start aggregating
+
+Type the following command inside your terminal to start using mongo shell and load the aggregation script.
+
+```
+mongo
+load("/path/to/aggregation/script.js")
+```
+
+It should return `true` if the aggregation is successful.
+
+### Congratulations!
+
+If you have obtained the desired results, congratulations! Or
+if you encountered some troubles during scraping or aggregating the data, feel free to submit an issue. :)
 
 ## Built With
 
@@ -133,6 +175,7 @@ Submit an issue or a pull request!
 ## Author
 
 * **Oscar Wang** - _Initial work_ - [OscarWang114](https://github.com/OscarWang114)
+* **Taihei Sato** - _Add a new url_ - [tsato815](https://github.com/tsato815)
 
 ## License
 
