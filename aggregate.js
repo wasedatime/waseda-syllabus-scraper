@@ -11,7 +11,6 @@ var raw = 'raw_';
 var rawCoursesAll = raw + yearTerm + '_courses';
 var rawCoursesSciEng = raw + yearTerm + '_courses_sci_eng';
 
-
 var coursesSciEng = yearTerm + '_courses_sci_eng';
 var classroomsSciEng = yearTerm + '_classrooms_sci_eng_all';
 var buildingsSciEngUnsorted = yearTerm + '_buildings_sci_eng_unsorted';
@@ -44,8 +43,6 @@ db[rawCoursesAll].aggregate([
   },
   { $out: rawCoursesSciEng }
 ]);
-
-quit();
 
 function correctInvalidClassrooms(object) {
   return db.getCollection(rawCoursesSciEng).findAndModify({
@@ -188,7 +185,7 @@ db[buildingsSciEngUnsorted].aggregate([
 ]);
 
 //Create index 'name' for buildings collection
-db.getCollection(buildingsSciEng).createIndex({ name: 1 });
+db[buildingsSciEng].createIndex({ name: 1 });
 
 //Group and export classroom schedules by weekdays
 //and sort by building number and name
@@ -210,9 +207,9 @@ classroomsSciEngWeekdays.forEach(function(object) {
 });
 
 //Create index 'building' for classrooms collection
-db.getCollection(classroomsSciEng).createIndex({ building: 1 });
+db[classroomsSciEng].createIndex({ building: 1 });
 
 //Create index 'building' for weekday classrooms collection
 classroomsSciEngWeekdays.forEach(function(object) {
-  db.getCollection(object.collection).createIndex({ building: 1 });
+  db[object.collection].createIndex({ building: 1 });
 });
