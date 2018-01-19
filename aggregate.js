@@ -3,11 +3,11 @@ var db = conn.getDB('syllabus');
 
 var year = '2017';
 var term = 'F';
-var yearTerm = year.concat(term);
+var yearTerm = year + term;
 var raw = 'raw_';
 
-//rawCourseAll is the name of the initial collection containing the scraped courses information.
-//Change it to the name of your own collection.
+// rawCourseAll is the name of the initial collection containing the scraped courses information.
+// Change it to the name of your own collection.
 var rawCoursesAll = raw + yearTerm + '_courses';
 var rawCoursesSciEng = raw + yearTerm + '_courses_sci_eng';
 
@@ -30,13 +30,13 @@ var classroomsSciEngWeekdays = [
   { collection: classroomsSciEngFri, day: 5 }
 ];
 
-//Export courses in Nishiwaseda campus
-//(School of Fundamental, Creative, and Advanced Science Engineering)
+// Export courses in Nishiwaseda campus
+// (School of Fundamental, Creative, and Advanced Science Engineering)
 db[rawCoursesAll].aggregate([
   {
     $match: {
       school: {
-        //Change the school names here to extract courses that belong to specific schools.
+        // Change the school names here to extract courses that belong to specific schools.
         $in: ['Schl of Fund Sci/Eng', 'Schl Cre Sci/Eng', 'Schl Adv Sci/Eng']
       }
     }
@@ -57,9 +57,9 @@ function correctInvalidClassrooms(object) {
   });
 }
 
-//These are the common invalid classroom names in courses
-//belonging to Nishiwaseda campus.
-//You can define your own ones if necessary.
+// These are the common invalid classroom names in courses
+// belonging to Nishiwaseda campus.
+// You can define your own ones if necessary.
 var commonInvalidClassroomsAndCorrections = [
   {
     invalidClassroom: '61号館2階',
@@ -93,10 +93,10 @@ var commonInvalidClassroomsAndCorrections = [
   }
 ];
 
-//Find and correct invalid classroom field embedded in
-//an array of course documents.
-//Disable this function if your data contains
-//no invalid classroom names.
+// Find and correct invalid classroom field embedded in
+// an array of course documents.
+// Disable this function if your data contains
+// no invalid classroom names.
 commonInvalidClassroomsAndCorrections.forEach(function(object) {
   var returnData = 1;
   while (returnData !== null) {
@@ -104,7 +104,7 @@ commonInvalidClassroomsAndCorrections.forEach(function(object) {
   }
 });
 
-//Export distinct courses by grouping multiple schools in one array
+// Export distinct courses by grouping multiple schools in one array
 db[rawCoursesSciEng].aggregate([
   {
     $group: {
@@ -128,7 +128,7 @@ db[rawCoursesSciEng].aggregate([
   { $out: coursesSciEng }
 ]);
 
-//Export classrooms from courses and sort by building number and name
+// Export classrooms from courses and sort by building number and name
 db[coursesSciEng].aggregate([
   { $unwind: '$occurrences' },
   {
@@ -157,7 +157,7 @@ db[coursesSciEng].aggregate([
   { $out: classroomsSciEng }
 ]);
 
-//Export buildings from classrooms
+// Export buildings from classrooms
 db[classroomsSciEng].aggregate([
   {
     $group: {
@@ -169,7 +169,7 @@ db[classroomsSciEng].aggregate([
   { $out: buildingsSciEngUnsorted }
 ]);
 
-//Sort buildings by name and sort all classrooms inside by name
+// Sort buildings by name and sort all classrooms inside by name
 db[buildingsSciEngUnsorted].aggregate([
   { $unwind: '$classrooms' },
   { $sort: { name: 1, 'classrooms.name': 1 } },
@@ -184,11 +184,11 @@ db[buildingsSciEngUnsorted].aggregate([
   { $out: buildingsSciEng }
 ]);
 
-//Create index 'name' for buildings collection
+// Create index 'name' for buildings collection
 db[buildingsSciEng].createIndex({ name: 1 });
 
-//Group and export classroom schedules by weekdays
-//and sort by building number and name
+// Group and export classroom schedules by weekdays
+// and sort by building number and name
 classroomsSciEngWeekdays.forEach(function(object) {
   db.getCollection(classroomsSciEng).aggregate([
     { $unwind: '$courses' },
@@ -206,10 +206,10 @@ classroomsSciEngWeekdays.forEach(function(object) {
   ]);
 });
 
-//Create index 'building' for classrooms collection
+// Create index 'building' for classrooms collection
 db[classroomsSciEng].createIndex({ building: 1 });
 
-//Create index 'building' for weekday classrooms collection
+// Create index 'building' for weekday classrooms collection
 classroomsSciEngWeekdays.forEach(function(object) {
   db[object.collection].createIndex({ building: 1 });
 });
