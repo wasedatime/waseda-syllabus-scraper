@@ -18,3 +18,5 @@ lib/
 
 #IDE
 .idea/
+
+*temp.js
