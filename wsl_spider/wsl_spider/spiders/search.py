@@ -1,25 +1,28 @@
 # -*- coding: utf-8 -*-
-import os
-import json
 import re
-import tempfile
 from time import sleep
 
-from scrapy.http import FormRequest
 from scrapy.selector import Selector
 from scrapy.spiders import Spider
-from scrapy.utils.python import to_bytes
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 
 from wsl_spider.items import CourseLoader, OccurrenceLoader
 
 
+############################
+# TODO https://www.wsl.waseda.jp/syllabus/JAA103.php?pLng=en&p_number=100&p_page=1
+# TODO https://www.wsl.waseda.jp/syllabus/js/custom/JAA103/JAA103.js
+# TODO You can find the key in <a onclick></a> and insert it into JAA104.php
+############################
+
+
 class SearchSpider(Spider):
     name = 'search'
     allowed_domains = ['wsl.waseda.jp']
-    start_urls = ['https://www.wsl.waseda.jp/syllabus/JAA101.php?pLng=en']
-    semesters = {'Spring': "1", 'Fall': "2"}
+    basic_url = 'https://www.wsl.waseda.jp/syllabus/JAA103.php?'
+    langs = {'Eng': "en", 'Jp': "jp"}
+    terms = {'Full Year': "0", 'Spring': "1", 'Fall': "2", 'Others': "9"}
     schools = {
         # These two schools return little course results and are good for testing.
         'Art/Architecture Schl': "712001",
@@ -33,20 +36,19 @@ class SearchSpider(Spider):
 
         # Returns results of every school.
         'All': ""
-
     }
+    # Use dict to represent enum
+    results_per_page_dict = {'10': "10", '20': "20", '50': "50", '100': "100"}
 
     # Change the target semester and school here.
-    target_semester = 'Fall'
-    target_school = 'All'
-
-    abs_script_path = os.path.abspath(os.path.dirname(__file__))
-    abs_data_path = os.path.join(abs_script_path, "../data/form_data.json")
-    with open(abs_data_path) as data_file:
-        form_data = json.load(data_file)
-
-    form_data['p_gakki'] = semesters[target_semester]
-    form_data['p_gakubu'] = schools[target_school]
+    lang = 'pLng=' + langs['Eng']
+    target_term = 'p_gakki=' + terms['Fall']
+    target_school = 'p_gakubu=' + schools['All']
+    results_per_page = 'p_number=' + results_per_page_dict['100']
+    page_number = 'p_page=' + '1'
+    query_strings = ([lang, target_term, target_school, results_per_page, page_number])
+    custom_url = basic_url + '&'.join(query_strings)
+    start_urls = [custom_url]
 
     def __init__(self):
         # Replace /Users/oscar/chromedriver with your own chrome driver path, e.g. /Users/myself/my-chromedriver
@@ -54,34 +56,11 @@ class SearchSpider(Spider):
         self.driver = webdriver.Chrome('/Users/oscar/chromedriver')
         return
 
-    # perform a POST request to the syllabus search page
     def parse(self, response):
-        yield FormRequest.from_response(
-            response,
-            formdata=self.form_data,
-            callback=self.after_search
-        )
-
-    def after_search(self, response):
-        fname = self.get_temp_html_path(response)
-        self.driver.get("file://%s" % fname)
-        return self.expand_results_per_page()
-
-    def expand_results_per_page(self):
-        next_page = self.driver.find_element_by_xpath(
-            '//table[@class="t-btn"]/tbody/tr/td/div/div/p/a[text()="Next>"]'
-        )
-        next_page.click()
-
-        hundred_items = self.driver.find_element_by_xpath('id("cHeader")/div[3]/a[3]')
-        hundred_items.click()
-        return self.parse_each_results_page()
-
-    def parse_each_results_page(self):
 
         while True:
 
-            sel = Selector(text=self.driver.page_source, type="html")
+            sel = Selector(response=response, type="html")
 
             c_infos = sel.xpath('//table[@class="ct-vh"]/tbody/tr[not(@class="c-vh-title")]')
             for c_info in c_infos:
@@ -140,15 +119,15 @@ class SearchSpider(Spider):
                             r'(\d{2}:)?(?P<value>.*)', location
                         )
                         bldg = '-1'
-                        clsrm = location_match.group('value')
+                        classroom = location_match.group('value')
 
                     else:
                         bldg = location_match.group('building')
-                        clsrm = location_match.group('classroom')
+                        classroom = location_match.group('classroom')
 
                     ol.add_value(field_name='building', value=bldg)
-                    ol.add_value(field_name='classroom', value=clsrm)
-                    ol.add_value(field_name='location', value=bldg + '-' + clsrm)
+                    ol.add_value(field_name='classroom', value=classroom)
+                    ol.add_value(field_name='location', value=bldg + '-' + classroom)
                     cl.add_value(field_name='occurrences', value=ol.load_item())
 
                 yield(cl.load_item())
@@ -165,6 +144,7 @@ class SearchSpider(Spider):
                 self.logger.info('No more pages to load.')
                 self.driver.quit()
                 break
+
 
     def period_to_minutes(self, period):
         p_t_m = {
@@ -187,22 +167,3 @@ class SearchSpider(Spider):
             return p_t_m[period]
         except KeyError:
             return -1
-
-    def get_temp_html_path(self, response):
-
-        from scrapy.http import HtmlResponse
-        # The implementation below is modified from scrapy.util.response.open_in_browser
-        # According to the source code, it is a bit dirty and could be improved
-        body = response.body
-        if isinstance(response, HtmlResponse):
-            if b'<base' not in body:
-                repl = '<head><base href="%s">' % response.url
-                body = body.replace(b'<head>', to_bytes(repl))
-            ext = '.html'
-        else:
-            raise TypeError("Unsupported response type: %s" %
-                            response.__class__.__name__)
-        fd, fname = tempfile.mkstemp(ext)
-        os.write(fd, body)
-        os.close(fd)
-        return fname
