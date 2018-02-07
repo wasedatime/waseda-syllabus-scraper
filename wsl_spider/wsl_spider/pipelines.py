@@ -2,29 +2,11 @@
 import logging
 import pymongo
 
-from scrapy.exceptions import DropItem, CloseSpider
-
-# This pipeline filters courses by its academic year.
-class FilterYearPipeline(object):
-    drop_item_msg = "Invalid Year {}. Course title: {}, instructor: {}"
-    close_spider_msg = "Reached Year {}. Scraped data has gone below target year {}"
-    target_year = 2018
-    target_year_str = str(target_year)
-    lower_bound_year_str = str(target_year - 1)
-
-    def __init__(self):
-        return
-
-    def process_item(self, item, spider):
-        if item['year'] == self.lower_bound_year_str:
-            raise CloseSpider(self.close_spider_msg.format(item['year'], self.target_year_str))
-        if item['year'] != self.target_year_str:
-            raise DropItem(self.drop_item_msg.format(item['year'], item['title'], item['instructor']))
-        else:
-            return item
+from scrapy.exceptions import DropItem
 
 # This pipeline drops a course if another course with the
 # same title, instructor, year, term, and school is scraped already
+#TODO: Check Financial Information and Business Valuation, consider adding day and period?
 class DuplicatesPipeline(object):
 
     drop_item_msg = "Duplicate course, title: {}, instructor: {}"
