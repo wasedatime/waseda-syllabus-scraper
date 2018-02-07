@@ -11,7 +11,7 @@ def normalize_characters(value):
     return unicodedata.normalize('NFKC', value)
 
 
-def weekday_to_number(day):
+def weekday_to_int(day):
     w_t_n = {
         'Sun': 0,
         'Mon': 1,
@@ -27,6 +27,16 @@ def weekday_to_number(day):
         return -1
 
 
+def period_to_int(period):
+    try:
+        int(period)
+        return int(period)
+    except ValueError:
+        return -1
+
+#################
+# TODO: use key only instead of contructing a link
+#################
 def onclick_to_link(onclick):
     onclick_match = re.match(r"post_submit\(\'(?P<php>\w{6})\w*', '(?P<pKey>\w+)'\)", onclick)
     php = onclick_match.group('php')
@@ -90,13 +100,13 @@ class OccurrenceLoader(ItemLoader):
     default_item_class = Occurrence
     default_output_processor = TakeFirst()
 
-    day_in = MapCompose(str.strip, normalize_characters, weekday_to_number)
+    day_in = MapCompose(str.strip, normalize_characters, weekday_to_int)
     day_out = TakeFirst()
 
-    start_period_in = MapCompose(str.strip, normalize_characters)
+    start_period_in = MapCompose(str.strip, normalize_characters, period_to_int)
     start_period_out = TakeFirst()
 
-    end_period_in = MapCompose(str.strip, normalize_characters)
+    end_period_in = MapCompose(str.strip, normalize_characters, period_to_int)
     end_period_out = TakeFirst()
 
     building_in = MapCompose(str.strip, normalize_characters)
