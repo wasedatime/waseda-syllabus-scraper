@@ -5,30 +5,29 @@ import pymongo
 from scrapy.exceptions import DropItem, CloseSpider
 
 # This pipeline filters courses by its academic year.
-
-
 class FilterYearPipeline(object):
-
-    drop_item_msg = "Dropping {} course, title: {}, instructor: {}"
+    drop_item_msg = "Invalid Year {}. Course title: {}, instructor: {}"
+    close_spider_msg = "Reached Year {}. Scraped data has gone below target year {}"
+    target_year = 2018
+    target_year_str = str(target_year)
+    lower_bound_year_str = str(target_year - 1)
 
     def __init__(self):
         return
 
     def process_item(self, item, spider):
-        if item['year'] == '2016':
-            raise CloseSpider('Scraped data has gone below target year')
-        if item['year'] != '2017':
+        if item['year'] == self.lower_bound_year_str:
+            raise CloseSpider(self.close_spider_msg.format(item['year'], self.target_year_str))
+        if item['year'] != self.target_year_str:
             raise DropItem(self.drop_item_msg.format(item['year'], item['title'], item['instructor']))
         else:
             return item
 
 # This pipeline drops a course if another course with the
 # same title, instructor, year, term, and school is scraped already
-
-
 class DuplicatesPipeline(object):
 
-    drop_item_msg = "Dropping duplicate course, title: {}, instructor: {}"
+    drop_item_msg = "Duplicate course, title: {}, instructor: {}"
 
     def __init__(self):
         self.hashes_seen = set()
@@ -46,8 +45,6 @@ class DuplicatesPipeline(object):
 # Currently it uses the default hash() provided by python, which produces a different result every time we rerun.
 # Check out Stack Overflow "hash function in Python 3.3 returns different results between sessions"
 # See https://docs.python.org/3/using/cmdline.html#envvar-PYTHONHASHSEED
-
-
 class HashPipeline(object):
 
     def __init__(self):
@@ -60,8 +57,6 @@ class HashPipeline(object):
         return item
 
 # This pipeline exports the result to MongoDB.
-
-
 class MongoPipeline(object):
 
     def __init__(self, mongo_uri, mongo_db, mongo_col):
