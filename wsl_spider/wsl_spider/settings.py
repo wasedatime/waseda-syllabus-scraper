@@ -68,7 +68,6 @@ COOKIES_ENABLED = False
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'wsl_spider.pipelines.FilterYearPipeline': 50,
     'wsl_spider.pipelines.DuplicatesPipeline': 100,
     'wsl_spider.pipelines.HashPipeline': 200,
     'wsl_spider.pipelines.MongoPipeline': 300,
