@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 
+from scrapy.exceptions import CloseSpider
 from scrapy.http import Request
 from scrapy.selector import Selector
 from scrapy.spiders import Spider
@@ -9,7 +10,6 @@ from wsl_spider.items import CourseLoader, OccurrenceLoader
 
 
 ############################
-# TODO https://www.wsl.waseda.jp/syllabus/JAA103.php?pLng=en&p_number=100&p_page=1
 # TODO https://www.wsl.waseda.jp/syllabus/js/custom/JAA103/JAA103.js
 # TODO You can find the key in <a onclick></a> and insert it into JAA104.php
 ############################
@@ -47,13 +47,18 @@ class SearchSpider(Spider):
     name = 'search'
     allowed_domains = ['wsl.waseda.jp']
     basic_url = 'https://www.wsl.waseda.jp/syllabus/JAA103.php?'
+    close_spider_msg = "Scraped data has reached lower bound year {}"
 
-    # Change the target semester and school here.
+    # Change the target semester, school, and other parameters here.
     lang = 'Eng'
+    year = 2018
     term = 'Spring/Summer'
     school = 'All'
     results_per_page = 100
     start_page = 1
+
+    year_str = str(year)
+    year_lower_bound = str(year - 1)
     current_page = start_page
     custom_url = customize_url(basic_url, lang, term, school, results_per_page, start_page)
     start_urls = [custom_url]
@@ -62,9 +67,13 @@ class SearchSpider(Spider):
         sel = Selector(response=response, type="html")
         c_infos = sel.xpath('//table[@class="ct-vh"]/tbody/tr[not(@class="c-vh-title")]')
         for c_info in c_infos:
+            year = c_info.xpath('td[1]/text()').extract_first()
+            if year == self.year_lower_bound:
+                raise CloseSpider(self.close_spider_msg.format(self.year_lower_bound))
+
             cl = CourseLoader(selector=c_info)
 
-            cl.add_xpath(field_name='year', xpath='td[1]/text()')
+            cl.add_value(field_name='year', value=year)
             cl.add_xpath(field_name='code', xpath='td[2]/text()')
             cl.add_xpath(field_name='title', xpath='td[3]/a/text()')
             cl.add_xpath(field_name='instructor', xpath='td[4]/text()')
