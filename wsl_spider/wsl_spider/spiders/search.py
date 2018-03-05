@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
+import logging
 
 from scrapy.exceptions import CloseSpider
 from scrapy.http import Request
@@ -14,22 +15,32 @@ from wsl_spider.items import CourseLoader, OccurrenceLoader
 # TODO You can find the key in <a onclick></a> and insert it into JAA104.php
 ############################
 
+# These two schools return little course results and are good for testing.
+art_architecture = "art_architecture"
+sports_sci = "sports_sci"
+
+sils = "sils"
+poli_sci = "poli_sci"
+fund_sci_eng = "fund_sci_eng"
+cre_sci_eng = "cre_sci_eng"
+adv_sci_eng = "adv_sci_eng"
+
+# Returns results of every school.
+all_school = "all"
+
+
 def customize_url(url, lang, term, school, results_per_page, start_page):
-    langs = {'Eng': "en", 'Jp': "jp"}
-    terms = {'Full Year': "0", 'Spring/Summer': "1", 'Fall/Winter': "2", 'Others': "9"}
+    langs = {'eng': "en", 'jp': "jp"}
+    terms = {'full_year': "0", 'spring_summer': "1", 'fall_winter': "2", 'others': "9"}
     schools = {
-        # These two schools return little course results and are good for testing.
-        'Art/Architecture Schl': "712001",
-        'Sports Sci': "202003",
-
-        'SILS': "212004",
-        'Political Sci': "111973",
-        'Fund Sci/Eng': "262006",
-        'Cre Sci/Eng': "272006",
-        'Adv Sci/Eng': "282006",
-
-        # Returns results of every school.
-        'All': ""
+        'art_architecture': "712001",
+        'sports_sci': "202003",
+        'sils': "212004",
+        'poli_sci': "111973",
+        'fund_sci_eng': "262006",
+        'cre_sci_eng': "272006",
+        'adv_sci_eng': "282006",
+        'all': ""
     }
     # Use dict to represent enum
     results_per_page_dict = {'10': "10", '20': "20", '50': "50", '100': "100"}
@@ -47,30 +58,34 @@ class SearchSpider(Spider):
     name = 'search'
     allowed_domains = ['wsl.waseda.jp']
     basic_url = 'https://www.wsl.waseda.jp/syllabus/JAA103.php?'
-    close_spider_msg = "Scraped data has reached lower bound year {}"
+    close_spider_msg = "There are no more urls to scrape. Closing spider."
+    reach_lower_bound_year_msg = "Scraped data has reached lower bound year {}"
 
     # Change the target semester, school, and other parameters here.
-    lang = 'Eng'
+    lang = 'eng'
     year = 2018
-    term = 'Spring/Summer'
-    school = 'All'
+    term = 'spring_summer'
+    schools = [fund_sci_eng, cre_sci_eng, adv_sci_eng]
+    start_school = schools[0]
     results_per_page = 100
     start_page = 1
+    start_url = customize_url(basic_url, lang, term, start_school, results_per_page, start_page)
+    start_urls = [start_url]
 
     year_str = str(year)
     year_lower_bound = str(year - 1)
+    current_school = start_school
     current_page = start_page
-    custom_url = customize_url(basic_url, lang, term, school, results_per_page, start_page)
-    start_urls = [custom_url]
+    current_url = start_url
 
     def parse(self, response):
+        reached_lower_bound_year = False
         sel = Selector(response=response, type="html")
         c_infos = sel.xpath('//table[@class="ct-vh"]/tbody/tr[not(@class="c-vh-title")]')
         for c_info in c_infos:
             year = c_info.xpath('td[1]/text()').extract_first()
-            if year == self.year_lower_bound:
-                raise CloseSpider(self.close_spider_msg.format(self.year_lower_bound))
-
+            if year <= self.year_lower_bound:
+                reached_lower_bound_year = True
             cl = CourseLoader(selector=c_info)
 
             cl.add_value(field_name='year', value=year)
@@ -139,8 +154,21 @@ class SearchSpider(Spider):
 
             yield(cl.load_item())
 
-        next_url = self.increment_page_in_url_by(1)
-        yield Request(next_url, callback=self.parse, dont_filter=True)
+        if reached_lower_bound_year:
+            # finish scraping one target url. Remove it from list
+            logging.log(logging.INFO, self.reach_lower_bound_year_msg.format(self.year_lower_bound))
+            logging.log(logging.INFO, "Finish scraping url {}".format(self.current_url))
+            self.schools.pop(0)
+            if self.schools:
+                # continue scraping if list of target schools is not empty
+                self.update_school_in_url(self.schools)
+                logging.log(logging.INFO, "Start scraping url {}".format(self.current_url))
+                yield Request(self.current_url, callback=self.parse, dont_filter=True)
+            else:
+                raise CloseSpider(self.close_spider_msg)
+        else:
+            self.increment_page_in_url_by(1)
+            yield Request(self.current_url, callback=self.parse, dont_filter=True)
 
     def period_to_minutes(self, period):
         p_t_m = {
@@ -166,4 +194,11 @@ class SearchSpider(Spider):
 
     def increment_page_in_url_by(self, increment):
         self.current_page += increment
-        return customize_url(self.basic_url, self.lang, self.term, self.school, self.results_per_page, self.current_page)
+        self.current_url = customize_url(self.basic_url, self.lang, self.term, self.current_school,
+                                         self.results_per_page, self.current_page)
+
+    def update_school_in_url(self, schools):
+        self.current_school = schools[0]
+        self.current_page = self.start_page
+        self.current_url = customize_url(self.basic_url, self.lang, self.term, self.current_school,
+                                         self.results_per_page, self.current_page)
