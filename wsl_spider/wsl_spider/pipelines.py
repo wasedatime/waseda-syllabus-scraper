@@ -25,6 +25,23 @@ class DuplicatesPipeline(object):
             self.hashes_seen.add(item_hash)
             return item
 
+
+class FilterByYearPipeline(object):
+
+    drop_item_msg = "Year below lower bound course, year:{}, title: {}, instructor: {}"
+
+    def __init__(self):
+        self.lower_bound_year = 2017
+
+    def process_item(self, item, spider):
+        # Take the first occurrence of the course
+        item_year = int(item['year'])
+        if item_year <= self.lower_bound_year:
+            raise DropItem(self.drop_item_msg.format(item_year, item['title'], item['instructor']))
+        else:
+            return item
+
+
 # This pipeline exports the result to MongoDB.
 class MongoPipeline(object):
 
