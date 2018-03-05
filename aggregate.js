@@ -1,5 +1,5 @@
 var conn = new Mongo('localhost:27017');
-var db = conn.getDB('syllabus');
+var db = conn.getDB('syllabus_2018');
 
 var year = '2018';
 var term = 'spr_';
@@ -122,7 +122,7 @@ db[rawCoursesSciEng].aggregate([
   },
   { $project: { year: '$_id.year', term: '$_id.term', title: '$_id.title',
       instructor: '$_id.instructor', occurrences: '$_id.occurrences',
-      code: '$_id.code', _id: 0
+      code: '$_id.code', links: '$links', _id: 0
     }
   },
   { $out: coursesSciEng }
