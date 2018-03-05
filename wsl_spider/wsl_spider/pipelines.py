@@ -15,7 +15,10 @@ class DuplicatesPipeline(object):
         self.hashes_seen = set()
 
     def process_item(self, item, spider):
-        item_hash = hash((item['title'], item['instructor'], item['year'], item['term'], item['school']))
+        # Take the first occurrence of the course
+        occurrence = item['occurrences'][0]
+        item_hash = hash((item['title'], item['instructor'], item['school'],
+                          occurrence['day'], occurrence['start_period'], occurrence['end_period']))
         if item_hash in self.hashes_seen:
             raise DropItem(self.drop_item_msg.format(item['title'], item['instructor']))
         else:
