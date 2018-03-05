@@ -69,6 +69,7 @@ COOKIES_ENABLED = False
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     'wsl_spider.pipelines.DuplicatesPipeline': 100,
+    'wsl_spider.pipelines.FilterByYearPipeline': 200,
     'wsl_spider.pipelines.MongoPipeline': 300,
 }
 
