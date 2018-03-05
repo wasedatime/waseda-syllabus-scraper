@@ -41,8 +41,8 @@ def onclick_to_link(onclick):
     onclick_match = re.match(r"post_submit\(\'(?P<php>\w{6})\w*', '(?P<pKey>\w+)'\)", onclick)
     php = onclick_match.group('php')
     pKey = onclick_match.group('pKey')
-    url = 'https://www.wsl.waseda.jp/syllabus/{}.php?pKey={}&pLng=en'.format(php, pKey)
-    return url
+    # url = 'https://www.wsl.waseda.jp/syllabus/{}.php?pKey={}&pLng=en'.format(php, pKey)
+    return pKey
 
 
 class Course(Item):
