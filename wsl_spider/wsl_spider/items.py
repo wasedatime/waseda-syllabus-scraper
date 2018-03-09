@@ -36,9 +36,10 @@ def str_to_int(str):
 
 
 def onclick_to_link(onclick):
-    onclick_match = re.match(r"post_submit\(\'(?P<php>\w{6})\w*', '(?P<p_key>\w+)'\)", onclick)
-    p_key = onclick_match.group('pKey')
-    return p_key
+    #pKey is the query parameter used in waseda's syllabus website. We stick with its original name for now.
+    onclick_match = re.match(r"post_submit\(\'(?P<php>\w{6})\w*', '(?P<pKey>\w+)'\)", onclick)
+    pKey = onclick_match.group('pKey')
+    return pKey
 
 
 class Course(Item):
