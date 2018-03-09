@@ -19,6 +19,6 @@ lib/
 #IDE
 .idea/
 
-*temp.js
-
+# credentials
 credentials.md
+server/export.sh
