@@ -12,7 +12,7 @@ from wsl_spider.items import CourseLoader, OccurrenceLoader
 
 ############################
 # TODO https://www.wsl.waseda.jp/syllabus/js/custom/JAA103/JAA103.js
-# TODO You can find the key in <a onclick></a> and insert it into JAA104.php
+# TODO You can find the key in <a onclick></a> and insert it into JAA104.php to ge full detail of syllabus
 ############################
 
 # These two schools return little course results and are good for testing.
