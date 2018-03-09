@@ -7,4 +7,3 @@ install:
 - pip3 install -r requirements-dev.txt
 script:
 - echo "Currently no unit test has been created yet."
-
