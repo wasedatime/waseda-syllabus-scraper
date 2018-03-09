@@ -6,7 +6,6 @@ if [ $TRAVIS_BRANCH == 'master' ] ; then
     git checkout master
     git remote add deploy 'deploy@128.199.92.161:waseda-syllabus-scraper.git'
     git add .
-    git add client/build/* --force
     git status
     git commit -m "Deploy from Travis CI"
     git status
