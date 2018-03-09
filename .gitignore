@@ -20,3 +20,5 @@ lib/
 .idea/
 
 *temp.js
+
+credentials.md
