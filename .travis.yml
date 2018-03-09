@@ -7,3 +7,8 @@ install:
 - pip3 install -r requirements-dev.txt
 script:
 - echo "Currently no unit test has been created yet."
+after_success:
+- bash travis/deploy.sh
+addons:
+  ssh_known_hosts:
+  - 128.199.92.161
