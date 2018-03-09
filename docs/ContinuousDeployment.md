@@ -38,7 +38,8 @@ do
 done
 ```
 
-Make post-receive executable for user deploy exclusively.
+IMPORTANT!
+Make post-receive executable for user deploy exclusively, or else it won't be executed.
 
 ```
 chmod u+x hooks/post-receive
