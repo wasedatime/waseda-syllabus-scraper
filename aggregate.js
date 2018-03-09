@@ -1,5 +1,5 @@
 var conn = new Mongo('localhost:27017');
-var db = conn.getDB('syllabus_2018');
+var db = conn.getDB('syllabus');
 
 var year = '2018';
 var term = 'spr_';
