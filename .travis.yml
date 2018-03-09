@@ -1,0 +1,10 @@
+language: python
+python:
+- '3.6'
+before_install:
+- bash travis/before_install.sh
+install:
+- pip3 install -r requirements-dev.txt
+script:
+- echo "Currently no unit test has been created yet."
+

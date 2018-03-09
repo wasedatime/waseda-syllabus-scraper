@@ -68,16 +68,22 @@ COOKIES_ENABLED = False
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'wsl_spider.pipelines.FilterYearPipeline': 50,
     'wsl_spider.pipelines.DuplicatesPipeline': 100,
-    'wsl_spider.pipelines.HashPipeline': 200,
+    'wsl_spider.pipelines.FilterByYearPipeline': 200,
     'wsl_spider.pipelines.MongoPipeline': 300,
 }
 
 MONGO_URI = 'mongodb://localhost:27017/'
 MONGO_DB = "syllabus"
 # Change the name of the output collection here
-MONGO_COLLECTION = "raw_2017F_courses"
+
+# spring 2018
+year = '2018'
+term = 'spr_'
+yearTerm = term + year
+raw = 'raw_'
+
+MONGO_COLLECTION = raw + yearTerm + "_courses_all"
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html

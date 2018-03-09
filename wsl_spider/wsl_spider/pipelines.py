@@ -2,66 +2,47 @@
 import logging
 import pymongo
 
-from scrapy.exceptions import DropItem, CloseSpider
-
-# This pipeline filters courses by its academic year.
-
-
-class FilterYearPipeline(object):
-
-    drop_item_msg = "Dropping {} course, title: {}, instructor: {}"
-
-    def __init__(self):
-        return
-
-    def process_item(self, item, spider):
-        if item['year'] == '2016':
-            raise CloseSpider('Scraped data has gone below target year')
-        if item['year'] != '2017':
-            raise DropItem(self.drop_item_msg.format(item['year'], item['title'], item['instructor']))
-        else:
-            return item
+from scrapy.exceptions import DropItem
 
 # This pipeline drops a course if another course with the
 # same title, instructor, year, term, and school is scraped already
-
-
+#TODO: Consider a cleaner way of filteringi duplicates
 class DuplicatesPipeline(object):
 
-    drop_item_msg = "Dropping duplicate course, title: {}, instructor: {}"
+    drop_item_msg = "Duplicate course, title: {}, instructor: {}"
 
     def __init__(self):
         self.hashes_seen = set()
 
     def process_item(self, item, spider):
-        item_hash = hash((item['title'], item['instructor'], item['year'], item['term'], item['school']))
+        # Take the first occurrence of the course
+        occurrence = item['occurrences'][0]
+        item_hash = hash((item['title'], item['instructor'], item['school'],
+                          occurrence['day'], occurrence['start_period'], occurrence['end_period']))
         if item_hash in self.hashes_seen:
             raise DropItem(self.drop_item_msg.format(item['title'], item['instructor']))
         else:
             self.hashes_seen.add(item_hash)
             return item
 
-# This pipeline produces a hash according to the title, instructor, year, and term of a course.
-# It's result will be used in MongoDB aggregation framework to group courses together.
-# Currently it uses the default hash() provided by python, which produces a different result every time we rerun.
-# Check out Stack Overflow "hash function in Python 3.3 returns different results between sessions"
-# See https://docs.python.org/3/using/cmdline.html#envvar-PYTHONHASHSEED
 
+class FilterByYearPipeline(object):
 
-class HashPipeline(object):
+    drop_item_msg = "Year below lower bound course, year:{}, title: {}, instructor: {}"
 
     def __init__(self):
-        return
+        self.lower_bound_year = 2017
 
     def process_item(self, item, spider):
-        # TODO: Set a fixed PYTHONHASHSEED environment variable or use hashlib for stable hashing
-        item_hash = hash((item['title'], item['instructor'], item['year'], item['term']))
-        item['hash'] = item_hash
-        return item
+        # Take the first occurrence of the course
+        item_year = int(item['year'])
+        if item_year <= self.lower_bound_year:
+            raise DropItem(self.drop_item_msg.format(item_year, item['title'], item['instructor']))
+        else:
+            return item
+
 
 # This pipeline exports the result to MongoDB.
-
-
 class MongoPipeline(object):
 
     def __init__(self, mongo_uri, mongo_db, mongo_col):

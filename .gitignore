@@ -18,3 +18,7 @@ lib/
 
 #IDE
 .idea/
+
+*temp.js
+
+credentials.md

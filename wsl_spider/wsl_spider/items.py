@@ -11,7 +11,7 @@ def normalize_characters(value):
     return unicodedata.normalize('NFKC', value)
 
 
-def weekday_to_number(day):
+def weekday_to_int(day):
     w_t_n = {
         'Sun': 0,
         'Mon': 1,
@@ -27,12 +27,18 @@ def weekday_to_number(day):
         return -1
 
 
+def str_to_int(str):
+    try:
+        int(str)
+        return int(str)
+    except ValueError:
+        return -1
+
+
 def onclick_to_link(onclick):
-    onclick_match = re.match(r"post_submit\(\'(?P<php>\w{6})\w*', '(?P<pKey>\w+)'\)", onclick)
-    php = onclick_match.group('php')
-    pKey = onclick_match.group('pKey')
-    url = 'https://www.wsl.waseda.jp/syllabus/{}.php?pKey={}&pLng=en'.format(php, pKey)
-    return url
+    onclick_match = re.match(r"post_submit\(\'(?P<php>\w{6})\w*', '(?P<p_key>\w+)'\)", onclick)
+    p_key = onclick_match.group('pKey')
+    return p_key
 
 
 class Course(Item):
@@ -68,7 +74,7 @@ class CourseLoader(ItemLoader):
     instructor_in = MapCompose(str.strip, normalize_characters)
     instructor_out = TakeFirst()
 
-    year_in = MapCompose(str.strip, normalize_characters)
+    year_in = MapCompose(str.strip, normalize_characters, str_to_int)
     year_out = TakeFirst()
 
     term_in = MapCompose(str.strip, normalize_characters)
@@ -90,13 +96,13 @@ class OccurrenceLoader(ItemLoader):
     default_item_class = Occurrence
     default_output_processor = TakeFirst()
 
-    day_in = MapCompose(str.strip, normalize_characters, weekday_to_number)
+    day_in = MapCompose(str.strip, normalize_characters, weekday_to_int)
     day_out = TakeFirst()
 
-    start_period_in = MapCompose(str.strip, normalize_characters)
+    start_period_in = MapCompose(str.strip, normalize_characters, str_to_int)
     start_period_out = TakeFirst()
 
-    end_period_in = MapCompose(str.strip, normalize_characters)
+    end_period_in = MapCompose(str.strip, normalize_characters, str_to_int)
     end_period_out = TakeFirst()
 
     building_in = MapCompose(str.strip, normalize_characters)

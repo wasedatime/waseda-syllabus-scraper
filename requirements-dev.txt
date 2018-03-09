@@ -28,7 +28,6 @@ Pygments==2.2.0
 pyOpenSSL==17.3.0
 queuelib==1.4.2
 Scrapy==1.4.0
-selenium==3.6.0
 service-identity==17.0.0
 simplegeneric==0.8.1
 six==1.11.0
