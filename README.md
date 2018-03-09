@@ -4,6 +4,10 @@
 
 This is a web scraper built to scrape course information from the [Syllabus Search Database at Waseda University](https://www.wsl.waseda.jp/syllabus/JAA101.php?pLng=en).
 
+## NOTE: Documentation is outdated
+Large amount of refinement and changes have been done to improve the program, so some parts of the README.md are
+not applicable anymore. We will update it as soon as possible. (2018.03.10)
+
 ## Getting Started
 
 ### Prerequisites
