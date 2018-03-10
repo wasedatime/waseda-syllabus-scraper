@@ -31,7 +31,7 @@ all_school = "all"
 
 def customize_url(url, lang, term, school, results_per_page, start_page):
     langs = {'eng': "en", 'jp': "jp"}
-    terms = {'full_year': "0", 'spring_summer': "1", 'fall_winter': "2", 'others': "9"}
+    terms = {'all': "", 'full_year': "0", 'spring_summer': "1", 'fall_winter': "2", 'others': "9"}
     schools = {
         'art_architecture': "712001",
         'sports_sci': "202003",
@@ -64,7 +64,8 @@ class SearchSpider(Spider):
     # Change the target semester, school, and other parameters here.
     lang = 'eng'
     year = 2018
-    term = 'spring_summer'
+    term = 'all'
+    # TODO Add sils, pse
     schools = [fund_sci_eng, cre_sci_eng, adv_sci_eng]
     start_school = schools[0]
     results_per_page = 100
@@ -79,6 +80,7 @@ class SearchSpider(Spider):
     current_url = start_url
 
     def parse(self, response):
+        return
         reached_lower_bound_year = False
         sel = Selector(response=response, type="html")
         c_infos = sel.xpath('//table[@class="ct-vh"]/tbody/tr[not(@class="c-vh-title")]')
