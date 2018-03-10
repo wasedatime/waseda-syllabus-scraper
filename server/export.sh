@@ -9,10 +9,6 @@ mv /home/deploy/syllabus /home/deploy/syllabus_prev
 # dump database syllabus
 mongodump -d syllabus -o /home/deploy/syllabus
 
-# restore remote mlab waseda-syllabus-dev database (Not recommended)
-# mongorestore -h ds141796.mlab.com:41796 -d waseda-syllabus-dev \
-#    -u deploy -p $DEPLOY_PASSWORD /home/deploy/syllabus
-
 # cd into dumped syllabus directory
 cd /home/deploy/syllabus
 
