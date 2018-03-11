@@ -1,19 +1,24 @@
-####Server side
+## Server side
+
+### Add user deploy
 
 Add a deploy user and with limited directory access permission.
 
-```
+```bash
 adduser deploy
 # TODO think about what restriction to impose after success
 chown -R deploy:deploy /var/www/wasetime-web
 ```
 
-```
+```bash
 mkdir ~/waseda-syllabus-scraper.git
 cd ~/waseda-syllabus-scraper.git
 git init --bare
 vim hooks/post-receive
 ```
+### In post-receive
+
+Write the script to be executed after receiving master reference
 
 ```bash
 #!/bin/bash
@@ -38,24 +43,29 @@ do
 done
 ```
 
-IMPORTANT!
-Make post-receive executable for user deploy exclusively, or else it won't be executed.
+**IMPORTANT** Make post-receive executable for user deploy exclusively, or else it won't be executed.
 
-```
+```bash
 chmod u+x hooks/post-receive
 ```
 
+### Local side
 
-#chron job
+Create and encrypt private key deploy_rsa to the project
 
-
-####Local side
-
-This example assumes you are running the command in your project directory. 
-If not, add -r owner/project
-```
+```bash
 gem install travis
 travis login
 cd my_project
+# This example assumes you are running the command in your project directory. 
+# If not, add -r owner/project
 travis encrypt-file ~/.ssh/deploy_rsa --add
 ```
+
+### Travis side
+
+Refer to 
+[.travis.yml](../.travis.yml), 
+[before_install.sh](../travis/before_install.sh) and
+[deploy.sh](../travis/deploy.sh) 
+for the procedure details.

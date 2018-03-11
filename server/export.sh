@@ -12,15 +12,14 @@ mongodump -d syllabus -o /home/deploy/syllabus
 # cd into dumped syllabus directory
 cd /home/deploy/syllabus
 
-# force current session to read environment variables
-source /home/deploy/.bashrc
-
 # for every *.bson collection, export it to  remote mlab waseda-syllabus-dev database
-for f in *.bson ;
+for file in *.bson ;
     # -f flag returns true if file exists and is a regular file. If not skip the iteration
-    do [[ -f "$f" ]] || continue
-    mongoimport -h ds141796.mlab.com:41796 -d waseda-syllabus-dev -c "$f" \
-        -u deploy -p $DEPLOY_PASSWORD --file "$f" ;
+    do
+        [[ -f "$file" ]] || continue
+        base=${file%.bson}
+        mongoimport -h "$MLAB_HOST_PORT" -d waseda-syllabus-dev -c "$base" \
+            -u deploy -p "$MLAB_PASSWORD" --file "$file" ;
 done
 
 # for all json export to remote mongodb, check how to access scrapy dumped status

@@ -4,10 +4,6 @@
 
 This is a web scraper built to scrape course information from the [Syllabus Search Database at Waseda University](https://www.wsl.waseda.jp/syllabus/JAA101.php?pLng=en).
 
-## NOTE: Documentation is outdated
-Large amount of refinement and changes have been done to improve the program, so some parts of the README.md are
-not applicable anymore. We will update it as soon as possible. (2018.03.10)
-
 ## Getting Started
 
 ### Prerequisites
@@ -15,7 +11,6 @@ not applicable anymore. We will update it as soon as possible. (2018.03.10)
 * [Python 3](https://www.python.org/downloads/), version 3.6.2 and above.
 * pip3 (package manager for Python3) 9.0.1 and above.
 * [MongoDB shell](https://docs.mongodb.com/getting-started/shell/installation/) 3.6.0 and above.
-* [Google Chrome Driver](https://sites.google.com/a/chromium.org/chromedriver/downloads)
 * [Robo 3T](https://robomongo.org/) (Optional but recommended)
 
 ### Installing
@@ -85,38 +80,40 @@ mongod
 
 Remember that you will need to start the database before scraping so that the scraped data can be exported to MongoDB.
 
-#### Google Chrome Driver
 
-This project automates Google Chrome to click on links and proceed to the next page of search results. Download the driver [here](https://sites.google.com/a/chromium.org/chromedriver/downloads) and put it somewhere you like.
-
-### Some tweaks before scraping
-
-#### Google Chrome Driver Path
-
-Inside `search.py`, you need to replace the original chrome driver path with your own one.
-
-```python
-# Replace /Users/oscar/chromedriver with your own chrome driver path, e.g. /Users/myself/my-chrome-driver
-self.driver = webdriver.Chrome('/Users/oscar/chromedriver')
-```
+### Customize your scraper
 
 #### Target Year, Semester, and School
 
-Also, you can specify the courses of a particular semester and school you want to scrape.
+You can specify the courses of a particular semester and school you want to scrape
+inside [search.py](wsl_spider/wsl_spider/spiders/search.py)
 
 ```python
-# Change the target semester and school here.
-target_semester = 'Fall'
-target_school = 'All'
+# Change the target semester, school, and other parameters here.
+lang = 'eng' # or 'jp' 
+year = 2018
+term = 'all' # or 'full_year', 'spring_summer', 'fall_winter', 'others'
+# You can scrape multiple schools by adding them into the list schools
+schools = [fund_sci_eng, cre_sci_eng, adv_sci_eng]
+# Besides the three schools above, we currently support 
+# art_architecture, sports_sci, sils, poli_sci, and all_school for every school 
 ```
 
 #### Export collection name
 
-At last, if needed feel free to change the name of output MongoDB collection inside `settings.py`.
+At last, if needed feel free to change the name of output MongoDB database and collection 
+inside [settings.py](wsl_spider/wsl_spider/settings.py).
 
 ```python
+# Change the name of the output database here
+MONGO_DB = "syllabus"
 # Change the name of the output collection here
-MONGO_COLLECTION = "raw_2017F_courses"
+# spring 2018
+year = '2018'
+term = 'spr_'
+yearTerm = term + year
+raw = 'raw_'
+MONGO_COLLECTION = raw + yearTerm + "_courses_all"
 ```
 
 ### Start scraping
@@ -127,8 +124,7 @@ Type the following command inside your terminal
 python3 run_search.py
 ```
 
-You should see a new Google Chrome Icon pop up. Open it and it should display
-"Chrome is being controlled by automated test software.". Depends on the target you selected,
+Depending on the target you selected,
 the scraping process may take a few minutes.
 
 After finish scraping, you can deactivate the virtual environment by typing the following command
@@ -147,7 +143,7 @@ The Waseda syllabus database only provides data related to courses. In order to 
 
 This project contains a `aggregate.js` file that helps automating the entire aggregation process. However, it is necessary to change some variables inside before starting.
 
-### Some tweaks before aggregating
+### Customize your aggregation
 
 Currently, there is no written guide for this section, but you can follow the comments in `aggregate.js` to tweak and customize your own aggregation process.
 
@@ -167,11 +163,29 @@ It should return `true` if the aggregation is successful.
 If you have obtained the desired results, congratulations! Or
 if you encountered some troubles during scraping or aggregating the data, feel free to submit an issue. :)
 
+## Advanced Topics
+
+### Continuous Integration and Deployment
+
+This project is deployed on a remote server, and uses continuous integration and deployment 
+with the help Travis CI. You can learn more about the setup process at  
+[continuous_deployment.md](docs/continuous_deployment.md)
+
+Unfortunately, currently there are no unit tests
+created to ensure the code quality.
+
+### Automated Scraping
+
+This project is deployed on a remote server, which is set up to scrape,
+aggregate, and export the data automatically to a remote database.
+You can learn more about the setup process at  
+[automated_scraping.md](docs/automated_scraping.md)
+
+
 ## Built With
 
 * [Python3](https://www.python.org/) - The language used.
 * [Scrapy](https://scrapy.org/) - The scraping framework used.
-* [Selenium](http://www.seleniumhq.org/) - The browser automation framework used.
 * [MongoDB](https://www.mongodb.com/) - The database used for storing results.
 
 ## Contributing

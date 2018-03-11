@@ -75,8 +75,8 @@ ITEM_PIPELINES = {
 
 MONGO_URI = 'mongodb://localhost:27017/'
 MONGO_DB = "syllabus"
-# Change the name of the output collection here
 
+# Change the name of the output collection here
 # spring 2018
 year = '2018'
 term = 'spr_'
