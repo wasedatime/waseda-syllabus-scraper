@@ -17,10 +17,11 @@ for file in *.bson ;
     # -f flag returns true if file exists and is a regular file. If not skip the iteration
     do
         [[ -f "$file" ]] || continue
-        base=${file%.bson}
-        mongoimport -h "$MLAB_HOST_PORT" -d waseda-syllabus-dev -c "$base" \
-            -u deploy -p "$MLAB_PASSWORD" --file "$file" ;
+        # format: mongorestore -h <host_port> -d waseda-syllabus-dev -u <user> -p <password> <input .bson file>
+        mongorestore -h "$MLAB_HOST_PORT" -d waseda-syllabus-dev  \
+            -u deploy -p "$MLAB_PASSWORD" "$file" ;
 done
+
 
 # for all json export to remote mongodb, check how to access scrapy dumped status
 # https://stackoverflow.com/questions/31210345/cant-access-the-scrapy-stats-that-are-dumped-on-finish-eg-finish-time
