@@ -7,7 +7,7 @@ Add a deploy user and with limited directory access permission.
 ```bash
 adduser deploy
 # TODO think about what restriction to impose after success
-chown -R deploy:deploy /var/www/wasetime-web
+chown -R deploy:deploy /some/directory
 ```
 
 ```bash
