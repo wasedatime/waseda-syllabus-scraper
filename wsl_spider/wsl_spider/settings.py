@@ -78,12 +78,15 @@ MONGO_DB = "syllabus"
 
 # Change the name of the output collection here
 # spring 2018
-year = '2018'
-term = 'spr_'
-yearTerm = term + year
 raw = 'raw_'
+year = '2018'
+entireYear = 'entire_' + year
 
-MONGO_COLLECTION = raw + yearTerm + "_courses_all"
+# For targeting a single semester
+# term = 'spr_first_half_'
+# termYear = term + year
+
+MONGO_COLLECTION = raw + entireYear + "_courses_all"
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html
