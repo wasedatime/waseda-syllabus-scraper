@@ -13,5 +13,4 @@ cd /home/deploy/waseda-syllabus-scraper/wsl_spider
 # Use absolute path to execute run_search.py in a virtual environment, if succeed do aggregation
 /home/deploy/deploy-virtual-env/bin/python3 /home/deploy/waseda-syllabus-scraper/wsl_spider/wsl_spider/run_search.py \
 && mongo localhost:27017/syllabus /home/deploy/waseda-syllabus-scraper/aggregate.js \
-&& source export.sh
-
+&& source /home/deploy/export.sh
