@@ -245,6 +245,9 @@ db[buildingsSciEngUnsorted].aggregate([
   { $out: buildingsSciEng }
 ]);
 
+// Drop unsorted buildings collection
+db[buildingsSciEngUnsorted].drop();
+
 // Create index 'name' for buildings collection
 db[buildingsSciEng].createIndex({ name: 1 });
 
