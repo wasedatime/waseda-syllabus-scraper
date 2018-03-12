@@ -80,7 +80,6 @@ class SearchSpider(Spider):
     current_url = start_url
 
     def parse(self, response):
-        return
         reached_lower_bound_year = False
         sel = Selector(response=response, type="html")
         c_infos = sel.xpath('//table[@class="ct-vh"]/tbody/tr[not(@class="c-vh-title")]')
