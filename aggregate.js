@@ -1,26 +1,56 @@
-var conn = new Mongo('localhost:27017');
-var db = conn.getDB('syllabus');
+// TODO Consider using pKeys as id instead of mongo object id?
+
+var full_year = 'full year';
+var spring_fall_intensive =  'an intensive course(spring and fall)';
+
+var spring_semester = 'spring semester';
+var spring_quarter = 'spring quarter';
+var summer_quarter = 'summer quarter';
+var spring_intensive = 'an intensive course(spring)';
+
+var fall_semester = 'fall semester';
+var fall_quarter = 'fall quarter';
+var winter_quarter = 'winter quarter';
+var fall_intensive = 'an intensive course(fall)';
+
+// had to harcode the data since array.push does not work :'(
+var spr_first_half_terms = [full_year, spring_semester, spring_intensive, spring_fall_intensive, spring_quarter];
+var spr_second_half_terms = [full_year, spring_semester, spring_intensive, spring_fall_intensive, summer_quarter];
+var fall_first_half_terms =  [full_year, fall_semester, fall_intensive, spring_fall_intensive, fall_quarter];
+var fall_second_half_terms = [full_year, fall_semester, fall_intensive, spring_fall_intensive, winter_quarter];
+
+// change this variable to filter the relevant courses according to the current semester
+var current_terms = spr_first_half_terms;
+
+var sci_eng_schools = ['Schl of Fund Sci/Eng', 'Schl Cre Sci/Eng', 'Schl Adv Sci/Eng'];
 
 var year = '2018';
-var term = 'spr_';
-var yearTerm = term + year;
+var entireYear = 'entire_' + year;
+var term = 'spr_first_half_';
+var termYear = term + year;
 var raw = 'raw_';
 
-// rawCourseAll is the name of the initial collection containing the scraped courses information.
-// Change it to the name of your own collection.
-var rawCoursesAll = raw + yearTerm + '_courses_all';
-var rawCoursesSciEng = raw + yearTerm + '_courses_sci_eng';
+// rawCoursesALL is the name of the initial collection containing the scraped courses info
+// for the entire year
+var rawEntireYearCoursesAll = raw + entireYear + '_courses_all';
+var rawEntireYearCoursesSciEng = raw + entireYear + '_courses_sci_eng';
 
-var coursesSciEng = yearTerm + '_courses_sci_eng';
-var classroomsSciEng = yearTerm + '_classrooms_sci_eng_all';
-var buildingsSciEngUnsorted = yearTerm + '_buildings_sci_eng_unsorted';
-var buildingsSciEng = yearTerm + '_buildings_sci_eng';
+var entireYearCoursesSciEng =  entireYear + '_courses_sci_eng'
+// a simplified version used for syllabus searching
+var entireYearCoursesSciEngSearch = entireYearCoursesSciEng + '_search';
 
-var classroomsSciEngMon = yearTerm + '_classrooms_sci_eng_mon';
-var classroomsSciEngTue = yearTerm + '_classrooms_sci_eng_tue';
-var classroomsSciEngWed = yearTerm + '_classrooms_sci_eng_wed';
-var classroomsSciEngThur = yearTerm + '_classrooms_sci_eng_thur';
-var classroomsSciEngFri = yearTerm + '_classrooms_sci_eng_fri';
+var coursesSciEng = termYear + '_courses_sci_eng';
+// a simplified version used for searching courses in the timetable section
+var coursesSciEngTimetable = coursesSciEng + '_timetable';
+var classroomsSciEng = termYear + '_classrooms_sci_eng_all';
+var buildingsSciEngUnsorted = termYear + '_buildings_sci_eng_unsorted';
+var buildingsSciEng = termYear + '_buildings_sci_eng';
+
+var classroomsSciEngMon = termYear + '_classrooms_sci_eng_mon';
+var classroomsSciEngTue = termYear + '_classrooms_sci_eng_tue';
+var classroomsSciEngWed = termYear + '_classrooms_sci_eng_wed';
+var classroomsSciEngThur = termYear + '_classrooms_sci_eng_thur';
+var classroomsSciEngFri = termYear + '_classrooms_sci_eng_fri';
 
 var classroomsSciEngWeekdays = [
   { collection: classroomsSciEngMon, day: 1 },
@@ -30,22 +60,22 @@ var classroomsSciEngWeekdays = [
   { collection: classroomsSciEngFri, day: 5 }
 ];
 
-// Export courses in Nishiwaseda campus
+// Export courses in Nishiwaseda campus (for entire year)
 // (School of Fundamental, Creative, and Advanced Science Engineering)
-db[rawCoursesAll].aggregate([
+db[rawEntireYearCoursesAll].aggregate([
   {
     $match: {
       school: {
         // Change the school names here to extract courses that belong to specific schools.
-        $in: ['Schl of Fund Sci/Eng', 'Schl Cre Sci/Eng', 'Schl Adv Sci/Eng']
+        $in: sci_eng_schools
       }
     }
   },
-  { $out: rawCoursesSciEng }
+  { $out: rawEntireYearCoursesSciEng}
 ]);
 
 function correctInvalidClassrooms(object) {
-  return db.getCollection(rawCoursesSciEng).findAndModify({
+  return db.getCollection(rawEntireYearCoursesSciEng).findAndModify({
     query: { 'occurrences.classroom': object.invalidClassroom },
     update: {
       $set: {
@@ -105,7 +135,7 @@ commonInvalidClassroomsAndCorrections.forEach(function(object) {
 });
 
 // Export distinct courses by grouping multiple schools in one array
-db[rawCoursesSciEng].aggregate([
+db[rawEntireYearCoursesSciEng].aggregate([
   {
     $group: {
       _id: { year: '$year', term: '$term', title: '$title',
@@ -125,8 +155,39 @@ db[rawCoursesSciEng].aggregate([
       code: '$_id.code', links: '$links', _id: 0
     }
   },
-  { $out: coursesSciEng }
+  { $out: entireYearCoursesSciEng }
 ]);
+
+// Export simplified courses for syllabus searching, keeping the original _id
+db[entireYearCoursesSciEng].aggregate([
+  { $project: {
+      title: '$title', year: '$year', term: '$term', instructor: '$instructor', links: '$links'
+    }
+  },
+  { $out: entireYearCoursesSciEngSearch}
+]);
+
+// Export courses belonging to the current term/semester
+db[entireYearCoursesSciEng].aggregate([
+  {
+    $match: {
+      term: {
+        $in: current_terms
+      }
+    }
+  },
+  { $out: coursesSciEng}
+]);
+
+// Export simplified courses for searching in timetable section, keeping the original _id
+db[coursesSciEng].aggregate([
+  { $project: {
+      title: '$title', instructor: '$instructor'
+    }
+  },
+  { $out: coursesSciEngTimetable}
+]);
+
 
 // Export classrooms from courses and sort by building number and name
 db[coursesSciEng].aggregate([
