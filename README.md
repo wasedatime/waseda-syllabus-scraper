@@ -149,11 +149,10 @@ Currently, there is no written guide for this section, but you can follow the co
 
 ### Start aggregating
 
-Type the following command inside your terminal to start using mongo shell and load the aggregation script.
+Type the following command inside your terminal to use mongo shell to load the aggregation script.
 
 ```
-mongo
-load("/path/to/aggregation/script.js")
+mongo localhost:27017/syllabus /path/to/aggregate.js
 ```
 
 It should return `true` if the aggregation is successful.
