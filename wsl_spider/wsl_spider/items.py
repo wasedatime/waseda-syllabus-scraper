@@ -27,10 +27,10 @@ def weekday_to_int(day):
         return -1
 
 
-def str_to_int(str):
+def string_to_int(string):
     try:
-        int(str)
-        return int(str)
+        int(string)
+        return int(string)
     except ValueError:
         return -1
 
@@ -75,7 +75,7 @@ class CourseLoader(ItemLoader):
     instructor_in = MapCompose(str.strip, normalize_characters)
     instructor_out = TakeFirst()
 
-    year_in = MapCompose(str.strip, normalize_characters, str_to_int)
+    year_in = MapCompose(str.strip, normalize_characters, string_to_int)
     year_out = TakeFirst()
 
     term_in = MapCompose(str.strip, normalize_characters)
@@ -100,10 +100,10 @@ class OccurrenceLoader(ItemLoader):
     day_in = MapCompose(str.strip, normalize_characters, weekday_to_int)
     day_out = TakeFirst()
 
-    start_period_in = MapCompose(str.strip, normalize_characters, str_to_int)
+    start_period_in = MapCompose(str.strip, normalize_characters, string_to_int)
     start_period_out = TakeFirst()
 
-    end_period_in = MapCompose(str.strip, normalize_characters, str_to_int)
+    end_period_in = MapCompose(str.strip, normalize_characters, string_to_int)
     end_period_out = TakeFirst()
 
     building_in = MapCompose(str.strip, normalize_characters)
@@ -111,4 +111,3 @@ class OccurrenceLoader(ItemLoader):
 
     classroom_in = MapCompose(str.strip, normalize_characters)
     classroom_out = TakeFirst()
-
