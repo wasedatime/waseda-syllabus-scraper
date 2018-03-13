@@ -39,5 +39,4 @@ classroomsSciEngWeekdays.forEach(function(object) {
   collectionName = object.collection;
   db.getCollection(collectionName).drop()
 });
-db[buildingsSciEngUnsorted].drop();
 db[buildingsSciEng].drop();
