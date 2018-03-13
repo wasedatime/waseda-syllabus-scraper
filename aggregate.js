@@ -1,4 +1,6 @@
 // TODO Consider using pKeys as id instead of mongo object id?
+// TODO Remove start time and end time. Use periods instead?
+// TODO title=>t year=>y term=>m instructor=>i school=>s links=>ks occurences=>os
 
 var full_year = 'full year';
 var spring_fall_intensive =  'an intensive course(spring and fall)';
@@ -13,7 +15,7 @@ var fall_quarter = 'fall quarter';
 var winter_quarter = 'winter quarter';
 var fall_intensive = 'an intensive course(fall)';
 
-// had to harcode the data since array.push does not work :'(
+// had to hardcode the data since array.push does not work :'(
 var spr_first_half_terms = [full_year, spring_semester, spring_intensive, spring_fall_intensive, spring_quarter];
 var spr_second_half_terms = [full_year, spring_semester, spring_intensive, spring_fall_intensive, summer_quarter];
 var fall_first_half_terms =  [full_year, fall_semester, fall_intensive, spring_fall_intensive, fall_quarter];
@@ -161,7 +163,7 @@ db[rawEntireYearCoursesSciEng].aggregate([
 // Export simplified courses for syllabus searching, keeping the original _id
 db[entireYearCoursesSciEng].aggregate([
   { $project: {
-      title: '$title', year: '$year', term: '$term', instructor: '$instructor', links: '$links'
+      title: '$title', year: '$year', term: '$term', instructor: '$instructor', schools: '$schools'
     }
   },
   { $out: entireYearCoursesSciEngSearch}
