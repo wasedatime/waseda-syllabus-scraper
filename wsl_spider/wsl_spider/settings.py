@@ -87,6 +87,7 @@ entireYear = 'entire_' + year
 # termYear = term + year
 
 MONGO_COLLECTION = raw + entireYear + "_courses_all"
+MONGO_STATS_COLLECTION = "stats"
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html
