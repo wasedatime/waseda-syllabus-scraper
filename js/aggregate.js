@@ -4,7 +4,8 @@
 // TODO DELETE MLAB collection before importing!! They don't overwrite but accumulate!
 // bc you created a new id every time you aggregate... solve it with the first TODO?
 // TODO Filter courses => IPSE, PSE, SILS check box? select one at a time.
-// TODO Do you have to store start_time? Maybe use start_period alone would be okay?
+// TODO break your huge file into small bits. use load(/path/to/another/jsfile) inside the file
+// TODO use git hooks to update cron jobs every time you push
 
 /*
 Important: _id of a course is determined by its pKey in the syllabus database.
@@ -12,86 +13,11 @@ When grouping courses, e.g., combining fund, adv, cre schools together for a sin
 we select the first pKey (here the fund pKey) as the _id for the new grouped course.
 */
 
-var full_year = 'full year';
-var spring_fall_intensive =  'an intensive course(spring and fall)';
-
-var spring_semester = 'spring semester';
-var spring_quarter = 'spring quarter';
-var summer_quarter = 'summer quarter';
-var spring_intensive = 'an intensive course(spring)';
-
-var fall_semester = 'fall semester';
-var fall_quarter = 'fall quarter';
-var winter_quarter = 'winter quarter';
-var fall_intensive = 'an intensive course(fall)';
-
-// had to hardcode the data since array.push does not work :'(
-var spr_first_half_terms = [full_year, spring_semester, spring_intensive, spring_fall_intensive, spring_quarter];
-var spr_second_half_terms = [full_year, spring_semester, spring_intensive, spring_fall_intensive, summer_quarter];
-var fall_first_half_terms =  [full_year, fall_semester, fall_intensive, spring_fall_intensive, fall_quarter];
-var fall_second_half_terms = [full_year, fall_semester, fall_intensive, spring_fall_intensive, winter_quarter];
-
-// change this variable to filter the relevant courses according to the current semester
-var current_terms = spr_first_half_terms;
-
-var sci_eng_schools = ['Schl of Fund Sci/Eng', 'Schl Cre Sci/Eng', 'Schl Adv Sci/Eng'];
-
-var year = '2018';
-var entireYear = 'entire_' + year;
-var term = 'spr_first_half_';
-var termYear = term + year;
-var raw = 'raw_';
-
-// rawCoursesALL is the name of the initial collection containing the scraped courses info
-// for the entire year
-var rawEntireYearCoursesAll = raw + entireYear + '_courses_all';
-var rawEntireYearCoursesSciEng = raw + entireYear + '_courses_sci_eng';
-
-// temp collection for grouping courses according to schools.
-// the doc _id field in this collection is not pKey.
-var entireYearCoursesSciEngTemp =  entireYear + '_courses_sci_eng' + '_temp';
-// the doc _id field in this collection is the first pKey if multiple schools exist.
-var entireYearCoursesSciEng =  entireYear + '_courses_sci_eng';
-// a simplified version used for syllabus searching
-var entireYearCoursesSciEngSearch = entireYearCoursesSciEng + '_search';
-
-var coursesSciEng = termYear + '_courses_sci_eng';
-// a simplified version used for searching courses in the timetable section
-var coursesSciEngTimetable = coursesSciEng + '_timetable';
-
-var classroomsSciEngTemp = termYear + '_classrooms_sci_eng_all' + '_temp';
-var classroomsSciEng = termYear + '_classrooms_sci_eng_all';
-
-var buildingsSciEngUnsorted = termYear + '_buildings_sci_eng_unsorted';
-var buildingsSciEngTemp = termYear + '_buildings_sci_eng' + '_temp';
-var buildingsSciEng = termYear + '_buildings_sci_eng';
-
-var classroomsSciEngMon = termYear + '_classrooms_sci_eng_mon';
-var classroomsSciEngTue = termYear + '_classrooms_sci_eng_tue';
-var classroomsSciEngWed = termYear + '_classrooms_sci_eng_wed';
-var classroomsSciEngThur = termYear + '_classrooms_sci_eng_thur';
-var classroomsSciEngFri = termYear + '_classrooms_sci_eng_fri';
-
-var classroomsSciEngWeekdays = [
-  { collection: classroomsSciEngMon, day: 1 },
-  { collection: classroomsSciEngTue, day: 2 },
-  { collection: classroomsSciEngWed, day: 3 },
-  { collection: classroomsSciEngThur, day: 4 },
-  { collection: classroomsSciEngFri, day: 5 }
-];
-
-// drop all collections except raw
-db[entireYearCoursesSciEng].drop();
-db[entireYearCoursesSciEngSearch].drop();
-db[coursesSciEng].drop();
-db[coursesSciEngTimetable].drop();
-db[classroomsSciEng].drop();
-classroomsSciEngWeekdays.forEach(function(object) {
-  collectionName = object.collection
-  db.getCollection(collectionName).drop()
-});
-db[buildingsSciEngUnsorted].drop();
-db[buildingsSciEng].drop();
+if (db.getUser("deploy")) {
+    load("home/deploy/waseda-syllabus-scraper/js/variables.js");
+} else {
+    load("/Users/oscar/PythonProjects/waseda-syllabus-scraper/js/variables.js");
+}
 
 // Export courses in Nishiwaseda campus (for entire year)
 // (School of Fundamental, Creative, and Advanced Science Engineering)
