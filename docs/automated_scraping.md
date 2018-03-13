@@ -12,6 +12,8 @@ Refer to [export.sh](../server/export.sh) for the procedure details.
 ```bash
 # ubuntu uses .profile instead of .bash_profile
 vim /home/deploy/.profile
+export MLAB_DEV_PASSWORD=example_password
+export MLAB_DEV_HOST_PORT=example_host_port
 export MLAB_PASSWORD=example_password
 export MLAB_HOST_PORT=example_host_port
 ```
