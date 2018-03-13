@@ -96,8 +96,8 @@ class SearchSpider(Spider):
             cl.add_xpath(field_name='school', xpath='td[5]/text()')
             cl.add_xpath(field_name='term', xpath='td[6]/text()')
 
-            link = c_info.xpath('td[3]/a/@onclick').extract()
-            cl.add_value(field_name='link', value=link)
+            onclick_url = c_info.xpath('td[3]/a/@onclick').extract()
+            cl.add_value(field_name='_id', value=onclick_url)
 
             day_periods = c_info.xpath('td[7]/text()').extract()
             locations = c_info.xpath('td[8]/text()').extract()

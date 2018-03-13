@@ -35,21 +35,21 @@ def str_to_int(str):
         return -1
 
 
-def onclick_to_link(onclick):
-    #pKey is the query parameter used in waseda's syllabus website. We stick with its original name for now.
-    onclick_match = re.match(r"post_submit\(\'(?P<php>\w{6})\w*', '(?P<pKey>\w+)'\)", onclick)
-    pKey = onclick_match.group('pKey')
-    return pKey
+def onclick_url_to_id(onclick_url):
+    # pKey is the query parameter used in waseda's syllabus website. We stick with its original name for now.
+    onclick_match = re.match(r"post_submit\(\'(?P<php>\w{6})\w*', '(?P<pKey>\w+)'\)", onclick_url)
+    _id = onclick_match.group('pKey')
+    return _id
 
 
 class Course(Item):
+    _id = Field()
     title = Field()
     instructor = Field()
     year = Field()
     term = Field()
     school = Field()
     occurrences = Field()
-    link = Field()
     code = Field()
     hash = Field()
 
@@ -86,8 +86,8 @@ class CourseLoader(ItemLoader):
 
     occurrences_out = Identity()
 
-    link_in = MapCompose(str.strip, normalize_characters, onclick_to_link)
-    link_out = TakeFirst()
+    _id_in = MapCompose(str.strip, normalize_characters, onclick_url_to_id)
+    _id_out = TakeFirst()
 
     code_in = MapCompose(str.strip, normalize_characters)
     code_out = TakeFirst()
