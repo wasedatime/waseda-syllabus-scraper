@@ -207,6 +207,7 @@ db[entireYearCoursesSciEng].aggregate([
       title: '$title', year: '$year', term: '$term', instructor: '$instructor', schools: '$schools'
     }
   },
+  { $sort: { title: 1, instructor: 1 } },
   { $out: entireYearCoursesSciEngSearch}
 ]);
 
@@ -228,6 +229,7 @@ db[coursesSciEng].aggregate([
       title: '$title', instructor: '$instructor'
     }
   },
+  { $sort: { title: 1, instructor: 1 } },
   { $out: coursesSciEngTimetable}
 ]);
 
