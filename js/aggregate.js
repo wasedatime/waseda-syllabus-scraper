@@ -13,10 +13,12 @@ When grouping courses, e.g., combining fund, adv, cre schools together for a sin
 we select the first pKey (here the fund pKey) as the _id for the new grouped course.
 */
 
-if (db.getUser("deploy")) {
-    load("home/deploy/waseda-syllabus-scraper/js/variables.js");
+hostName= db.hostInfo().system.hostname;
+
+if (hostName.toString() === 'waseda-syllabus-scraper') {
+    load('home/deploy/waseda-syllabus-scraper/js/variables.js');
 } else {
-    load("/Users/oscar/PythonProjects/waseda-syllabus-scraper/js/variables.js");
+    load('/Users/oscar/PythonProjects/waseda-syllabus-scraper/js/variables.js');
 }
 
 // Export courses in Nishiwaseda campus (for entire year)

@@ -1,7 +1,9 @@
-if (db.getUser("deploy")) {
-    load("home/deploy/waseda-syllabus-scraper/js/variables.js");
+hostName= db.hostInfo().system.hostname;
+
+if (hostName.toString() === 'waseda-syllabus-scraper') {
+    load('home/deploy/waseda-syllabus-scraper/js/variables.js');
 } else {
-    load("/Users/oscar/PythonProjects/waseda-syllabus-scraper/js/variables.js");
+    load('/Users/oscar/PythonProjects/waseda-syllabus-scraper/js/variables.js');
 }
 
 // drop all aggregated collections
