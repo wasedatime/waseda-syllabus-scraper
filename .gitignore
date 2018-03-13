@@ -21,3 +21,5 @@ lib/
 
 # credentials
 credentials.md
+
+server/export_prod.sh
