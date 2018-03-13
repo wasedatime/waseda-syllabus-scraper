@@ -1,7 +1,7 @@
 hostName= db.hostInfo().system.hostname;
 
 if (hostName.toString() === 'waseda-syllabus-scraper') {
-    load('home/deploy/waseda-syllabus-scraper/js/variables.js');
+    load('/home/deploy/waseda-syllabus-scraper/js/variables.js');
 } else {
     load('/Users/oscar/PythonProjects/waseda-syllabus-scraper/js/variables.js');
 }

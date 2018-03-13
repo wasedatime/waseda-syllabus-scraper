@@ -16,7 +16,7 @@ we select the first pKey (here the fund pKey) as the _id for the new grouped cou
 hostName= db.hostInfo().system.hostname;
 
 if (hostName.toString() === 'waseda-syllabus-scraper') {
-    load('home/deploy/waseda-syllabus-scraper/js/variables.js');
+    load('/home/deploy/waseda-syllabus-scraper/js/variables.js');
 } else {
     load('/Users/oscar/PythonProjects/waseda-syllabus-scraper/js/variables.js');
 }
