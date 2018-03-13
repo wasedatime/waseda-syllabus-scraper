@@ -1,6 +1,16 @@
 // TODO Consider using pKeys as id instead of mongo object id?
 // TODO Remove start time and end time. Use periods instead?
 // TODO title=>t year=>y term=>m instructor=>i school=>s links=>ks occurences=>os
+// TODO DELETE MLAB collection before importing!! They don't overwrite but accumulate!
+// bc you created a new id every time you aggregate... solve it with the first TODO?
+// TODO Filter courses => IPSE, PSE, SILS check box? select one at a time.
+// TODO Do you have to store start_time? Maybe use start_period alone would be okay?
+
+/*
+Important: _id of a course is determined by its pKey in the syllabus database.
+When grouping courses, e.g., combining fund, adv, cre schools together for a single course,
+we select the first pKey (here the fund pKey) as the _id for the new grouped course.
+*/
 
 var full_year = 'full year';
 var spring_fall_intensive =  'an intensive course(spring and fall)';
@@ -37,15 +47,23 @@ var raw = 'raw_';
 var rawEntireYearCoursesAll = raw + entireYear + '_courses_all';
 var rawEntireYearCoursesSciEng = raw + entireYear + '_courses_sci_eng';
 
-var entireYearCoursesSciEng =  entireYear + '_courses_sci_eng'
+// temp collection for grouping courses according to schools.
+// the doc _id field in this collection is not pKey.
+var entireYearCoursesSciEngTemp =  entireYear + '_courses_sci_eng' + '_temp';
+// the doc _id field in this collection is the first pKey if multiple schools exist.
+var entireYearCoursesSciEng =  entireYear + '_courses_sci_eng';
 // a simplified version used for syllabus searching
 var entireYearCoursesSciEngSearch = entireYearCoursesSciEng + '_search';
 
 var coursesSciEng = termYear + '_courses_sci_eng';
 // a simplified version used for searching courses in the timetable section
 var coursesSciEngTimetable = coursesSciEng + '_timetable';
+
+var classroomsSciEngTemp = termYear + '_classrooms_sci_eng_all' + '_temp';
 var classroomsSciEng = termYear + '_classrooms_sci_eng_all';
+
 var buildingsSciEngUnsorted = termYear + '_buildings_sci_eng_unsorted';
+var buildingsSciEngTemp = termYear + '_buildings_sci_eng' + '_temp';
 var buildingsSciEng = termYear + '_buildings_sci_eng';
 
 var classroomsSciEngMon = termYear + '_classrooms_sci_eng_mon';
@@ -61,6 +79,19 @@ var classroomsSciEngWeekdays = [
   { collection: classroomsSciEngThur, day: 4 },
   { collection: classroomsSciEngFri, day: 5 }
 ];
+
+// drop all collections except raw
+db[entireYearCoursesSciEng].drop();
+db[entireYearCoursesSciEngSearch].drop();
+db[coursesSciEng].drop();
+db[coursesSciEngTimetable].drop();
+db[classroomsSciEng].drop();
+classroomsSciEngWeekdays.forEach(function(object) {
+  collectionName = object.collection
+  db.getCollection(collectionName).drop()
+});
+db[buildingsSciEngUnsorted].drop();
+db[buildingsSciEng].drop();
 
 // Export courses in Nishiwaseda campus (for entire year)
 // (School of Fundamental, Creative, and Advanced Science Engineering)
@@ -147,18 +178,28 @@ db[rawEntireYearCoursesSciEng].aggregate([
       links: {
         $push: {
           school: '$school',
-          link: '$link'
+          link: '$_id'
         }
       }
     }
   },
-  { $project: { year: '$_id.year', term: '$_id.term', title: '$_id.title',
+  { $project: { _id: 0, year: '$_id.year', term: '$_id.term', title: '$_id.title',
       instructor: '$_id.instructor', occurrences: '$_id.occurrences',
-      code: '$_id.code', links: '$links', _id: 0
+      code: '$_id.code', schools: '$schools', links: '$links'
     }
   },
-  { $out: entireYearCoursesSciEng }
+  { $out: entireYearCoursesSciEngTemp }
 ]);
+
+// Reassign _id value of every docs to first link(pKey) and insert to a new collection
+db[entireYearCoursesSciEngTemp].find().forEach(function(course){
+  // Taking the first link as _id
+  course._id = course.links[0].link.toString();
+  db[entireYearCoursesSciEng].insert(course)
+})
+
+// Drop temporary collection
+db[entireYearCoursesSciEngTemp].drop();
 
 // Export simplified courses for syllabus searching, keeping the original _id
 db[entireYearCoursesSciEng].aggregate([
@@ -217,8 +258,16 @@ db[coursesSciEng].aggregate([
     }
   },
   { $sort: { building: 1, name: 1 } },
-  { $out: classroomsSciEng }
+  { $out: classroomsSciEngTemp }
 ]);
+
+db[classroomsSciEngTemp].find().forEach(function(classroom) {
+  // Taking 'building-classroom_name' as _id
+  classroom._id = classroom.building.toString() + '-' + classroom.name.toString();
+  db[classroomsSciEng].insert(classroom);
+});
+
+db[classroomsSciEngTemp].drop();
 
 // Export buildings from classrooms
 db[classroomsSciEng].aggregate([
@@ -232,6 +281,7 @@ db[classroomsSciEng].aggregate([
   { $out: buildingsSciEngUnsorted }
 ]);
 
+
 // Sort buildings by name and sort all classrooms inside by name
 db[buildingsSciEngUnsorted].aggregate([
   { $unwind: '$classrooms' },
@@ -244,11 +294,19 @@ db[buildingsSciEngUnsorted].aggregate([
   },
   { $sort: { _id: 1 } },
   { $project: { _id: 0, name: '$_id', classrooms: 1 } },
-  { $out: buildingsSciEng }
+  { $out: buildingsSciEngTemp }
 ]);
 
 // Drop unsorted buildings collection
 db[buildingsSciEngUnsorted].drop();
+
+db[buildingsSciEngTemp].find().forEach(function(building) {
+  // Taking name as _id
+  building._id = building.name.toString();
+  db[buildingsSciEng].insert(building);
+});
+
+db[buildingsSciEngTemp].drop();
 
 // Create index 'name' for buildings collection
 db[buildingsSciEng].createIndex({ name: 1 });
