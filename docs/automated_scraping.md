@@ -19,4 +19,30 @@ export MLAB_HOST_PORT=example_host_port
 ```
 
 ## Chron job
-To be completed
+
+Make all shell scripts executable by user deploy
+```bash
+chmod u+x scrape.sh
+chmod u+x aggregate.sh
+chmod u+x export_dev.sh
+chmod u+x export_prod.sh
+```
+
+Type in to set up cron job
+```bash
+crontab -e
+```
+
+Inside the file
+```bash
+# Using bash so we can access the RANDOM variable
+SHELL=/bin/bash
+# Start scraping at midnight
+# Sleep randomly up til 2.5 hours
+0 0 * * * deploy sleep $(( RANDOM \% 9000 )); /home/deploy/waseda-syllabus-scraper/server/scrape.sh
+```
+
+Check cron jobs
+```bash
+crontab -l
+```
