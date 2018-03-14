@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# TODO for all json export to remote mongodb, check how to access scrapy dumped status
-# https://stackoverflow.com/questions/31210345/cant-access-the-scrapy-stats-that-are-dumped-on-finish-eg-finish-time
-
 # delete previous previous syllabus data
 rm -R /home/deploy/syllabus_prev
 
