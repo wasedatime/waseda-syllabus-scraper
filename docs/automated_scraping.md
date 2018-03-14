@@ -18,7 +18,7 @@ export MLAB_PASSWORD=example_password
 export MLAB_HOST_PORT=example_host_port
 ```
 
-## Chron job
+## Cron job
 
 Make all shell scripts executable by user deploy
 ```bash
