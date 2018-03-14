@@ -40,3 +40,4 @@ classroomsSciEngWeekdays.forEach(function(object) {
   db.getCollection(collectionName).drop()
 });
 db[buildingsSciEng].drop();
+db['stats'].drop();
