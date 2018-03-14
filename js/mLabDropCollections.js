@@ -40,4 +40,5 @@ classroomsSciEngWeekdays.forEach(function(object) {
   db.getCollection(collectionName).drop()
 });
 db[buildingsSciEng].drop();
-db['stats'].drop();
+// db stats is a native function!
+db.getCollection('stats').drop();
