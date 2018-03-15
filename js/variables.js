@@ -1,3 +1,4 @@
+// TODO Include term 'others'?
 var full_year = 'full year';
 var spring_fall_intensive =  'an intensive course(spring and fall)';
 
