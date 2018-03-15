@@ -37,6 +37,7 @@ Inside the file
 ```bash
 # Using bash so we can access the RANDOM variable
 SHELL=/bin/bash
+# Remember to set your server time zone to JST
 # Start scraping at midnight
 # Sleep randomly up til 2.5 hours
 0 0 * * * deploy sleep $(( RANDOM \% 9000 )); /home/deploy/waseda-syllabus-scraper/server/scrape.sh
@@ -45,4 +46,9 @@ SHELL=/bin/bash
 Check cron jobs
 ```bash
 crontab -l
+```
+
+Check cron logs
+```bash
+sudo grep CRON /var/log/syslog
 ```
