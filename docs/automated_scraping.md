@@ -12,6 +12,10 @@ Refer to [export.sh](../server/export.sh) for the procedure details.
 ```bash
 # ubuntu uses .profile instead of .bash_profile
 vim /home/deploy/.profile
+
+# set up environment variable for aggregate.sh
+export DEPLOY=deploy
+# set up environment variable for mlab
 export MLAB_DEV_PASSWORD=example_password
 export MLAB_DEV_HOST_PORT=example_host_port
 export MLAB_PASSWORD=example_password
@@ -38,10 +42,12 @@ Inside the file
 # Using bash so we can access the RANDOM variable
 SHELL=/bin/bash
 # Remember to set your server time zone to JST
-# Start scraping at midnight
-# Sleep randomly up til 2.5 hours
-0 0 * * * deploy sleep $(( RANDOM \% 9000 )); /home/deploy/waseda-syllabus-scraper/server/scrape.sh
+# Gets environment variables before scraping
+# Start scraping at midnight but first sleep randomly up to 2.5 hours
+0 0 * * * source /home/deploy/.profile; sleep $(( RANDOM \% 9000 )); /home/deploy/waseda-syllabus-scraper/server/cron_job.sh
 ```
+
+Add `>> /home/deploy/example.log 2>&1` at the end for logging
 
 Check cron jobs
 ```bash
