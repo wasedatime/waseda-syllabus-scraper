@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Don't for get spaces after '[' and before ']'! [ condition ]
-if [ "$USER" == "deploy" ]
+if [ "$DEPLOY" == "deploy" ]
 then
     mongo localhost:27017/syllabus /home/deploy/waseda-syllabus-scraper/js/dropAggregatedCollections.js \
     && mongo localhost:27017/syllabus /home/deploy/waseda-syllabus-scraper/js/aggregate.js
