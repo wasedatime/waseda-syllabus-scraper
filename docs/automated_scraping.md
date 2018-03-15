@@ -13,8 +13,6 @@ Refer to [export.sh](../server/export.sh) for the procedure details.
 # ubuntu uses .profile instead of .bash_profile
 vim /home/deploy/.profile
 
-# set up environment variable for aggregate.sh
-export DEPLOY=deploy
 # set up environment variable for mlab
 export MLAB_DEV_PASSWORD=example_password
 export MLAB_DEV_HOST_PORT=example_host_port
@@ -44,7 +42,8 @@ SHELL=/bin/bash
 # Remember to set your server time zone to JST
 # Gets environment variables before scraping
 # Start scraping at midnight but first sleep randomly up to 2.5 hours
-0 0 * * * source /home/deploy/.profile; sleep $(( RANDOM \% 9000 )); /home/deploy/waseda-syllabus-scraper/server/cron_job.sh
+# Have to call the files in one line so env variables can apply to all :'(
+0 0 * * * source /home/deploy/.profile; sleep $(( RANDOM \% 9000 )); /home/deploy/waseda-syllabus-scraper/server/scrape.sh && /home/deploy/waseda-syllabus-scraper/server/aggregate.sh && /home/deploy/waseda-syllabus-scraper/server/export_dev.sh && /home/deploy/export_prod.sh
 ```
 
 Add `>> /home/deploy/example.log 2>&1` at the end for logging
