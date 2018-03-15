@@ -1,5 +1,5 @@
 #!/bin/bash
-source /home/deploy/.profile \
+source /home/deploy/waseda-syllabus-scraper/server/source_profile.sh  \
 && source /home/deploy/waseda-syllabus-scraper/server/scrape.sh \
 && source /home/deploy/waseda-syllabus-scraper/server/aggregate.sh \
 && source /home/deploy/waseda-syllabus-scraper/server/export_dev.sh \
