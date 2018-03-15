@@ -18,4 +18,3 @@ classroomsSciEngWeekdays.forEach(function(object) {
 });
 db[buildingsSciEngUnsorted].drop();
 db[buildingsSciEng].drop();
-db['stats'].drop();

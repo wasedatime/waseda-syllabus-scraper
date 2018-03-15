@@ -8,7 +8,7 @@ mv /home/deploy/syllabus /home/deploy/syllabus_prev
 
 # dump database syllabus, excluding collection with prefix "raw"
 mongodump -d syllabus -o /home/deploy/syllabus --excludeCollectionsWithPrefix raw \
-&& mongo "${MLAB_DEV_HOST_PORT}/waseda-syllabus-dev" -u deploy -p "$MLAB_DEV_PASSWORD" /home/deploy/waseda-syllabus-scraper/js/mLabDropCollections.js\
+&& mongo "${MLAB_DEV_HOST_PORT}/waseda-syllabus-dev" -u deploy -p "$MLAB_DEV_PASSWORD" /home/deploy/waseda-syllabus-scraper/js/mLabDropAggregatedCollections.js\
 && cd /home/deploy/syllabus/syllabus \
 && for file in *.bson ; # for every *.bson collection, export it to  remote mlab waseda-syllabus-dev database
     # -f flag returns true if file exists and is a regular file. If not skip the iteration
