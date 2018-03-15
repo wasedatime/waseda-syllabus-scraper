@@ -36,6 +36,11 @@ do
         && pip3 install -r requirements-dev.txt \
         && echo "Done. Deactivating virtual environment..." \
         && deactivate \
+        && echo "Done. Making shell scripts executable by user deploy..." \
+        && chmod u+x /home/deploy/waseda-syllabus-scraper/server/scrape.sh \
+        && chmod u+x /home/deploy/waseda-syllabus-scraper/server/aggregate.sh \
+        && chmod u+x /home/deploy/waseda-syllabus-scraper/server/export_dev.sh \
+        && chmod u+x /home/deploy/waseda-syllabus-scraper/server/cron_job.sh \
         && echo "Done. waseda-syllabus-scraper is updated successfully."
     else
         echo "Ref $ref successfully received.  Doing nothing: only the master branch may be deployed on this server."
