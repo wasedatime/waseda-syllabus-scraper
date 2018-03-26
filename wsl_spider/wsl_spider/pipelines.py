@@ -7,7 +7,7 @@ from scrapy.exceptions import DropItem
 
 # This pipeline drops a course if another course with the
 # same title, instructor, year, term, and school is scraped already
-#TODO: Consider a cleaner way of filteringi duplicates
+#TODO: Consider a cleaner way of filtering duplicates
 class DuplicatesPipeline(object):
 
     drop_item_msg = "Duplicate course, title: {}, instructor: {}"
