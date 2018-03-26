@@ -10,48 +10,41 @@ from scrapy.spiders import Spider
 from wsl_spider.items import CourseLoader, OccurrenceLoader
 
 
-############################
-# TODO https://www.wsl.waseda.jp/syllabus/js/custom/JAA103/JAA103.js
 # TODO You can find the key in <a onclick></a> and insert it into JAA104.php to ge full detail of syllabus
-############################
 
-# These two schools return little course results and are good for testing.
-art_architecture = "art_architecture"
-sports_sci = "sports_sci"
-
-sils = "sils"
-poli_sci = "poli_sci"
-fund_sci_eng = "fund_sci_eng"
-cre_sci_eng = "cre_sci_eng"
-adv_sci_eng = "adv_sci_eng"
-
-# Returns results of every school.
-all_school = "all"
-
-
-def customize_url(url, lang, term, school, results_per_page, start_page):
-    langs = {'eng': "en", 'jp': "jp"}
+def customize_url(url, display_lang, term, school, lang, results_per_page, start_page, program):
+    display_langs = {'eng': "en", 'jp': "jp"}
     terms = {'all': "", 'full_year': "0", 'spring_summer': "1", 'fall_winter': "2", 'others': "9"}
     schools = {
+        'all': "",
         'art_architecture': "712001",
         'sports_sci': "202003",
         'sils': "212004",
         'poli_sci': "111973",
         'fund_sci_eng': "262006",
         'cre_sci_eng': "272006",
-        'adv_sci_eng': "282006",
-        'all': ""
+        'adv_sci_eng': "282006"
     }
+    langs = {'all': "", 'n/a': "00", 'jp': "01", 'eng': "02"}
     # Use dict to represent enum
     results_per_page_dict = {'10': "10", '20': "20", '50': "50", '100': "100"}
 
-    lang_param = 'pLng=' + langs[lang]
+    display_lang_param = 'pLng=' + display_langs[display_lang]
     term_param = 'p_gakki=' + terms[term]
     school_param = 'p_gakubu=' + schools[school]
+    lang_param = 'p_gengo=' + langs[lang]
+
     results_per_page_param = 'p_number=' + results_per_page_dict[str(results_per_page)]
     start_page_param = 'p_page=' + str(start_page)
-    params = ([lang_param, term_param, school_param, results_per_page_param, start_page_param])
-    return url + '&'.join(params)
+
+    program_param = 'keyword=' + program if program else ''
+
+    params = ([display_lang_param, term_param, school_param, lang_param,
+               results_per_page_param, start_page_param, program_param])
+
+    # Remove empty string from list. If function is None, the identity function is assumed => Remove all false elements
+    filtered_params = filter(None, params)
+    return url + '&'.join(filtered_params)
 
 
 class SearchSpider(Spider):
@@ -61,23 +54,33 @@ class SearchSpider(Spider):
     close_spider_msg = "There are no more urls to scrape. Closing spider."
     reach_lower_bound_year_msg = "Scraped data has reached lower bound year {}"
 
-    # Change the target semester, school, and other parameters here.
-    lang = 'eng'
-    year = 2018
-    term = 'all'
-    # TODO Add sils, pse
-    schools = [fund_sci_eng, cre_sci_eng, adv_sci_eng]
-    start_school = schools[0]
-    results_per_page = 100
-    start_page = 1
-    start_url = customize_url(basic_url, lang, term, start_school, results_per_page, start_page)
-    start_urls = [start_url]
+    def __init__(self, *args, **kwargs):
+        super(SearchSpider, self).__init__(*args, **kwargs)
 
-    year_str = str(year)
-    year_lower_bound = str(year - 1)
-    current_school = start_school
-    current_page = start_page
-    current_url = start_url
+        # Change the target semester, school, and other parameters here.
+        # language of the displayed information: eng or jp
+        self.display_lang = 'eng'
+        self.year = 2018
+        self.year_str = str(self.year)
+        self.year_lower_bound = str(self.year - 1)
+        self.term = 'all'
+
+        # TODO Add sils, pse from run_search.py
+        self.schools = kwargs.get('schools').split(',')
+        self.start_school = self.schools[0]
+        self.current_school = self.start_school
+        # language which the course is taught in: all, eng, jp, or n/a (don't recommend the last option)
+        self.lang = 'all'
+
+        self.results_per_page = 100
+        self.start_page = 1
+        self.current_page = self.start_page
+
+        self.program = kwargs.get('program')
+        start_url = customize_url(self.basic_url, self.display_lang, self.term, self.start_school, self.lang,
+                                  self.results_per_page, self.start_page, self.program)
+        self.start_urls = [start_url]
+        self.current_url = start_url
 
     def parse(self, response):
         reached_lower_bound_year = False
@@ -195,11 +198,11 @@ class SearchSpider(Spider):
 
     def increment_page_in_url_by(self, increment):
         self.current_page += increment
-        self.current_url = customize_url(self.basic_url, self.lang, self.term, self.current_school,
-                                         self.results_per_page, self.current_page)
+        self.current_url = customize_url(self.basic_url, self.display_lang, self.term, self.current_school, self.lang,
+                                         self.results_per_page, self.current_page, self.program)
 
     def update_school_in_url(self, schools):
         self.current_school = schools[0]
         self.current_page = self.start_page
-        self.current_url = customize_url(self.basic_url, self.lang, self.term, self.current_school,
-                                         self.results_per_page, self.current_page)
+        self.current_url = customize_url(self.basic_url, self.display_lang, self.term, self.current_school, self.lang,
+                                         self.results_per_page, self.current_page, self.program)
