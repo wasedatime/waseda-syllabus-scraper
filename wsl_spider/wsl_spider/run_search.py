@@ -25,10 +25,10 @@ def parse_cmd_options():
             program = a
         else:
             assert False, "unhandled option"
-    school_arg = "-a schools={}".format(schools) if schools else ""
-    program_arg = "-a program={}".format(program) if program else ""
-    return " ".join([school_arg, program_arg])
+    schools_arg = ["-a"] + ["schools={}".format(schools)] if schools else []
+    program_arg = ["-a"] + ["program={}".format(program)] if program else []
+    return schools_arg + program_arg
 
 
-command = "scrapy crawl search " + parse_cmd_options()
-cmdline.execute(command.split())
+command = "scrapy crawl search"
+cmdline.execute(command.split() + parse_cmd_options())
