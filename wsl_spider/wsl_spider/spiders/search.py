@@ -52,7 +52,8 @@ class SearchSpider(Spider):
     allowed_domains = ['wsl.waseda.jp']
     basic_url = 'https://www.wsl.waseda.jp/syllabus/JAA103.php?'
     close_spider_msg = "There are no more urls to scrape. Closing spider."
-    reach_lower_bound_year_msg = "Scraped data has reached lower bound year {}"
+    reach_lower_bound_year_msg = "Scraped data has reached lower bound year {}."
+    reach_empty_page_msg = "Scraper has reached an empty page."
 
     def __init__(self, *args, **kwargs):
         super(SearchSpider, self).__init__(*args, **kwargs)
@@ -86,6 +87,7 @@ class SearchSpider(Spider):
         reached_lower_bound_year = False
         sel = Selector(response=response, type="html")
         c_infos = sel.xpath('//table[@class="ct-vh"]/tbody/tr[not(@class="c-vh-title")]')
+        reached_empty_page = False if c_infos != [] else True
         for c_info in c_infos:
             year = c_info.xpath('td[1]/text()').extract_first()
             if year <= self.year_lower_bound:
@@ -158,10 +160,13 @@ class SearchSpider(Spider):
 
             yield(cl.load_item())
 
-        if reached_lower_bound_year:
+        if reached_lower_bound_year or reached_empty_page:
             # finish scraping one target url. Remove it from list
-            logging.log(logging.INFO, self.reach_lower_bound_year_msg.format(self.year_lower_bound))
+            msg = self.reach_lower_bound_year_msg.format(self.year_lower_bound) \
+                if reached_lower_bound_year else self.reach_empty_page_msg
+            logging.log(logging.INFO, msg)
             logging.log(logging.INFO, "Finish scraping url {}".format(self.current_url))
+            # remove the school that we've scraped from the list
             self.schools.pop(0)
             if self.schools:
                 # continue scraping if list of target schools is not empty
