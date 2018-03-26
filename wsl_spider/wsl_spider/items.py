@@ -51,7 +51,6 @@ class Course(Item):
     school = Field()
     occurrences = Field()
     code = Field()
-    hash = Field()
 
 
 class Occurrence(Item):
