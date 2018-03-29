@@ -1,10 +1,15 @@
 {
-  "_id" : "ObjectID('CCCC')",
+  "_id" : "26G021000401201826G021000426",
   "title" : "Calculus A",
   "instructor" : "",
   "year" : "",
   "term" : "",
   "school" : "",
+  "programs": [
+    "IPSE",
+    "English-based Undergraduate Program"
+  ],
+  "lang": "",
   "occurrences" : [
     {
       "day" : "",
@@ -24,6 +29,5 @@
     }
   ],
     "code" : "",
-    "link" : "",
-    "hash" : ""
+    "link" : ""
 }
