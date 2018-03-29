@@ -105,6 +105,12 @@ class SearchSpider(Spider):
             day_periods = c_info.xpath('td[7]/text()').extract()
             locations = c_info.xpath('td[8]/text()').extract()
 
+            # extend locations if it's shorter than day_periods for zip function to match properly.
+            # e.g. two day_periods but location is undecided (a single element).
+            for i in range(len(day_periods)):
+                if i >= len(locations):
+                    locations.append(locations[i-1])
+
             for day_period, location in zip(day_periods, locations):
                 ol = OccurrenceLoader()
                 day_period_match = re.match(
