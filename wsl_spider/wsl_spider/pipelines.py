@@ -68,7 +68,8 @@ class MongoPipeline(object):
     def open_spider(self, spider):
         self.client = pymongo.MongoClient(self.mongo_uri)
         self.db = self.client[self.mongo_db]
-        self.col = self.db[self.mongo_col]
+        # use default mongo collection if not specified by user
+        self.col = self.db[self.mongo_col] if spider.mongo_col == "" else self.db[spider.mongo_col]
         self.stats_col = self.db[self.mongo_stats_col]
 
     def close_spider(self, spider):
@@ -78,16 +79,16 @@ class MongoPipeline(object):
 
     def update_item_program(self, item_title, item_id, program):
         self.col.update_one({'_id': item_id}, {"$addToSet": {'programs': program}})
-        logging.log(logging.INFO, "Added program '{}' to {} in collection {}".format(program, item_title, self.mongo_col))
+        logging.log(logging.INFO, "Added program '{}' to {} in collection {}".format(program, item_title, self.col.name))
 
     def update_item_lang(self, item_title, item_id, lang):
         self.col.update_one({'_id': item_id}, {"$set": {'lang': lang}})
-        logging.log(logging.INFO, "Set lang '{}' for {} in collection {}".format(lang, item_title, self.mongo_col))
+        logging.log(logging.INFO, "Set lang '{}' for {} in collection {}".format(lang, item_title, self.col.name))
 
     def process_item(self, item, spider):
         try:
             self.col.insert_one(dict(item))
-            logging.log(logging.INFO, "Course '{}' is added to collection {}".format(item['title'], self.mongo_col))
+            logging.log(logging.INFO, "Course '{}' is added to collection {}".format(item['title'], self.col.name))
         except pymongo.errors.DuplicateKeyError:
             logging.log(logging.WARNING, "Duplicate Key Course.")
             item_id = item['_id']
@@ -100,5 +101,5 @@ class MongoPipeline(object):
                 self.update_item_lang(item_title, item_id, item_lang)
             else:
                 self.col.replace_one({'_id': item_id}, dict(item))
-                logging.log(logging.INFO, "Replaced with '{}' in collection {}".format(item_title, self.mongo_col))
+                logging.log(logging.INFO, "Replaced with '{}' in collection {}".format(item_title, self.col.name))
         return item
