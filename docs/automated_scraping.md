@@ -45,7 +45,8 @@ SHELL=/bin/bash
 # Remember to set your server time zone to JST
 # Gets environment variables before scraping
 # Start scraping at midnight every Tue Thur Sat, but first sleep randomly up to 2.5 hours
-0 0 * * 2,4,6 source /home/deploy/.profile; sleep $(( RANDOM \% 9000 )); /home/deploy/waseda-syllabus-scraper/server/cron_job.sh
+# cd into server folder so variables.sh can be read properly
+0 0 * * 2,4,6 source /home/deploy/.profile; sleep $(( RANDOM \% 9000 )); cd /home/deploy/waseda-syllabus-scraper/server; ./cron_job.sh
 ```
 
 Add `>> /home/deploy/example.log 2>&1` at the end for logging
@@ -58,4 +59,10 @@ crontab -l
 Check cron logs
 ```bash
 sudo grep CRON /var/log/syslog
+```
+
+For exporting static json file to nginx api folder, be sure to give deploy permission
+```bash
+sudo chown deploy: api_folder
+sudo chmod u+w api_folder
 ```
