@@ -4,7 +4,13 @@ import getopt
 from scrapy import cmdline
 
 
+def format_arg(arg, str_base):
+    return ["-a"] + [str_base.format(arg)] if arg else []
+
+
 def parse_cmd_options():
+    # Displayed language: en or jp
+    display_lang = ""
     # These two schools return little course results and are good for testing:
     # art_architecture, sports_sci
     # Target schools:
@@ -12,23 +18,36 @@ def parse_cmd_options():
     schools = ""
     # Target programs: IPSE, English-based Undergraduate Program
     program = ""
+    # Language which the course is taught in: all, en, jp, or n/a (don't recommend the last option)
+    teaching_lang = ""
+
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 's:k:')
+        opts, args = getopt.getopt(sys.argv[1:], 's:p:d:t:')
     except getopt.GetoptError:
-        print("Usage: python3 run_search.py -s school_one school_two -k a_single_program")
+        print("Usage: python3 run_search.py -s school_one,school_two -p a_single_program " +
+              "-t teaching_language -d display_language")
         sys.exit(2)
 
     for o, a in opts:
-        if o == '-s':
+        if o == '-d':
+            display_lang = a
+        elif o == '-s':
             schools = a
-        elif o == '-k':
+        elif o == '-p':
             program = a
+        elif o == '-t':
+            teaching_lang = a
         else:
             assert False, "unhandled option"
-    schools_arg = ["-a"] + ["schools={}".format(schools)] if schools else []
-    program_arg = ["-a"] + ["program={}".format(program)] if program else []
-    return schools_arg + program_arg
+
+    display_lang_arg = format_arg(display_lang, "display_lang={}")
+    schools_arg = format_arg(schools, "schools={}")
+    program_arg = format_arg(program, "program={}")
+    teaching_lang_arg = format_arg(teaching_lang, "teaching_lang={}")
+
+    return display_lang_arg + schools_arg + program_arg + teaching_lang_arg
 
 
 command = "scrapy crawl search"
+# print(command.split() + parse_cmd_options())
 cmdline.execute(command.split() + parse_cmd_options())
