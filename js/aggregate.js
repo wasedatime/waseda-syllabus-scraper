@@ -1,11 +1,6 @@
-// TODO Consider using pKeys as id instead of mongo object id?
 // TODO Remove start time and end time. Use periods instead?
 // TODO title=>t year=>y term=>m instructor=>i school=>s links=>ks occurences=>os
-// TODO DELETE MLAB collection before importing!! They don't overwrite but accumulate!
-// bc you created a new id every time you aggregate... solve it with the first TODO?
 // TODO Filter courses => IPSE, PSE, SILS check box? select one at a time.
-// TODO break your huge file into small bits. use load(/path/to/another/jsfile) inside the file
-// TODO use git hooks to update cron jobs every time you push
 
 /*
 Important: _id of a course is determined by its pKey in the syllabus database.
@@ -128,6 +123,12 @@ db[entireYearCoursesSciEngTemp].find().forEach(function(course){
 
 // Drop temporary collection
 db[entireYearCoursesSciEngTemp].drop();
+
+// Sort entireYearCoursesSciEng collection
+db[entireYearCoursesSciEng].aggregate([
+  { $sort: { title: 1, instructor: 1 } },
+  { $out: entireYearCoursesSciEng}
+]);
 
 // Export simplified courses for syllabus searching, keeping the original _id
 db[entireYearCoursesSciEng].aggregate([
