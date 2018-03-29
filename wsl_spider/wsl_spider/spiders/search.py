@@ -12,7 +12,7 @@ from wsl_spider.items import CourseLoader, OccurrenceLoader
 
 # TODO You can find the key in <a onclick></a> and insert it into JAA104.php to ge full detail of syllabus
 
-def customize_url(url, display_lang, term, school, program, teaching_lang, results_per_page, start_page):
+def customize_url(url, display_lang, term, school, teaching_lang, keyword, results_per_page, start_page):
     display_langs = {'en': "en", 'jp': "jp"}
     terms = {'all': "", 'full_year': "0", 'spring_summer': "1", 'fall_winter': "2", 'others': "9"}
     schools = {
@@ -37,10 +37,10 @@ def customize_url(url, display_lang, term, school, program, teaching_lang, resul
     results_per_page_param = 'p_number=' + results_per_page_dict[str(results_per_page)]
     start_page_param = 'p_page=' + str(start_page)
 
-    program_param = 'keyword=' + program if program else ''
+    keyword_param = 'keyword=' + keyword if keyword else ''
 
-    params = ([display_lang_param, term_param, school_param, teaching_lang_param,
-               results_per_page_param, start_page_param, program_param])
+    params = ([display_lang_param, term_param, school_param, teaching_lang_param, keyword_param,
+               results_per_page_param, start_page_param])
 
     # Remove empty string from list. If function is None, the identity function is assumed => Remove all false elements
     filtered_params = filter(None, params)
@@ -61,8 +61,8 @@ class SearchSpider(Spider):
         # Change the target semester, school, and other parameters here.
         self.display_lang = kwargs.get('display_lang')
         self.schools = kwargs.get('schools').split(',')
-        self.program = kwargs.get('program')
         self.teaching_lang = kwargs.get('teaching_lang')
+        self.keyword = kwargs.get('keyword')
 
         self.year = 2018
         self.year_str = str(self.year)
@@ -76,8 +76,8 @@ class SearchSpider(Spider):
         self.start_page = 1
         self.current_page = self.start_page
 
-        start_url = customize_url(self.basic_url, self.display_lang, self.term, self.start_school, self.program,
-                                  self.teaching_lang, self.results_per_page, self.start_page)
+        start_url = customize_url(self.basic_url, self.display_lang, self.term, self.start_school, self.teaching_lang,
+                                  self.keyword, self.results_per_page, self.start_page)
         self.start_urls = [start_url]
         self.current_url = start_url
 
@@ -207,11 +207,11 @@ class SearchSpider(Spider):
 
     def increment_page_in_url_by(self, increment):
         self.current_page += increment
-        self.current_url = customize_url(self.basic_url, self.display_lang, self.term, self.current_school, self.program,
-                                         self.teaching_lang, self.results_per_page, self.current_page)
+        self.current_url = customize_url(self.basic_url, self.display_lang, self.term, self.current_school,
+                                         self.teaching_lang, self.keyword, self.results_per_page, self.current_page)
 
     def update_school_in_url(self, schools):
         self.current_school = schools[0]
         self.current_page = self.start_page
-        self.current_url = customize_url(self.basic_url, self.display_lang, self.term, self.current_school, self.program,
-                                         self.teaching_lang, self.results_per_page, self.current_page)
+        self.current_url = customize_url(self.basic_url, self.display_lang, self.term, self.current_school,
+                                         self.teaching_lang, self.keyword, self.results_per_page, self.current_page)

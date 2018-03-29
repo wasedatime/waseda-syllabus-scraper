@@ -16,16 +16,16 @@ def parse_cmd_options():
     # Target schools:
     # sils, poli_sci, fund_sci_eng, cre_sci_eng, adv_sci_eng
     schools = ""
-    # Target programs: IPSE, English-based Undergraduate Program
-    program = ""
     # Language which the course is taught in: all, en, jp, or n/a (don't recommend the last option)
     teaching_lang = ""
+    # Target keywords: IPSE, English-based Undergraduate Program
+    keyword = ""
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 's:p:d:t:')
+        opts, args = getopt.getopt(sys.argv[1:], 's:d:t:k:')
     except getopt.GetoptError:
-        print("Usage: python3 run_search.py -s school_one,school_two -p a_single_program " +
-              "-t teaching_language -d display_language")
+        print("Usage: python3 run_search.py -d display_language -s school_one,school_two " +
+              "-t teaching_language -k a_single_keyword")
         sys.exit(2)
 
     for o, a in opts:
@@ -33,19 +33,19 @@ def parse_cmd_options():
             display_lang = a
         elif o == '-s':
             schools = a
-        elif o == '-p':
-            program = a
         elif o == '-t':
             teaching_lang = a
+        elif o == '-k':
+            keyword = a
         else:
             assert False, "unhandled option"
 
     display_lang_arg = format_arg(display_lang, "display_lang={}")
     schools_arg = format_arg(schools, "schools={}")
-    program_arg = format_arg(program, "program={}")
     teaching_lang_arg = format_arg(teaching_lang, "teaching_lang={}")
+    keyword_arg = format_arg(keyword, "keyword={}")
 
-    return display_lang_arg + schools_arg + program_arg + teaching_lang_arg
+    return display_lang_arg + schools_arg + teaching_lang_arg + keyword_arg
 
 
 command = "scrapy crawl search"
