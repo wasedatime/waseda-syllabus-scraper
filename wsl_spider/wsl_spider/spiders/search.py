@@ -64,6 +64,7 @@ class SearchSpider(Spider):
         self.schools = kwargs.get('schools').split(',')
         self.teaching_lang = kwargs.get('teaching_lang')
         self.keyword = kwargs.get('keyword')
+        self.mongo_db = kwargs.get('mongo_db')
         self.mongo_col = kwargs.get('mongo_col')
         # Check if we're searching for a target program
         # Cannot use "" for others because it won't be loaded by scrapy

@@ -67,8 +67,8 @@ class MongoPipeline(object):
 
     def open_spider(self, spider):
         self.client = pymongo.MongoClient(self.mongo_uri)
-        self.db = self.client[self.mongo_db]
-        # use default mongo collection if not specified by user
+        # use default mongo db and collection in settings.py if not specified by user
+        self.db = self.client[self.mongo_db] if spider.mongo_db == "" else self.client[spider.mongo_db]
         self.col = self.db[self.mongo_col] if spider.mongo_col == "" else self.db[spider.mongo_col]
         self.stats_col = self.db[self.mongo_stats_col]
 
