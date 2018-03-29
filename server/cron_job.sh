@@ -1,7 +1,14 @@
 #!/bin/bash
 
-# Use source so that variables and functions are still accessible from the called scripts
-source /home/deploy/waseda-syllabus-scraper/server/scrape.sh \
-&& source /home/deploy/waseda-syllabus-scraper/server/aggregate.sh \
-&& source /home/deploy/waseda-syllabus-scraper/server/export_dev.sh \
-&& source /home/deploy/export_prod.sh
+source variables.sh
+
+cron_job() {
+    # Use source so that variables and functions are still accessible from the called scripts
+    source ${SCRIPT_PATH}${1} \
+    && cd "${PROJECT_PATH}server" # cd back so that variables.sh can be found in sub shell scripts
+}
+
+cron_job "scrape.sh" \
+&& cron_job "aggregate.sh" \
+&& cron_job "export_nginx.sh"
+
