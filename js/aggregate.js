@@ -16,20 +16,6 @@ if (hostName.toString() === 'waseda-syllabus-scraper') {
     load('/Users/oscar/PythonProjects/waseda-syllabus-scraper/js/variables.js');
 }
 
-// Export courses in Nishiwaseda campus (for entire year)
-// (School of Fundamental, Creative, and Advanced Science Engineering)
-db[rawEntireYearCoursesAll].aggregate([
-  {
-    $match: {
-      school: {
-        // Change the school names here to extract courses that belong to specific schools.
-        $in: sci_eng_schools
-      }
-    }
-  },
-  { $out: rawEntireYearCoursesSciEng}
-]);
-
 function correctInvalidClassrooms(object) {
   return db.getCollection(rawEntireYearCoursesSciEng).findAndModify({
     query: { 'occurrences.classroom': object.invalidClassroom },
@@ -94,8 +80,8 @@ commonInvalidClassroomsAndCorrections.forEach(function(object) {
 db[rawEntireYearCoursesSciEng].aggregate([
   {
     $group: {
-      _id: { year: '$year', term: '$term', title: '$title',
-        instructor: '$instructor', occurrences: '$occurrences', code: '$code'
+      _id: { year: '$year', term: '$term', title: '$title', instructor: '$instructor', occurrences: '$occurrences',
+          programs: '$programs', lang: '$lang', code: '$code',
       },
       schools: { $push: '$school' },
       links: {
@@ -108,6 +94,7 @@ db[rawEntireYearCoursesSciEng].aggregate([
   },
   { $project: { _id: 0, year: '$_id.year', term: '$_id.term', title: '$_id.title',
       instructor: '$_id.instructor', occurrences: '$_id.occurrences',
+      programs: '$_id.programs', lang: '$_id.lang',
       code: '$_id.code', schools: '$schools', links: '$links'
     }
   },
