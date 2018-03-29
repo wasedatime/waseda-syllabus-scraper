@@ -42,6 +42,10 @@ def onclick_url_to_id(onclick_url):
     return _id
 
 
+def create_program_list(program):
+    return [program]
+
+
 class Course(Item):
     _id = Field()
     title = Field()
@@ -49,6 +53,8 @@ class Course(Item):
     year = Field()
     term = Field()
     school = Field()
+    programs = Field()
+    lang = Field()
     occurrences = Field()
     code = Field()
 
@@ -82,6 +88,12 @@ class CourseLoader(ItemLoader):
 
     school_in = MapCompose(str.strip, normalize_characters)
     school_out = TakeFirst()
+
+    programs_in = MapCompose(create_program_list)
+    programs_out = Identity()
+
+    lang_in = MapCompose(str.strip, normalize_characters)
+    lang_out = TakeFirst()
 
     occurrences_out = Identity()
 

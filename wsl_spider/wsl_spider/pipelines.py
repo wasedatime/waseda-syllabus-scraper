@@ -7,7 +7,7 @@ from scrapy.exceptions import DropItem
 
 # This pipeline drops a course if another course with the
 # same title, instructor, year, term, and school is scraped already
-#TODO: Consider a cleaner way of filtering duplicates
+#TODO: Consider a better way of filtering duplicates
 class DuplicatesPipeline(object):
 
     drop_item_msg = "Duplicate course, title: {}, instructor: {}"
@@ -76,7 +76,29 @@ class MongoPipeline(object):
         self.stats_col.insert_one({'finish_time': str(now)})
         self.client.close()
 
+    def update_item_program(self, item_title, item_id, program):
+        self.col.update_one({'_id': item_id}, {"$addToSet": {'programs': program}})
+        logging.log(logging.INFO, "Added program '{}' to {} in collection {}".format(program, item_title, self.mongo_col))
+
+    def update_item_lang(self, item_title, item_id, lang):
+        self.col.update_one({'_id': item_id}, {"$set": {'lang': lang}})
+        logging.log(logging.INFO, "Set lang '{}' for {} in collection {}".format(lang, item_title, self.mongo_col))
+
     def process_item(self, item, spider):
-        self.col.insert_one(dict(item))
-        logging.log(logging.INFO, "Course '{}' is added to collection {}".format(item['title'], self.mongo_col))
+        try:
+            self.col.insert_one(dict(item))
+            logging.log(logging.INFO, "Course '{}' is added to collection {}".format(item['title'], self.mongo_col))
+        except pymongo.errors.DuplicateKeyError:
+            logging.log(logging.WARNING, "Duplicate Key Course.")
+            item_id = item['_id']
+            item_title = item['title']
+            item_programs = item['programs'][0]
+            item_lang = item['lang']
+            if spider.program != "others":
+                self.update_item_program(item_title, item_id, item_programs)
+            elif spider.lang != "others":
+                self.update_item_lang(item_title, item_id, item_lang)
+            else:
+                self.col.replace_one({'_id': item_id}, dict(item))
+                logging.log(logging.INFO, "Replaced with '{}' in collection {}".format(item_title, self.mongo_col))
         return item

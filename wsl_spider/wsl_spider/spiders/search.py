@@ -51,6 +51,7 @@ class SearchSpider(Spider):
     name = 'search'
     allowed_domains = ['wsl.waseda.jp']
     basic_url = 'https://www.wsl.waseda.jp/syllabus/JAA103.php?'
+    target_programs = ['IPSE', 'English-based Undergraduate Program']
     close_spider_msg = "There are no more urls to scrape. Closing spider."
     reach_lower_bound_year_msg = "Scraped data has reached lower bound year {}."
     reach_empty_page_msg = "Scraper has reached an empty page."
@@ -63,6 +64,12 @@ class SearchSpider(Spider):
         self.schools = kwargs.get('schools').split(',')
         self.teaching_lang = kwargs.get('teaching_lang')
         self.keyword = kwargs.get('keyword')
+        # Check if we're searching for a target program
+        # Cannot use "" for others because it won't be loaded by scrapy
+        self.program = self.keyword if self.keyword in self.target_programs else "others"
+        # Check if we're searching for a target language
+        # Cannot use "" for others because it won't be loaded by scrapy
+        self.lang = self.teaching_lang if self.teaching_lang != "all" else "others"
 
         self.year = 2018
         self.year_str = str(self.year)
@@ -92,15 +99,17 @@ class SearchSpider(Spider):
                 reached_lower_bound_year = True
             cl = CourseLoader(selector=c_info)
 
+            onclick_url = c_info.xpath('td[3]/a/@onclick').extract()
+            cl.add_value(field_name='_id', value=onclick_url)
             cl.add_value(field_name='year', value=year)
+            cl.add_value(field_name='programs', value=self.program)
+            cl.add_value(field_name='lang', value=self.lang)
+
             cl.add_xpath(field_name='code', xpath='td[2]/text()')
             cl.add_xpath(field_name='title', xpath='td[3]/a/text()')
             cl.add_xpath(field_name='instructor', xpath='td[4]/text()')
             cl.add_xpath(field_name='school', xpath='td[5]/text()')
             cl.add_xpath(field_name='term', xpath='td[6]/text()')
-
-            onclick_url = c_info.xpath('td[3]/a/@onclick').extract()
-            cl.add_value(field_name='_id', value=onclick_url)
 
             day_periods = c_info.xpath('td[7]/text()').extract()
             locations = c_info.xpath('td[8]/text()').extract()
