@@ -1,33 +1,54 @@
 {
-  "_id" : "26G021000401201826G021000426",
-  "title" : "Calculus A",
-  "instructor" : "",
-  "year" : "",
-  "term" : "",
-  "school" : "",
-  "programs": [
-    "IPSE",
-    "English-based Undergraduate Program"
-  ],
-  "lang": "",
-  "occurrences" : [
-    {
-      "day" : "",
-      "start_period" : "",
-      "end_period" : "",
-      "location" : "",
-      "building" : "",
-      "classroom" : ""
-    },
-    {
-      "day" : "",
-      "start_period" : "",
-      "end_period" : "",
-      "location" : "",
-      "building" : "",
-      "classroom" : ""
-    }
-  ],
-    "code" : "",
-    "link" : ""
+    "_id" : "26G021000401201826G021000426",
+    "year" : 2018,
+    "term" : "fall semester",
+    "title" : "Calculus A",
+    "instructor" : "BOWEN, Mark",
+    "occurrences" : [
+        {
+            "day" : 2,
+            "start_period" : 5,
+            "end_period" : 5,
+            "start_time" : 990,
+            "end_time" : 1080,
+            "building" : "-1",
+            "classroom" : "undecided",
+            "location" : "-1-undecided"
+        },
+        {
+            "day" : 4,
+            "start_period" : 4,
+            "end_period" : 4,
+            "start_time" : 885,
+            "end_time" : 975,
+            "building" : "-1",
+            "classroom" : "undecided",
+            "location" : "-1-undecided"
+        }
+    ],
+    "programs" : [
+        "others",
+        "IPSE"
+    ],
+    "lang" : "en",
+    "code" : "MATX13ZL",
+    "schools" : [
+        "Schl of Fund Sci/Eng",
+        "Schl Cre Sci/Eng",
+        "Schl Adv Sci/Eng"
+    ],
+    "links" : [
+        {
+            "school" : "Schl of Fund Sci/Eng",
+            "link" : "26G021000401201826G021000426"
+        },
+        {
+            "school" : "Schl Cre Sci/Eng",
+            "link" : "27G021000401201826G021000427"
+        },
+        {
+            "school" : "Schl Adv Sci/Eng",
+            "link" : "28G021000401201826G021000428"
+        }
+    ]
 }
