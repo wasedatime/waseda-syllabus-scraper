@@ -7,21 +7,18 @@ if (hostName.toString() === 'waseda-syllabus-scraper') {
 }
 
 // drop all aggregated collections
-db[entireYearCoursesSciEng].drop();
-db[entireYearCoursesPse].drop();
-db[entireYearCoursesSils].drop();
+function dropAggregatedCollections(entireYearCourses, termYearCourses) {
+    db[entireYearCourses].drop();
+    db[entireYearCourses + suffixSyllabus].drop();
+    db[termYearCourses].drop();
+    db[termYearCourses + suffixTimetable].drop();
+}
 
-db[entireYearCoursesSciEngSearch].drop();
-db[entireYearCoursesPseSearch].drop();
-db[entireYearCoursesSilsSearch].drop();
-
-db[termYearCoursesSciEng].drop();
-db[termYearCoursesPse].drop();
-db[termYearCoursesSils].drop();
-
-db[termYearCoursesSciEngTimetable].drop();
-db[termYearCoursesPseTimetable].drop();
-db[termYearCoursesSilsTimetable].drop();
+dropAggregatedCollections(entireYearCoursesAll, termYearCoursesAll);
+dropAggregatedCollections(entireYearCoursesSciEng, termYearCoursesSciEng);
+dropAggregatedCollections(entireYearCoursesPse, termYearCoursesPse);
+dropAggregatedCollections(entireYearCoursesSils, termYearCoursesSils);
+dropAggregatedCollections(entireYearCoursesCjl, termYearCoursesCjl);
 
 // db[classroomsSciEng].drop();
 // classroomsSciEngWeekdays.forEach(function(object) {

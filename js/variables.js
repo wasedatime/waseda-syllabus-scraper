@@ -36,31 +36,28 @@ var suffixCoursesAll = '_courses_all';
 var suffixCoursesSciEng = '_courses_sci_eng';
 var suffixCoursesPse = '_courses_pse';
 var suffixCoursesSils = '_courses_sils';
+var suffixCoursesCjl = '_courses_cjl';
 
-// rawCoursesALL is the name of the initial collection containing the scraped courses info
+// rawCoursesAll is the name of the initial collection containing the scraped courses info
 // for the entire year
 var rawEntireYearCoursesAll = raw + entireYear + suffixCoursesAll;
 var rawEntireYearCoursesSciEng = raw + entireYear + suffixCoursesSciEng;
 var rawEntireYearCoursesPse = raw + entireYear + suffixCoursesPse;
 var rawEntireYearCoursesSils = raw + entireYear + suffixCoursesSils;
+var rawEntireYearCoursesCjl = raw + entireYear + suffixCoursesCjl;
 
 // the doc _id field in this collection is the first pKey if multiple schools exist.
+var entireYearCoursesAll = entireYear + suffixCoursesAll;
 var entireYearCoursesSciEng =  entireYear + suffixCoursesSciEng;
 var entireYearCoursesPse = entireYear + suffixCoursesPse;
 var entireYearCoursesSils = entireYear + suffixCoursesSils;
+var entireYearCoursesCjl = entireYear + suffixCoursesCjl;
 
-// a simplified version used for syllabus searching
-var entireYearCoursesSciEngSearch = entireYearCoursesSciEng + suffixSyllabus;
-var entireYearCoursesPseSearch = entireYearCoursesPse + suffixSyllabus;
-var entireYearCoursesSilsSearch = entireYearCoursesSils + suffixSyllabus;
-
+var termYearCoursesAll = termYear + suffixCoursesAll;
 var termYearCoursesSciEng = termYear + suffixCoursesSciEng;
 var termYearCoursesPse = termYear + suffixCoursesPse;
 var termYearCoursesSils = termYear + suffixCoursesSils;
-// a simplified version used for searching courses in the timetable section
-var termYearCoursesSciEngTimetable = termYearCoursesSciEng + suffixTimetable;
-var termYearCoursesPseTimetable = termYearCoursesPse + suffixTimetable;
-var termYearCoursesSilsTimetable = termYearCoursesSils + suffixTimetable;
+var termYearCoursesCjl = termYear + suffixCoursesCjl;
 
 // var classroomsSciEngTemp = termYear + '_classrooms_sci_eng_all' + suffixTemp;
 // var classroomsSciEng = termYear + '_classrooms_sci_eng_all';

@@ -123,6 +123,12 @@ function groupMultipleSchools(rawEntireYearCourses, entireYearCourses) {
 groupMultipleSchools(rawEntireYearCoursesSciEng, entireYearCoursesSciEng);
 copyTo(rawEntireYearCoursesPse, entireYearCoursesPse);
 copyTo(rawEntireYearCoursesSils, entireYearCoursesSils);
+copyTo(rawEntireYearCoursesCjl, entireYearCoursesCjl);
+
+copyTo(entireYearCoursesSciEng, entireYearCoursesAll);
+copyTo(entireYearCoursesPse, entireYearCoursesAll);
+copyTo(entireYearCoursesSils, entireYearCoursesAll);
+copyTo(entireYearCoursesCjl, entireYearCoursesAll);
 
 function sortEntireYearCourses(entireYearCourses) {
   // Sort entireYearCourses collection by title then instructor
@@ -132,11 +138,15 @@ function sortEntireYearCourses(entireYearCourses) {
   ]);
 }
 
+sortEntireYearCourses(entireYearCoursesAll);
 sortEntireYearCourses(entireYearCoursesSciEng);
 sortEntireYearCourses(entireYearCoursesPse);
 sortEntireYearCourses(entireYearCoursesSils);
+sortEntireYearCourses(entireYearCoursesCjl);
 
-function aggregateEntireYearCoursesSearch(entireYearCourses, entireYearCoursesSearch) {
+function aggregateEntireYearCoursesSearch(entireYearCourses) {
+  // a simplified version used for syllabus searching
+  var entireYearCoursesSearch = entireYearCourses + suffixSyllabus;
   // Export simplified courses for syllabus searching, keeping the original _id
   db[entireYearCourses].aggregate([
     { $project: {
@@ -148,9 +158,11 @@ function aggregateEntireYearCoursesSearch(entireYearCourses, entireYearCoursesSe
   ]);
 }
 
-aggregateEntireYearCoursesSearch(entireYearCoursesSciEng, entireYearCoursesSciEngSearch);
-aggregateEntireYearCoursesSearch(entireYearCoursesPse, entireYearCoursesPseSearch);
-aggregateEntireYearCoursesSearch(entireYearCoursesSils, entireYearCoursesSilsSearch);
+aggregateEntireYearCoursesSearch(entireYearCoursesAll);
+aggregateEntireYearCoursesSearch(entireYearCoursesSciEng);
+aggregateEntireYearCoursesSearch(entireYearCoursesPse);
+aggregateEntireYearCoursesSearch(entireYearCoursesSils);
+aggregateEntireYearCoursesSearch(entireYearCoursesCjl);
 
 function aggregateTermYearCourses(entireYearCourses, termYearCourses) {
   // Export courses belonging to the current term/semester
@@ -166,11 +178,15 @@ function aggregateTermYearCourses(entireYearCourses, termYearCourses) {
   ]);
 }
 
+aggregateTermYearCourses(entireYearCoursesAll, termYearCoursesAll);
 aggregateTermYearCourses(entireYearCoursesSciEng, termYearCoursesSciEng);
 aggregateTermYearCourses(entireYearCoursesPse, termYearCoursesPse);
 aggregateTermYearCourses(entireYearCoursesSils, termYearCoursesSils);
+aggregateTermYearCourses(entireYearCoursesCjl, termYearCoursesCjl);
 
-function aggregateTermYearCoursesTimetable(termYearCourses, termYearCoursesTimetable) {
+function aggregateTermYearCoursesTimetable(termYearCourses) {
+  // a simplified version used for searching courses in the timetable section
+  var termYearCoursesTimetable = termYearCourses + suffixTimetable;
   // Export simplified courses for searching in timetable section, keeping the original _id
   db[termYearCourses].aggregate([
     { $project: {
@@ -182,9 +198,11 @@ function aggregateTermYearCoursesTimetable(termYearCourses, termYearCoursesTimet
   ]);
 }
 
-aggregateTermYearCoursesTimetable(termYearCoursesSciEng, termYearCoursesSciEngTimetable);
-aggregateTermYearCoursesTimetable(termYearCoursesPse, termYearCoursesPseTimetable);
-aggregateTermYearCoursesTimetable(termYearCoursesSils, termYearCoursesSilsTimetable);
+aggregateTermYearCoursesTimetable(termYearCoursesAll);
+aggregateTermYearCoursesTimetable(termYearCoursesSciEng);
+aggregateTermYearCoursesTimetable(termYearCoursesPse);
+aggregateTermYearCoursesTimetable(termYearCoursesSils);
+aggregateTermYearCoursesTimetable(termYearCoursesCjl);
 
 // // Export classrooms from courses and sort by building number and name
 // db[coursesSciEng].aggregate([

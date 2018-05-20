@@ -5,11 +5,14 @@
 source variables.sh
 
 export_courses() {
-    mongoexport --db ${DB_NAME} -c ${1} --out "${API_PATH}courses/${2}/index.json" --jsonArray
+    mongoexport --db ${DB_NAME} -c ${1} --out "${API_PATH}course_list_${2}.json" --jsonArray
 }
 
-export_courses ${entire_year_courses_sci_eng} "sci_eng"
-# && export_courses ${entire_year_courses_pse} "pse" \
-# && export_courses ${entire_year_courses_sils} "sils"
+export_courses ${entire_year_courses_all} "all" \
+&& export_courses ${entire_year_courses_sci_eng} "sci_eng" \
+&& export_courses ${entire_year_courses_pse} "pse" \
+&& export_courses ${entire_year_courses_sils} "sils" \
+&& export_courses ${entire_year_courses_cjl} "cjl"
 
-mongoexport --db ${DB_NAME} -c ${1} --out "${API_PATH}stats/index.json"
+
+mongoexport --db ${DB_NAME} -c stats --out "${API_PATH}scraper_stats/index.json"

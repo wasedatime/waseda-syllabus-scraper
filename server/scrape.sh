@@ -26,10 +26,10 @@ scrape "en" ${schools_sci_eng} "all" "" ${DB_NAME} ${raw_entire_year_courses_sci
 && scrape "en" ${schools_sci_eng} "en" "" ${DB_NAME} ${raw_entire_year_courses_sci_eng} \
 && scrape "en" ${schools_sci_eng} "all" "IPSE" ${DB_NAME} ${raw_entire_year_courses_sci_eng} \
 && scrape "en" ${schools_sci_eng} "all" "English-based Undergraduate Program" ${DB_NAME} ${raw_entire_year_courses_sci_eng} \
-
-# "en" "poli_sci" "all" "" ${raw_entire_year_courses_pse}
-# "en" "poli_sci" "en" "" ${raw_entire_year_courses_pse}
-# "en" "poli_sci" "jp" "" ${raw_entire_year_courses_pse}
-# "en" "sils" "all" "" ${raw_entire_year_courses_sils}
-# "en" "sils" "en" "" ${raw_entire_year_courses_sils}
-# "en" "sils" "jp" "" ${raw_entire_year_courses_sils}
+&& scrape "en" ${school_pse} "all" "" ${DB_NAME} ${raw_entire_year_courses_pse} \
+&& scrape "en" ${school_pse} "en" "" ${DB_NAME} ${raw_entire_year_courses_pse} \
+&& scrape "en" ${school_pse} "jp" "" ${DB_NAME} ${raw_entire_year_courses_pse} \
+&& scrape "en" ${school_sils} "all" "" ${DB_NAME} ${raw_entire_year_courses_sils} \
+&& scrape "en" ${school_sils} "en" "" ${DB_NAME} ${raw_entire_year_courses_sils} \
+&& scrape "en" ${school_sils} "jp" "" ${DB_NAME} ${raw_entire_year_courses_sils} \
+&& scrape "en" ${school_cjl} "jp" "" ${DB_NAME} ${raw_entire_year_courses_cjl}
