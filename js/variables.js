@@ -29,40 +29,62 @@ var term = 'spr_first_half_';
 var termYear = term + year;
 var raw = 'raw_';
 
+var suffixTemp = '_temp';
+var suffixSyllabus = '_syllabus';
+var suffixTimetable = '_timetable';
+var suffixCoursesAll = '_courses_all';
+var suffixCoursesSciEng = '_courses_sci_eng';
+var suffixCoursesPse = '_courses_pse';
+var suffixCoursesSils = '_courses_sils';
+
 // rawCoursesALL is the name of the initial collection containing the scraped courses info
 // for the entire year
-var rawEntireYearCoursesAll = raw + entireYear + '_courses_all';
-var rawEntireYearCoursesSciEng = raw + entireYear + '_courses_sci_eng';
+var rawEntireYearCoursesAll = raw + entireYear + suffixCoursesAll;
+var rawEntireYearCoursesSciEng = raw + entireYear + suffixCoursesSciEng;
+var rawEntireYearCoursesPse = raw + entireYear + suffixCoursesPse;
+var rawEntireYearCoursesSils = raw + entireYear + suffixCoursesSils;
 
 // temp collection for grouping courses according to schools.
 // the doc _id field in this collection is not pKey.
-var entireYearCoursesSciEngTemp =  entireYear + '_courses_sci_eng' + '_temp';
+var entireYearCoursesSciEngTemp =  entireYear + suffixCoursesSciEng + suffixTemp;
+var entireYearCoursesPseTemp =  entireYear + suffixCoursesPse + suffixTemp;
+var entireYearCoursesSilsTemp =  entireYear + suffixCoursesSils + suffixTemp;
+
 // the doc _id field in this collection is the first pKey if multiple schools exist.
-var entireYearCoursesSciEng =  entireYear + '_courses_sci_eng';
+var entireYearCoursesSciEng =  entireYear + suffixCoursesSciEng;
+var entireYearCoursesPse = entireYear + suffixCoursesPse;
+var entireYearCoursesSils = entireYear + suffixCoursesSils;
+
 // a simplified version used for syllabus searching
-var entireYearCoursesSciEngSearch = entireYearCoursesSciEng + '_search';
+var entireYearCoursesSciEngSearch = entireYearCoursesSciEng + suffixSyllabus;
+var entireYearCoursesPseSearch = entireYearCoursesPse + suffixSyllabus;
+var entireYearCoursesSilsSearch = entireYearCoursesSils + suffixSyllabus;
 
-var coursesSciEng = termYear + '_courses_sci_eng';
+var coursesSciEng = termYear + suffixCoursesSciEng;
+var coursesPse = termYear + suffixCoursesPse;
+var coursesSils = termYear + suffixCoursesSils;
 // a simplified version used for searching courses in the timetable section
-var coursesSciEngTimetable = coursesSciEng + '_timetable';
+var coursesSciEngTimetable = coursesSciEng + suffixTimetable;
+var coursesPseTimetable = coursesPse + suffixTimetable;
+var coursesSilsTimetable = coursesSils + suffixTimetable;
 
-var classroomsSciEngTemp = termYear + '_classrooms_sci_eng_all' + '_temp';
-var classroomsSciEng = termYear + '_classrooms_sci_eng_all';
+// var classroomsSciEngTemp = termYear + '_classrooms_sci_eng_all' + suffixTemp;
+// var classroomsSciEng = termYear + '_classrooms_sci_eng_all';
+//
+// var buildingsSciEngUnsorted = termYear + '_buildings_sci_eng_unsorted';
+// var buildingsSciEngTemp = termYear + '_buildings_sci_eng' + suffixTemp;
+// var buildingsSciEng = termYear + '_buildings_sci_eng';
 
-var buildingsSciEngUnsorted = termYear + '_buildings_sci_eng_unsorted';
-var buildingsSciEngTemp = termYear + '_buildings_sci_eng' + '_temp';
-var buildingsSciEng = termYear + '_buildings_sci_eng';
-
-var classroomsSciEngMon = termYear + '_classrooms_sci_eng_mon';
-var classroomsSciEngTue = termYear + '_classrooms_sci_eng_tue';
-var classroomsSciEngWed = termYear + '_classrooms_sci_eng_wed';
-var classroomsSciEngThur = termYear + '_classrooms_sci_eng_thur';
-var classroomsSciEngFri = termYear + '_classrooms_sci_eng_fri';
-
-var classroomsSciEngWeekdays = [
-  { collection: classroomsSciEngMon, day: 1 },
-  { collection: classroomsSciEngTue, day: 2 },
-  { collection: classroomsSciEngWed, day: 3 },
-  { collection: classroomsSciEngThur, day: 4 },
-  { collection: classroomsSciEngFri, day: 5 }
-];
+// var classroomsSciEngMon = termYear + '_classrooms_sci_eng_mon';
+// var classroomsSciEngTue = termYear + '_classrooms_sci_eng_tue';
+// var classroomsSciEngWed = termYear + '_classrooms_sci_eng_wed';
+// var classroomsSciEngThur = termYear + '_classrooms_sci_eng_thur';
+// var classroomsSciEngFri = termYear + '_classrooms_sci_eng_fri';
+//
+// var classroomsSciEngWeekdays = [
+//   { collection: classroomsSciEngMon, day: 1 },
+//   { collection: classroomsSciEngTue, day: 2 },
+//   { collection: classroomsSciEngWed, day: 3 },
+//   { collection: classroomsSciEngThur, day: 4 },
+//   { collection: classroomsSciEngFri, day: 5 }
+// ];
