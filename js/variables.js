@@ -44,12 +44,6 @@ var rawEntireYearCoursesSciEng = raw + entireYear + suffixCoursesSciEng;
 var rawEntireYearCoursesPse = raw + entireYear + suffixCoursesPse;
 var rawEntireYearCoursesSils = raw + entireYear + suffixCoursesSils;
 
-// temp collection for grouping courses according to schools.
-// the doc _id field in this collection is not pKey.
-var entireYearCoursesSciEngTemp =  entireYear + suffixCoursesSciEng + suffixTemp;
-var entireYearCoursesPseTemp =  entireYear + suffixCoursesPse + suffixTemp;
-var entireYearCoursesSilsTemp =  entireYear + suffixCoursesSils + suffixTemp;
-
 // the doc _id field in this collection is the first pKey if multiple schools exist.
 var entireYearCoursesSciEng =  entireYear + suffixCoursesSciEng;
 var entireYearCoursesPse = entireYear + suffixCoursesPse;
@@ -60,13 +54,13 @@ var entireYearCoursesSciEngSearch = entireYearCoursesSciEng + suffixSyllabus;
 var entireYearCoursesPseSearch = entireYearCoursesPse + suffixSyllabus;
 var entireYearCoursesSilsSearch = entireYearCoursesSils + suffixSyllabus;
 
-var coursesSciEng = termYear + suffixCoursesSciEng;
-var coursesPse = termYear + suffixCoursesPse;
-var coursesSils = termYear + suffixCoursesSils;
+var termYearCoursesSciEng = termYear + suffixCoursesSciEng;
+var termYearCoursesPse = termYear + suffixCoursesPse;
+var termYearCoursesSils = termYear + suffixCoursesSils;
 // a simplified version used for searching courses in the timetable section
-var coursesSciEngTimetable = coursesSciEng + suffixTimetable;
-var coursesPseTimetable = coursesPse + suffixTimetable;
-var coursesSilsTimetable = coursesSils + suffixTimetable;
+var termYearCoursesSciEngTimetable = termYearCoursesSciEng + suffixTimetable;
+var termYearCoursesPseTimetable = termYearCoursesPse + suffixTimetable;
+var termYearCoursesSilsTimetable = termYearCoursesSils + suffixTimetable;
 
 // var classroomsSciEngTemp = termYear + '_classrooms_sci_eng_all' + suffixTemp;
 // var classroomsSciEng = termYear + '_classrooms_sci_eng_all';
