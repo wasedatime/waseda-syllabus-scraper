@@ -16,8 +16,14 @@ if (hostName.toString() === 'waseda-syllabus-scraper') {
     load('/Users/oscar/PythonProjects/waseda-syllabus-scraper/js/variables.js');
 }
 
-function correctInvalidClassrooms(object) {
-  return db.getCollection(rawEntireYearCoursesSciEng).findAndModify({
+function copyTo(origin, destination) {
+  db[origin].find().forEach(function(doc){
+    db[destination].insert(doc);
+  });
+}
+
+function correctInvalidClassrooms(object, rawEntireYearCourses) {
+  return db.getCollection(rawEntireYearCourses).findAndModify({
     query: { 'occurrences.classroom': object.invalidClassroom },
     update: {
       $set: {
@@ -72,186 +78,216 @@ var commonInvalidClassroomsAndCorrections = [
 commonInvalidClassroomsAndCorrections.forEach(function(object) {
   var returnData = 1;
   while (returnData !== null) {
-    returnData = correctInvalidClassrooms(object);
+    returnData = correctInvalidClassrooms(object, rawEntireYearCoursesSciEng);
   }
 });
 
-// Export distinct courses by grouping multiple schools in one array
-db[rawEntireYearCoursesSciEng].aggregate([
-  {
-    $group: {
-      _id: { year: '$year', term: '$term', title: '$title', instructor: '$instructor', occurrences: '$occurrences',
-          programs: '$programs', lang: '$lang', code: '$code',
-      },
-      schools: { $push: '$school' },
-      links: {
-        $push: {
-          school: '$school',
-          link: '$_id'
-        }
-      }
-    }
-  },
-  { $project: { _id: 0, year: '$_id.year', term: '$_id.term', title: '$_id.title',
-      instructor: '$_id.instructor', occurrences: '$_id.occurrences',
-      programs: '$_id.programs', lang: '$_id.lang',
-      code: '$_id.code', schools: '$schools', links: '$links'
-    }
-  },
-  { $out: entireYearCoursesSciEngTemp }
-]);
-
-// Reassign _id value of every docs to first link(pKey) and insert to a new collection
-db[entireYearCoursesSciEngTemp].find().forEach(function(course){
-  // Taking the first link as _id
-  course._id = course.links[0].link.toString();
-  db[entireYearCoursesSciEng].insert(course)
-})
-
-// Drop temporary collection
-db[entireYearCoursesSciEngTemp].drop();
-
-// Sort entireYearCoursesSciEng collection
-db[entireYearCoursesSciEng].aggregate([
-  { $sort: { title: 1, instructor: 1 } },
-  { $out: entireYearCoursesSciEng}
-]);
-
-// Export simplified courses for syllabus searching, keeping the original _id
-db[entireYearCoursesSciEng].aggregate([
-  { $project: {
-      title: '$title', year: '$year', term: '$term', instructor: '$instructor', schools: '$schools'
-    }
-  },
-  { $sort: { title: 1, instructor: 1 } },
-  { $out: entireYearCoursesSciEngSearch}
-]);
-
-// Export courses belonging to the current term/semester
-db[entireYearCoursesSciEng].aggregate([
-  {
-    $match: {
-      term: {
-        $in: current_terms
-      }
-    }
-  },
-  { $out: coursesSciEng}
-]);
-
-// Export simplified courses for searching in timetable section, keeping the original _id
-db[coursesSciEng].aggregate([
-  { $project: {
-      title: '$title', instructor: '$instructor'
-    }
-  },
-  { $sort: { title: 1, instructor: 1 } },
-  { $out: coursesSciEngTimetable}
-]);
-
-
-// Export classrooms from courses and sort by building number and name
-db[coursesSciEng].aggregate([
-  { $unwind: '$occurrences' },
-  {
-    $group: {
-      _id: '$occurrences.location',
-      name: { $first: '$occurrences.classroom' },
-      building: { $first: '$occurrences.building' },
-      courses: {
-        $push: {
-          id: '$_id',
-          title: '$title',
-          occurrences: '$occurrences'
-        }
-      }
-    }
-  },
-  {
-    $project: {
-      _id: 0,
-      'courses.occurrences.location': 0,
-      'courses.occurrences.classroom': 0,
-      'courses.occurrences.building': 0
-    }
-  },
-  { $sort: { building: 1, name: 1 } },
-  { $out: classroomsSciEngTemp }
-]);
-
-db[classroomsSciEngTemp].find().forEach(function(classroom) {
-  // Taking 'building-classroom_name' as _id
-  classroom._id = classroom.building.toString() + '-' + classroom.name.toString();
-  db[classroomsSciEng].insert(classroom);
-});
-
-db[classroomsSciEngTemp].drop();
-
-// Export buildings from classrooms
-db[classroomsSciEng].aggregate([
-  {
-    $group: {
-      _id: '$building',
-      classrooms: { $push: { id: '$_id', name: '$name' } }
-    }
-  },
-  { $project: { _id: 0, name: '$_id', classrooms: 1 } },
-  { $out: buildingsSciEngUnsorted }
-]);
-
-
-// Sort buildings by name and sort all classrooms inside by name
-db[buildingsSciEngUnsorted].aggregate([
-  { $unwind: '$classrooms' },
-  { $sort: { name: 1, 'classrooms.name': 1 } },
-  {
-    $group: {
-      _id: '$name',
-      classrooms: { $push: { id: '$classrooms.id', name: '$classrooms.name' } }
-    }
-  },
-  { $sort: { _id: 1 } },
-  { $project: { _id: 0, name: '$_id', classrooms: 1 } },
-  { $out: buildingsSciEngTemp }
-]);
-
-// Drop unsorted buildings collection
-db[buildingsSciEngUnsorted].drop();
-
-db[buildingsSciEngTemp].find().forEach(function(building) {
-  // Taking name as _id
-  building._id = building.name.toString();
-  db[buildingsSciEng].insert(building);
-});
-
-db[buildingsSciEngTemp].drop();
-
-// Create index 'name' for buildings collection
-db[buildingsSciEng].createIndex({ name: 1 });
-
-// Group and export classroom schedules by weekdays
-// and sort by building number and name
-classroomsSciEngWeekdays.forEach(function(object) {
-  db.getCollection(classroomsSciEng).aggregate([
-    { $unwind: '$courses' },
-    { $match: { 'courses.occurrences.day': object.day } },
+function groupMultipleSchools(rawEntireYearCourses, entireYearCourses) {
+  var tempCollection = 'temp';
+  // Export distinct courses by grouping multiple schools in one array
+  db[rawEntireYearCourses].aggregate([
     {
       $group: {
-        _id: '$_id',
-        name: { $first: '$name' },
-        building: { $first: '$building' },
-        courses: { $push: '$courses' }
+        _id: { year: '$year', term: '$term', title: '$title', instructor: '$instructor', occurrences: '$occurrences',
+            programs: '$programs', lang: '$lang', code: '$code',
+        },
+        schools: { $push: '$school' },
+        links: {
+          $push: {
+            school: '$school',
+            link: '$_id'
+          }
+        }
       }
     },
-    { $sort: { building: 1, name: 1 } },
-    { $out: object.collection }
+    { $project: { _id: 0, year: '$_id.year', term: '$_id.term', title: '$_id.title',
+        instructor: '$_id.instructor', occurrences: '$_id.occurrences',
+        programs: '$_id.programs', lang: '$_id.lang',
+        code: '$_id.code', schools: '$schools', links: '$links'
+      }
+    },
+    { $out: tempCollection }
   ]);
-});
 
-// Create index 'building' for classrooms collection
-db[classroomsSciEng].createIndex({ building: 1 });
+  // Reassign _id value of every docs to first link(pKey) and insert to a new collection
+  db[tempCollection].find().forEach(function(course){
+    // Taking the first link as _id
+    course._id = course.links[0].link.toString();
+    db[entireYearCourses].insert(course)
+  });
 
-// Create index 'building' for weekday classrooms collection
-classroomsSciEngWeekdays.forEach(function(object) {
-  db[object.collection].createIndex({ building: 1 });
-});
+  // Drop temporary collection
+  db[tempCollection].drop();
+}
+
+groupMultipleSchools(rawEntireYearCoursesSciEng, entireYearCoursesSciEng);
+copyTo(rawEntireYearCoursesPse, entireYearCoursesPse);
+copyTo(rawEntireYearCoursesSils, entireYearCoursesSils);
+
+function sortEntireYearCourses(entireYearCourses) {
+  // Sort entireYearCourses collection by title then instructor
+  db[entireYearCourses].aggregate([
+      {$sort: {title: 1, instructor: 1}},
+      {$out: entireYearCourses}
+  ]);
+}
+
+sortEntireYearCourses(entireYearCoursesSciEng);
+sortEntireYearCourses(entireYearCoursesPse);
+sortEntireYearCourses(entireYearCoursesSils);
+
+function aggregateEntireYearCoursesSearch(entireYearCourses, entireYearCoursesSearch) {
+  // Export simplified courses for syllabus searching, keeping the original _id
+  db[entireYearCourses].aggregate([
+    { $project: {
+        title: '$title', year: '$year', term: '$term', instructor: '$instructor', schools: '$schools'
+      }
+    },
+    { $sort: { title: 1, instructor: 1 } },
+    { $out: entireYearCoursesSearch}
+  ]);
+}
+
+aggregateEntireYearCoursesSearch(entireYearCoursesSciEng, entireYearCoursesSciEngSearch);
+aggregateEntireYearCoursesSearch(entireYearCoursesPse, entireYearCoursesPseSearch);
+aggregateEntireYearCoursesSearch(entireYearCoursesSils, entireYearCoursesSilsSearch);
+
+function aggregateTermYearCourses(entireYearCourses, termYearCourses) {
+  // Export courses belonging to the current term/semester
+  db[entireYearCourses].aggregate([
+    {
+      $match: {
+        term: {
+          $in: current_terms
+        }
+      }
+    },
+    { $out: termYearCourses}
+  ]);
+}
+
+aggregateTermYearCourses(entireYearCoursesSciEng, termYearCoursesSciEng);
+aggregateTermYearCourses(entireYearCoursesPse, termYearCoursesPse);
+aggregateTermYearCourses(entireYearCoursesSils, termYearCoursesSils);
+
+function aggregateTermYearCoursesTimetable(termYearCourses, termYearCoursesTimetable) {
+  // Export simplified courses for searching in timetable section, keeping the original _id
+  db[termYearCourses].aggregate([
+    { $project: {
+        title: '$title', instructor: '$instructor'
+      }
+    },
+    { $sort: { title: 1, instructor: 1 } },
+    { $out: termYearCoursesTimetable}
+  ]);
+}
+
+aggregateTermYearCoursesTimetable(termYearCoursesSciEng, termYearCoursesSciEngTimetable);
+aggregateTermYearCoursesTimetable(termYearCoursesPse, termYearCoursesPseTimetable);
+aggregateTermYearCoursesTimetable(termYearCoursesSils, termYearCoursesSilsTimetable);
+
+// // Export classrooms from courses and sort by building number and name
+// db[coursesSciEng].aggregate([
+//   { $unwind: '$occurrences' },
+//   {
+//     $group: {
+//       _id: '$occurrences.location',
+//       name: { $first: '$occurrences.classroom' },
+//       building: { $first: '$occurrences.building' },
+//       courses: {
+//         $push: {
+//           id: '$_id',
+//           title: '$title',
+//           occurrences: '$occurrences'
+//         }
+//       }
+//     }
+//   },
+//   {
+//     $project: {
+//       _id: 0,
+//       'courses.occurrences.location': 0,
+//       'courses.occurrences.classroom': 0,
+//       'courses.occurrences.building': 0
+//     }
+//   },
+//   { $sort: { building: 1, name: 1 } },
+//   { $out: classroomsSciEngTemp }
+// ]);
+//
+// db[classroomsSciEngTemp].find().forEach(function(classroom) {
+//   // Taking 'building-classroom_name' as _id
+//   classroom._id = classroom.building.toString() + '-' + classroom.name.toString();
+//   db[classroomsSciEng].insert(classroom);
+// });
+//
+// db[classroomsSciEngTemp].drop();
+//
+// // Export buildings from classrooms
+// db[classroomsSciEng].aggregate([
+//   {
+//     $group: {
+//       _id: '$building',
+//       classrooms: { $push: { id: '$_id', name: '$name' } }
+//     }
+//   },
+//   { $project: { _id: 0, name: '$_id', classrooms: 1 } },
+//   { $out: buildingsSciEngUnsorted }
+// ]);
+//
+//
+// // Sort buildings by name and sort all classrooms inside by name
+// db[buildingsSciEngUnsorted].aggregate([
+//   { $unwind: '$classrooms' },
+//   { $sort: { name: 1, 'classrooms.name': 1 } },
+//   {
+//     $group: {
+//       _id: '$name',
+//       classrooms: { $push: { id: '$classrooms.id', name: '$classrooms.name' } }
+//     }
+//   },
+//   { $sort: { _id: 1 } },
+//   { $project: { _id: 0, name: '$_id', classrooms: 1 } },
+//   { $out: buildingsSciEngTemp }
+// ]);
+//
+// // Drop unsorted buildings collection
+// db[buildingsSciEngUnsorted].drop();
+//
+// db[buildingsSciEngTemp].find().forEach(function(building) {
+//   // Taking name as _id
+//   building._id = building.name.toString();
+//   db[buildingsSciEng].insert(building);
+// });
+//
+// db[buildingsSciEngTemp].drop();
+//
+// // Create index 'name' for buildings collection
+// db[buildingsSciEng].createIndex({ name: 1 });
+//
+// // Group and export classroom schedules by weekdays
+// // and sort by building number and name
+// classroomsSciEngWeekdays.forEach(function(object) {
+//   db.getCollection(classroomsSciEng).aggregate([
+//     { $unwind: '$courses' },
+//     { $match: { 'courses.occurrences.day': object.day } },
+//     {
+//       $group: {
+//         _id: '$_id',
+//         name: { $first: '$name' },
+//         building: { $first: '$building' },
+//         courses: { $push: '$courses' }
+//       }
+//     },
+//     { $sort: { building: 1, name: 1 } },
+//     { $out: object.collection }
+//   ]);
+// });
+//
+// // Create index 'building' for classrooms collection
+// db[classroomsSciEng].createIndex({ building: 1 });
+//
+// // Create index 'building' for weekday classrooms collection
+// classroomsSciEngWeekdays.forEach(function(object) {
+//   db[object.collection].createIndex({ building: 1 });
+// });
