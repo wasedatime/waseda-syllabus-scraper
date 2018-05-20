@@ -74,6 +74,7 @@ class MongoPipeline(object):
 
     def close_spider(self, spider):
         now = datetime.now().replace(microsecond=0)
+        self.stats_col.drop()
         self.stats_col.insert_one({'finish_time': str(now)})
         self.client.close()
 
