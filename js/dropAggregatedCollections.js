@@ -8,13 +8,25 @@ if (hostName.toString() === 'waseda-syllabus-scraper') {
 
 // drop all aggregated collections
 db[entireYearCoursesSciEng].drop();
+db[entireYearCoursesPse].drop();
+db[entireYearCoursesSils].drop();
+
 db[entireYearCoursesSciEngSearch].drop();
-db[coursesSciEng].drop();
-db[coursesSciEngTimetable].drop();
-db[classroomsSciEng].drop();
-classroomsSciEngWeekdays.forEach(function(object) {
-  collectionName = object.collection;
-  db.getCollection(collectionName).drop()
-});
-db[buildingsSciEngUnsorted].drop();
-db[buildingsSciEng].drop();
+db[entireYearCoursesPseSearch].drop();
+db[entireYearCoursesSilsSearch].drop();
+
+db[termYearCoursesSciEng].drop();
+db[termYearCoursesPse].drop();
+db[termYearCoursesSils].drop();
+
+db[termYearCoursesSciEngTimetable].drop();
+db[termYearCoursesPseTimetable].drop();
+db[termYearCoursesSilsTimetable].drop();
+
+// db[classroomsSciEng].drop();
+// classroomsSciEngWeekdays.forEach(function(object) {
+//   collectionName = object.collection;
+//   db.getCollection(collectionName).drop()
+// });
+// db[buildingsSciEngUnsorted].drop();
+// db[buildingsSciEng].drop();
