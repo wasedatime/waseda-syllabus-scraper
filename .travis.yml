@@ -11,4 +11,4 @@ after_success:
 - bash travis/deploy.sh
 addons:
   ssh_known_hosts:
-  - 128.199.92.161
+  - 159.89.210.122
