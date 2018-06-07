@@ -1,6 +1,6 @@
 hostName= db.hostInfo().system.hostname;
 
-if (hostName.toString() === 'waseda-syllabus-scraper') {
+if (hostName.toString() === 'WaseTime') {
     load('/home/deploy/waseda-syllabus-scraper/js/variables.js');
 } else {
     load('/Users/oscar/PythonProjects/waseda-syllabus-scraper/js/variables.js');
