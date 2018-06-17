@@ -43,6 +43,26 @@ class FilterByYearPipeline(object):
             return item
 
 
+class RenameCourseTermPipeline(object):
+
+    termMap = {
+        'fall semester': 'Fall',
+        'spring semester': 'Spring',
+        'fall quarter': 'Fall Quarter',
+        'spring quarter': 'Spring Quarter',
+        'summer quarter': 'Summer Quarter',
+        'winter quarter': 'Winter Quarter',
+        'full year': 'Full Year',
+        'an intensive course(spring and fall)': 'Intensive: Spring & Fall',
+        'an intensive course(spring)': 'Intensive: Spring',
+        'an intensive course(fall)': 'Intensive: Fall'
+    }
+
+    def process_item(self, item, spider):
+        item['term'] = self.termMap[item['term']]
+        return item
+
+
 # This pipeline exports the result to MongoDB.
 class MongoPipeline(object):
 
