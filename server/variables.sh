@@ -29,7 +29,7 @@ VIRTUAL_ENV_PATH="/Users/oscar/PythonProjects/waseda-syllabus-scraper-personal-v
 PROJECT_PATH="/Users/oscar/PythonProjects/waseda-syllabus-scraper/"
 DB_NAME="test"
 DB_PREV_NAME="${DB_NAME}_prev"
-API_PATH="/Users/oscar/WebDev/wasetime-api/api/${YEAR}/"
+API_PATH="/Users/oscar/WebDev/wasetime-api/api/static/${YEAR}/"
 
 # Don't for get spaces after '[' and before ']'! [ condition ]
 if [ "$DEPLOY" == "deploy" ]
@@ -39,5 +39,5 @@ then
     PROJECT_PATH="/home/deploy/waseda-syllabus-scraper/"
     DB_NAME="syllabus"
     DB_PREV_NAME="${DB_NAME}_prev"
-    API_PATH="/var/www/api/${YEAR}/"
+    API_PATH="/var/www/api/static/${YEAR}/"
 fi
