@@ -89,7 +89,7 @@ function groupMultipleSchools(rawEntireYearCourses, entireYearCourses) {
     {
       $group: {
         _id: { year: '$year', term: '$term', title: '$title', instructor: '$instructor', occurrences: '$occurrences',
-            programs: '$programs', lang: '$lang', code: '$code',
+            programs: '$programs', lang: '$lang', code: '$code'
         },
         schools: { $push: '$school' },
         links: {
@@ -121,9 +121,11 @@ function groupMultipleSchools(rawEntireYearCourses, entireYearCourses) {
 }
 
 groupMultipleSchools(rawEntireYearCoursesSciEng, entireYearCoursesSciEng);
-copyTo(rawEntireYearCoursesPse, entireYearCoursesPse);
-copyTo(rawEntireYearCoursesSils, entireYearCoursesSils);
-copyTo(rawEntireYearCoursesCjl, entireYearCoursesCjl);
+
+// Need to transform school:String field to schools:Array
+groupMultipleSchools(rawEntireYearCoursesPse, entireYearCoursesPse);
+groupMultipleSchools(rawEntireYearCoursesSils, entireYearCoursesSils);
+groupMultipleSchools(rawEntireYearCoursesCjl, entireYearCoursesCjl);
 
 copyTo(entireYearCoursesSciEng, entireYearCoursesAll);
 copyTo(entireYearCoursesPse, entireYearCoursesAll);
