@@ -63,6 +63,21 @@ class RenameCourseTermPipeline(object):
         return item
 
 
+class RenameCourseSchoolPipeline(object):
+    schoolMap = {
+        'Schl of Fund Sci/Eng': 'FSE',
+        'Schl Cre Sci/Eng': 'CSE',
+        'Schl Adv Sci/Eng': 'ASE',
+        'Schl Political Sci/Econo': 'PSE',
+        'SILS': 'SILS',
+        'CJL': 'CJL'
+    }
+
+    def process_item(self, item, spider):
+        item['school'] = self.schoolMap[item['school']]
+        return item
+
+
 # This pipeline exports the result to MongoDB.
 class MongoPipeline(object):
 

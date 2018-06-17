@@ -71,6 +71,7 @@ ITEM_PIPELINES = {
     'wsl_spider.pipelines.DuplicatesPipeline': 100,
     'wsl_spider.pipelines.FilterByYearPipeline': 200,
     'wsl_spider.pipelines.RenameCourseTermPipeline': 300,
+    'wsl_spider.pipelines.RenameCourseSchoolPipeline': 310,
     'wsl_spider.pipelines.MongoPipeline': 400,
 }
 
