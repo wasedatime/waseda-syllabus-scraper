@@ -42,8 +42,12 @@ def onclick_url_to_id(onclick_url):
     return _id
 
 
-def create_program_list(program):
-    return [program]
+def create_keyword_list(keyword):
+    # Create a list for str to be inserted in MongoDB.
+    if type(keyword) is str:
+        return [keyword]
+    else:
+        raise ValueError("Type of a keyword should a str.")
 
 
 class Course(Item):
@@ -53,7 +57,7 @@ class Course(Item):
     year = Field()
     term = Field()
     school = Field()
-    programs = Field()
+    keywords = Field()
     lang = Field()
     occurrences = Field()
     code = Field()
@@ -89,8 +93,8 @@ class CourseLoader(ItemLoader):
     school_in = MapCompose(str.strip, normalize_characters)
     school_out = TakeFirst()
 
-    programs_in = MapCompose(create_program_list)
-    programs_out = Identity()
+    keywords_in = MapCompose(create_keyword_list)
+    keywords_out = Identity()
 
     lang_in = MapCompose(str.strip, normalize_characters)
     lang_out = TakeFirst()

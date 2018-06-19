@@ -113,9 +113,11 @@ class MongoPipeline(object):
         self.stats_col.insert_one({'finish_time': str(now)})
         self.client.close()
 
-    def update_item_program(self, item_title, item_id, program):
-        self.col.update_one({'_id': item_id}, {"$addToSet": {'programs': program}})
-        logging.log(logging.INFO, "Added program '{}' to {} in collection {}".format(program, item_title, self.col.name))
+    def update_item_keyword(self, item_title, item_id, keywords):
+        # If keywords is absent in the document to update,
+        # $addToSet creates the array field with the specified value as its element.
+        self.col.update_one({'_id': item_id}, {"$addToSet": {'keywords': {"$each": keywords}}})
+        logging.log(logging.INFO, "Added program '{}' to {} in collection {}".format(keywords, item_title, self.col.name))
 
     def update_item_lang(self, item_title, item_id, lang):
         self.col.update_one({'_id': item_id}, {"$set": {'lang': lang}})
@@ -129,13 +131,9 @@ class MongoPipeline(object):
             logging.log(logging.WARNING, "Duplicate Key Course.")
             item_id = item['_id']
             item_title = item['title']
-            item_programs = item['programs'][0]
             item_lang = item['lang']
-            if spider.program != "others":
-                self.update_item_program(item_title, item_id, item_programs)
-            elif spider.lang != "others":
+            if "keywords" in item:
+                self.update_item_keyword(item_title, item_id, item['keywords'])
+            if item['lang'] != "others":
                 self.update_item_lang(item_title, item_id, item_lang)
-            else:
-                self.col.replace_one({'_id': item_id}, dict(item))
-                logging.log(logging.INFO, "Replaced with '{}' in collection {}".format(item_title, self.col.name))
         return item

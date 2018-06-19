@@ -52,7 +52,7 @@ class SearchSpider(Spider):
     name = 'search'
     allowed_domains = ['wsl.waseda.jp']
     basic_url = 'https://www.wsl.waseda.jp/syllabus/JAA103.php?'
-    target_programs = ['IPSE', 'English-based Undergraduate Program']
+    target_keywords = ['IPSE', 'English-based Undergraduate Program']
     close_spider_msg = "There are no more urls to scrape. Closing spider."
     reach_lower_bound_year_msg = "Scraped data has reached lower bound year {}."
     reach_empty_page_msg = "Scraper has reached an empty page."
@@ -64,12 +64,12 @@ class SearchSpider(Spider):
         self.display_lang = kwargs.get('display_lang')
         self.schools = kwargs.get('schools').split(',')
         self.teaching_lang = kwargs.get('teaching_lang')
-        self.keyword = kwargs.get('keyword')
+        self.search_keyword = kwargs.get('keyword')
         self.mongo_db = kwargs.get('mongo_db')
         self.mongo_col = kwargs.get('mongo_col')
-        # Check if we're searching for a target program
-        # Cannot use "" for others because it won't be loaded by scrapy
-        self.program = self.keyword if self.keyword in self.target_programs else "others"
+        # Check if we're searching for a target keyword
+        # If not, self.keyword is None and scraped items will not contain the keywords field
+        self.keyword = self.search_keyword if self.search_keyword in self.target_keywords else None
         # Check if we're searching for a target language
         # Cannot use "" for others because it won't be loaded by scrapy
         self.lang = self.teaching_lang if self.teaching_lang != "all" else "others"
@@ -87,7 +87,7 @@ class SearchSpider(Spider):
         self.current_page = self.start_page
 
         start_url = customize_url(self.basic_url, self.display_lang, self.term, self.start_school, self.teaching_lang,
-                                  self.keyword, self.results_per_page, self.start_page)
+                                  self.search_keyword, self.results_per_page, self.start_page)
         self.start_urls = [start_url]
         self.current_url = start_url
 
@@ -105,7 +105,7 @@ class SearchSpider(Spider):
             onclick_url = c_info.xpath('td[3]/a/@onclick').extract()
             cl.add_value(field_name='_id', value=onclick_url)
             cl.add_value(field_name='year', value=year)
-            cl.add_value(field_name='programs', value=self.program)
+            cl.add_value(field_name='keywords', value=self.keyword)
             cl.add_value(field_name='lang', value=self.lang)
 
             cl.add_xpath(field_name='code', xpath='td[2]/text()')
@@ -220,10 +220,10 @@ class SearchSpider(Spider):
     def increment_page_in_url_by(self, increment):
         self.current_page += increment
         self.current_url = customize_url(self.basic_url, self.display_lang, self.term, self.current_school,
-                                         self.teaching_lang, self.keyword, self.results_per_page, self.current_page)
+                                         self.teaching_lang, self.search_keyword, self.results_per_page, self.current_page)
 
     def update_school_in_url(self, schools):
         self.current_school = schools[0]
         self.current_page = self.start_page
         self.current_url = customize_url(self.basic_url, self.display_lang, self.term, self.current_school,
-                                         self.teaching_lang, self.keyword, self.results_per_page, self.current_page)
+                                         self.teaching_lang, self.search_keyword, self.results_per_page, self.current_page)
