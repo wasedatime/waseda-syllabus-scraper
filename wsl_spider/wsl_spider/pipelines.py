@@ -78,6 +78,18 @@ class RenameCourseSchoolPipeline(object):
         return item
 
 
+class RenameCourseLangPipeline(object):
+    langMap = {
+        'en': "EN",
+        'jp': "JP",
+        'others': "others"
+    }
+
+    def process_item(self, item, spider):
+        item['lang'] = self.langMap[item['lang']]
+        return item
+
+
 # This pipeline exports the result to MongoDB.
 class MongoPipeline(object):
 
