@@ -89,7 +89,7 @@ function groupMultipleSchools(rawEntireYearCourses, entireYearCourses) {
     {
       $group: {
         _id: { year: '$year', term: '$term', title: '$title', instructor: '$instructor', occurrences: '$occurrences',
-            programs: '$programs', lang: '$lang', code: '$code'
+            keywords: '$keywords', lang: '$lang', code: '$code'
         },
         schools: { $push: '$school' },
         links: {
@@ -102,7 +102,7 @@ function groupMultipleSchools(rawEntireYearCourses, entireYearCourses) {
     },
     { $project: { _id: 0, year: '$_id.year', term: '$_id.term', title: '$_id.title',
         instructor: '$_id.instructor', occurrences: '$_id.occurrences',
-        programs: '$_id.programs', lang: '$_id.lang',
+        keywords: '$_id.keywords', lang: '$_id.lang',
         code: '$_id.code', schools: '$schools', links: '$links'
       }
     },
