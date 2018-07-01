@@ -151,8 +151,8 @@ class SearchSpider(Spider):
                 ol.add_value(field_name='day', value=day)
                 ol.add_value(field_name='start_period', value=start_period)
                 ol.add_value(field_name='end_period', value=end_period)
-                ol.add_value(field_name='start_time', value=int(start_time))
-                ol.add_value(field_name='end_time', value=int(end_time))
+                # ol.add_value(field_name='start_time', value=int(start_time))
+                # ol.add_value(field_name='end_time', value=int(end_time))
 
                 location_match = re.match(
                     r'(\d{2}:)?(?P<building>\d+)-(?P<classroom>.*)', location
