@@ -36,9 +36,9 @@ function correctInvalidClassrooms(object, rawEntireYearCourses) {
 }
 
 // These are the common invalid classroom names in courses
-// belonging to Nishiwaseda campus.
-// You can define your own ones if necessary.
-var commonInvalidClassroomsAndCorrections = [
+// belonging to science engineering campus.
+// useful regex for finding: [^a-zA-Z0-9\s\{\}\[\]\:\,\.\-';"\_\(\)\/\\]
+var sciEngInvalidClassroomsAndCorrections = [
   {
     invalidClassroom: '61号館2階',
     newLocation: '61-2F',
@@ -68,17 +68,82 @@ var commonInvalidClassroomsAndCorrections = [
     newLocation: '50-304',
     newBuilding: '50',
     newClassroom: '304'
+  },
+  {
+    invalidClassroom: '255B教室',
+    newLocation: '61-255B',
+    newBuilding: '61',
+    newClassroom: '255B'
+  },
+  {
+    invalidClassroom: '711教室',
+    newLocation: '51-711',
+    newBuilding: '51',
+    newClassroom: '711'
+  },
+  {
+    invalidClassroom: '3F 社工演習室',
+    newLocation: '58-3F',
+    newBuilding: '58',
+    newClassroom: '3F'
+  },
+  {
+    invalidClassroom: '801教室',
+    newLocation: '51-801',
+    newBuilding: '51',
+    newClassroom: '801'
+  }
+];
+
+//実習室
+var pseTrainingRooms = ['909', '910', '912', '913', '914', '915', '916', '917', '918', '1103', '1104', '1115', '1116'];
+
+var pseInvalidClassroomsAndCorrections = pseTrainingRooms.map(function(room) {
+  return {
+    invalidClassroom: room.concat('実習室'),
+    newLocation: '3-'.concat(room),
+    newBuilding: '3',
+    newClassroom: room
+  };
+});
+
+var cjlInvalidClassroomsAndCorrections = [
+  {
+    invalidClassroom: '504(コンピュータ教室)科学技術計算',
+    newLocation: '14-504',
+    newBuilding: '14',
+    newClassroom: '504'
+  },
+  {
+    invalidClassroom: '408(コンピュータ教室)',
+    newLocation: '16-408',
+    newBuilding: '16',
+    newClassroom: '408'
   }
 ];
 
 // Find and correct invalid classroom field embedded in
 // an array of course documents.
-// Disable this function if your data contains
+// No need to use this function if your data contains
 // no invalid classroom names.
-commonInvalidClassroomsAndCorrections.forEach(function(object) {
+sciEngInvalidClassroomsAndCorrections.forEach(function(object) {
   var returnData = 1;
   while (returnData !== null) {
     returnData = correctInvalidClassrooms(object, rawEntireYearCoursesSciEng);
+  }
+});
+
+pseInvalidClassroomsAndCorrections.forEach(function(object) {
+  var returnData = 1;
+  while (returnData !== null) {
+    returnData = correctInvalidClassrooms(object, rawEntireYearCoursesPse);
+  }
+});
+
+cjlInvalidClassroomsAndCorrections.forEach(function(object) {
+  var returnData = 1;
+  while (returnData !== null) {
+    returnData = correctInvalidClassrooms(object, rawEntireYearCoursesCjl);
   }
 });
 
