@@ -95,6 +95,38 @@ var sciEngInvalidClassroomsAndCorrections = [
   }
 ];
 
+var silsPseInvalidClassroomsAndCorrections = [
+  {
+    invalidClassroom: '201(Center for Teaching,Learning, and Technology Active Learning)',
+    newLocation: '3-201',
+    newBuilding: '3',
+    newClassroom: '201'
+  },
+  {
+    invalidClassroom: '202(Center for Teaching,Learning, and Technology Active Learning)',
+    newLocation: '3-202',
+    newBuilding: '3',
+    newClassroom: '202'
+  },
+  {
+    invalidClassroom: '203(Center for Teaching,Learning, and Technology Active Learning)',
+    newLocation: '3-203',
+    newBuilding: '3',
+    newClassroom: '203'
+  }
+];
+
+var silsInvalidClassroomsAndCorrections = [
+  {
+    invalidClassroom: '806共同利用研究室7',
+    newLocation: '14-806',
+    newBuilding: '14',
+    newClassroom: '806'
+  }
+];
+
+silsInvalidClassroomsAndCorrections = silsInvalidClassroomsAndCorrections.concat(silsPseInvalidClassroomsAndCorrections);
+
 //実習室
 var pseTrainingRooms = ['909', '910', '912', '913', '914', '915', '916', '917', '918', '1103', '1104', '1115', '1116'];
 
@@ -106,6 +138,8 @@ var pseInvalidClassroomsAndCorrections = pseTrainingRooms.map(function(room) {
     newClassroom: room
   };
 });
+
+pseInvalidClassroomsAndCorrections = pseInvalidClassroomsAndCorrections.concat(silsPseInvalidClassroomsAndCorrections);
 
 var cjlInvalidClassroomsAndCorrections = [
   {
@@ -130,6 +164,13 @@ sciEngInvalidClassroomsAndCorrections.forEach(function(object) {
   var returnData = 1;
   while (returnData !== null) {
     returnData = correctInvalidClassrooms(object, rawEntireYearCoursesSciEng);
+  }
+});
+
+silsInvalidClassroomsAndCorrections.forEach(function(object) {
+  var returnData = 1;
+  while (returnData !== null) {
+    returnData = correctInvalidClassrooms(object, rawEntireYearCoursesSils);
   }
 });
 
