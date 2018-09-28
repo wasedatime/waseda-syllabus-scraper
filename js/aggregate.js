@@ -95,7 +95,7 @@ var sciEngInvalidClassroomsAndCorrections = [
   }
 ];
 
-var silsPseInvalidClassroomsAndCorrections = [
+var silsPseCjlInvalidClassroomsAndCorrections = [
   {
     invalidClassroom: '201(Center for Teaching,Learning, and Technology Active Learning)',
     newLocation: '3-201',
@@ -125,7 +125,7 @@ var silsInvalidClassroomsAndCorrections = [
   }
 ];
 
-silsInvalidClassroomsAndCorrections = silsInvalidClassroomsAndCorrections.concat(silsPseInvalidClassroomsAndCorrections);
+silsInvalidClassroomsAndCorrections = silsInvalidClassroomsAndCorrections.concat(silsPseCjlInvalidClassroomsAndCorrections);
 
 //実習室
 var pseTrainingRooms = ['909', '910', '912', '913', '914', '915', '916', '917', '918', '1103', '1104', '1115', '1116'];
@@ -139,7 +139,7 @@ var pseInvalidClassroomsAndCorrections = pseTrainingRooms.map(function(room) {
   };
 });
 
-pseInvalidClassroomsAndCorrections = pseInvalidClassroomsAndCorrections.concat(silsPseInvalidClassroomsAndCorrections);
+pseInvalidClassroomsAndCorrections = pseInvalidClassroomsAndCorrections.concat(silsPseCjlInvalidClassroomsAndCorrections);
 
 var cjlInvalidClassroomsAndCorrections = [
   {
@@ -155,6 +155,8 @@ var cjlInvalidClassroomsAndCorrections = [
     newClassroom: '408'
   }
 ];
+
+cjlInvalidClassroomsAndCorrections = cjlInvalidClassroomsAndCorrections.concat(silsPseCjlInvalidClassroomsAndCorrections);
 
 // Find and correct invalid classroom field embedded in
 // an array of course documents.
