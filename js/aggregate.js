@@ -231,6 +231,7 @@ groupMultipleSchools(rawEntireYearCoursesSciEng, entireYearCoursesSciEng);
 // Need to transform school:String field to schools:Array
 groupMultipleSchools(rawEntireYearCoursesPse, entireYearCoursesPse);
 groupMultipleSchools(rawEntireYearCoursesSils, entireYearCoursesSils);
+groupMultipleSchools(rawEntireYearCoursesSss, entireYearCoursesSss);
 groupMultipleSchools(rawEntireYearCoursesCjl, entireYearCoursesCjl);
 
 copyTo(entireYearCoursesSciEng, entireYearCoursesAll);
