@@ -55,7 +55,12 @@ class RenameCourseTermPipeline(object):
         'full year': 'Full Year',
         'an intensive course(spring and fall)': 'Intensive: Spring & Fall',
         'an intensive course(spring)': 'Intensive: Spring',
-        'an intensive course(fall)': 'Intensive: Fall'
+        'an intensive course(fall)': 'Intensive: Fall',
+
+        # Due to Waseda's inconsistent data in SSS.
+        'summer': 'Summer',
+        'spring': 'Spring',
+        'spring semester and summer': 'Spring'
     }
 
     def process_item(self, item, spider):
@@ -70,6 +75,7 @@ class RenameCourseSchoolPipeline(object):
         'Schl Adv Sci/Eng': 'ASE',
         'Schl Political Sci/Econo': 'PSE',
         'SILS': 'SILS',
+        'Schl Social Sci': 'SSS',
         'CJL': 'CJL'
     }
 
