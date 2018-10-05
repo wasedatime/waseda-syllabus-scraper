@@ -36,6 +36,7 @@ var suffixCoursesAll = '_courses_all';
 var suffixCoursesSciEng = '_courses_sci_eng';
 var suffixCoursesPse = '_courses_pse';
 var suffixCoursesSils = '_courses_sils';
+var suffixCoursesSss = '_courses_sss';
 var suffixCoursesCjl = '_courses_cjl';
 
 // rawCoursesAll is the name of the initial collection containing the scraped courses info
@@ -44,6 +45,7 @@ var rawEntireYearCoursesAll = raw + entireYear + suffixCoursesAll;
 var rawEntireYearCoursesSciEng = raw + entireYear + suffixCoursesSciEng;
 var rawEntireYearCoursesPse = raw + entireYear + suffixCoursesPse;
 var rawEntireYearCoursesSils = raw + entireYear + suffixCoursesSils;
+var rawEntireYearCoursesSss = raw + entireYear + suffixCoursesSss;
 var rawEntireYearCoursesCjl = raw + entireYear + suffixCoursesCjl;
 
 // the doc _id field in this collection is the first pKey if multiple schools exist.
@@ -51,12 +53,14 @@ var entireYearCoursesAll = entireYear + suffixCoursesAll;
 var entireYearCoursesSciEng =  entireYear + suffixCoursesSciEng;
 var entireYearCoursesPse = entireYear + suffixCoursesPse;
 var entireYearCoursesSils = entireYear + suffixCoursesSils;
+var entireYearCoursesSss = entireYear + suffixCoursesSss;
 var entireYearCoursesCjl = entireYear + suffixCoursesCjl;
 
 var termYearCoursesAll = termYear + suffixCoursesAll;
 var termYearCoursesSciEng = termYear + suffixCoursesSciEng;
 var termYearCoursesPse = termYear + suffixCoursesPse;
 var termYearCoursesSils = termYear + suffixCoursesSils;
+var termYearCoursesSss = termYear + suffixCoursesSss;
 var termYearCoursesCjl = termYear + suffixCoursesCjl;
 
 // var classroomsSciEngTemp = termYear + '_classrooms_sci_eng_all' + suffixTemp;

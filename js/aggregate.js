@@ -236,6 +236,7 @@ groupMultipleSchools(rawEntireYearCoursesCjl, entireYearCoursesCjl);
 copyTo(entireYearCoursesSciEng, entireYearCoursesAll);
 copyTo(entireYearCoursesPse, entireYearCoursesAll);
 copyTo(entireYearCoursesSils, entireYearCoursesAll);
+copyTo(entireYearCoursesSss, entireYearCoursesAll);
 copyTo(entireYearCoursesCjl, entireYearCoursesAll);
 
 function sortEntireYearCourses(entireYearCourses) {
@@ -250,6 +251,7 @@ sortEntireYearCourses(entireYearCoursesAll);
 sortEntireYearCourses(entireYearCoursesSciEng);
 sortEntireYearCourses(entireYearCoursesPse);
 sortEntireYearCourses(entireYearCoursesSils);
+sortEntireYearCourses(entireYearCoursesSss);
 sortEntireYearCourses(entireYearCoursesCjl);
 
 function aggregateEntireYearCoursesSearch(entireYearCourses) {
@@ -270,6 +272,7 @@ aggregateEntireYearCoursesSearch(entireYearCoursesAll);
 aggregateEntireYearCoursesSearch(entireYearCoursesSciEng);
 aggregateEntireYearCoursesSearch(entireYearCoursesPse);
 aggregateEntireYearCoursesSearch(entireYearCoursesSils);
+aggregateEntireYearCoursesSearch(entireYearCoursesSss);
 aggregateEntireYearCoursesSearch(entireYearCoursesCjl);
 
 function aggregateTermYearCourses(entireYearCourses, termYearCourses) {
@@ -290,6 +293,7 @@ aggregateTermYearCourses(entireYearCoursesAll, termYearCoursesAll);
 aggregateTermYearCourses(entireYearCoursesSciEng, termYearCoursesSciEng);
 aggregateTermYearCourses(entireYearCoursesPse, termYearCoursesPse);
 aggregateTermYearCourses(entireYearCoursesSils, termYearCoursesSils);
+aggregateTermYearCourses(entireYearCoursesSss, termYearCoursesSss);
 aggregateTermYearCourses(entireYearCoursesCjl, termYearCoursesCjl);
 
 function aggregateTermYearCoursesTimetable(termYearCourses) {
@@ -310,6 +314,7 @@ aggregateTermYearCoursesTimetable(termYearCoursesAll);
 aggregateTermYearCoursesTimetable(termYearCoursesSciEng);
 aggregateTermYearCoursesTimetable(termYearCoursesPse);
 aggregateTermYearCoursesTimetable(termYearCoursesSils);
+aggregateTermYearCoursesTimetable(termYearCoursesSss);
 aggregateTermYearCoursesTimetable(termYearCoursesCjl);
 
 // // Export classrooms from courses and sort by building number and name

@@ -24,7 +24,8 @@ def customize_url(url, display_lang, term, school, teaching_lang, keyword, resul
         'fund_sci_eng': "262006",
         'cre_sci_eng': "272006",
         'adv_sci_eng': "282006",
-        'cjl': "922006"
+        'cjl': "922006",
+        'sss': "181966"
     }
     teaching_langs = {'all': "", 'n/a': "00", 'jp': "01", 'en': "02"}
     # Use dict to represent enum

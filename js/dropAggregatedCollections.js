@@ -18,6 +18,7 @@ dropAggregatedCollections(entireYearCoursesAll, termYearCoursesAll);
 dropAggregatedCollections(entireYearCoursesSciEng, termYearCoursesSciEng);
 dropAggregatedCollections(entireYearCoursesPse, termYearCoursesPse);
 dropAggregatedCollections(entireYearCoursesSils, termYearCoursesSils);
+dropAggregatedCollections(entireYearCoursesSss, termYearCoursesSss);
 dropAggregatedCollections(entireYearCoursesCjl, termYearCoursesCjl);
 
 // db[classroomsSciEng].drop();
