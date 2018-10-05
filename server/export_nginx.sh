@@ -12,6 +12,7 @@ export_courses ${entire_year_courses_all} "all" \
 && export_courses ${entire_year_courses_sci_eng} "sci_eng" \
 && export_courses ${entire_year_courses_pse} "pse" \
 && export_courses ${entire_year_courses_sils} "sils" \
+&& export_courses ${entire_year_courses_sss} "sss" \
 && export_courses ${entire_year_courses_cjl} "cjl"
 
 
