@@ -34,5 +34,5 @@ scrape "en" ${schools_sci_eng} "all" "" ${DB_NAME} ${raw_entire_year_courses_sci
 && scrape "en" ${school_sils} "jp" "" ${DB_NAME} ${raw_entire_year_courses_sils} \
 && scrape "en" ${school_sss} "all" "" ${DB_NAME} ${raw_entire_year_courses_sss} \
 && scrape "en" ${school_sss} "en" "" ${DB_NAME} ${raw_entire_year_courses_sss} \
-&& scrape "en" ${school_sss} "jp" "" ${DB_NAME} ${raw_entire_year_courses_sss}
+&& scrape "en" ${school_sss} "jp" "" ${DB_NAME} ${raw_entire_year_courses_sss} \
 && scrape "en" ${school_cjl} "jp" "" ${DB_NAME} ${raw_entire_year_courses_cjl}
