@@ -44,20 +44,50 @@ class FilterByYearPipeline(object):
 
 
 class RenameCourseTermPipeline(object):
+    terms = {
+        'spring': 'Spring',
+        'summer': 'Summer',
+        'fall': 'Fall',
+        'winter': 'Winter',
+
+        'springQuarter': 'Spring Quarter',
+        'summerQuarter': 'Summer Quarter',
+        'fallQuarter': 'Fall Quarter',
+        'winterQuarter': 'Winter Quarter',
+        'fullYear': 'Full Year',
+
+        'intensiveSpring': 'Intensive: Spring',
+        'intensiveFall': 'Intensive: Fall',
+        'intensiveSpringFall': 'Intensive: Spring & Fall',
+
+    }
 
     termMap = {
-        'fall semester': 'Fall',
-        'spring semester': 'Spring',
-        'fall quarter': 'Fall Quarter',
-        'spring quarter': 'Spring Quarter',
-        'summer quarter': 'Summer Quarter',
-        'winter quarter': 'Winter Quarter',
-        'full year': 'Full Year',
-        'an intensive course(spring and fall)': 'Intensive: Spring & Fall',
-        'an intensive course(spring)': 'Intensive: Spring',
-        'an intensive course(fall)': 'Intensive: Fall',
+        '秋学期': terms['fall'],
+        'fall semester': terms['fall'],
+        '春学期': terms['spring'],
+        'spring semester': terms['spring'],
+
+        '春クォーター': terms['springQuarter'],
+        'spring quarter': terms['springQuarter'],
+        '夏クォーター': terms['summerQuarter'],
+        'summer quarter': terms['summerQuarter'],
+        '秋クォーター': terms['fallQuarter'],
+        'fall quarter': terms['fallQuarter'],
+        '冬クォーター': terms['winterQuarter'],
+        'winter quarter': terms['winterQuarter'],
+        '通年': terms['fullYear'],
+        'full year': terms['fullYear'],
+
+        '集中講義（春学期）': terms['intensiveSpring'],
+        'an intensive course(spring)': terms['intensiveSpring'],
+        '集中講義（秋学期）': terms['intensiveFall'],
+        'an intensive course(fall)': terms['intensiveFall'],
+        '集中（春・秋学期）': terms['intensiveSpringFall'],
+        'an intensive course(spring and fall)': terms['intensiveSpringFall'],
 
         # Due to Waseda's inconsistent data in SSS.
+        '夏季集中': 'Summer',
         'summer': 'Summer',
         'spring': 'Spring',
         'spring semester and summer': 'Spring'
@@ -76,7 +106,8 @@ class RenameCourseSchoolPipeline(object):
         'Schl Political Sci/Econo': 'PSE',
         'SILS': 'SILS',
         'Schl Social Sci': 'SSS',
-        'CJL': 'CJL'
+        'CJL': 'CJL',
+        'Schl Sport Sci': 'SPS'
     }
 
     def process_item(self, item, spider):
@@ -135,11 +166,15 @@ class MongoPipeline(object):
         # If keywords is absent in the document to update,
         # $addToSet creates the array field with the specified value as its element.
         self.col.update_one({'_id': item_id}, {"$addToSet": {'keywords': {"$each": keywords}}})
-        logging.log(logging.INFO, "Added program '{}' to {} in collection {}".format(keywords, item_title, self.col.name))
+        logging.log(logging.INFO, "Add program '{}' to {} in collection {}".format(keywords, item_title, self.col.name))
 
     def update_item_lang(self, item_title, item_id, lang):
         self.col.update_one({'_id': item_id}, {"$set": {'lang': lang}})
         logging.log(logging.INFO, "Set lang '{}' for {} in collection {}".format(lang, item_title, self.col.name))
+
+    def add_item_title_jp(self, item_title_jp, item_id):
+        self.col.update_one({'_id': item_id}, {"$set": {'title_jp': item_title_jp}})
+        logging.log(logging.INFO, "Add title_jp '{}' for id {} in collection {}".format(item_title_jp, item_id, self.col.name))
 
     def process_item(self, item, spider):
         try:
@@ -150,8 +185,11 @@ class MongoPipeline(object):
             item_id = item['_id']
             item_title = item['title']
             item_lang = item['lang']
-            if "keywords" in item:
+            if spider.display_lang == "jp":
+                self.add_item_title_jp(item_title, item_id)
+            elif "keywords" in item:
                 self.update_item_keyword(item_title, item_id, item['keywords'])
-            if item['lang'] != "others":
+            elif item['lang'] != "others":
                 self.update_item_lang(item_title, item_id, item_lang)
+
         return item
