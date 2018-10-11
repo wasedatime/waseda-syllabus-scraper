@@ -10,6 +10,7 @@ school_pse="poli_sci"
 school_sils="sils"
 school_sss="sss"
 school_cjl="cjl"
+school_sports_sci="sports_sci"
 
 # Raw collections
 raw_entire_year_courses_all="${raw}${entire_year}_all"
@@ -18,6 +19,7 @@ raw_entire_year_courses_pse="${raw}${entire_year}_courses_pse"
 raw_entire_year_courses_sils="${raw}${entire_year}_courses_sils"
 raw_entire_year_courses_sss="${raw}${entire_year}_courses_sss"
 raw_entire_year_courses_cjl="${raw}${entire_year}_courses_cjl"
+raw_entire_year_courses_sports_sci="${raw}${entire_year}_courses_sports_sci"
 
 entire_year_courses_all="${entire_year}_courses_all"
 entire_year_courses_sci_eng="${entire_year}_courses_sci_eng"
@@ -25,6 +27,7 @@ entire_year_courses_pse="${entire_year}_courses_pse"
 entire_year_courses_sils="${entire_year}_courses_sils"
 entire_year_courses_sss="${entire_year}_courses_sss"
 entire_year_courses_cjl="${entire_year}_courses_cjl"
+entire_year_courses_sports_sci="${entire_year}_courses_sports_sci"
 
 YEAR="2018-2019"
 SCRIPT_PATH="/Users/oscar/PythonProjects/waseda-syllabus-scraper/server/"
