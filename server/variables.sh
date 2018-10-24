@@ -16,6 +16,27 @@ academic_year=$(get_academic_year)
 next_academic_year=$((academic_year + 1))
 entire_academic_year="entire_${academic_year}"
 
+YEAR=${academic_year}-${next_academic_year}
+BASE_PATH="/Users/oscar/PythonProjects"
+PROJECT_PATH="${BASE_PATH}/waseda-syllabus-scraper"
+SCRIPT_PATH="${PROJECT_PATH}server/"
+VIRTUAL_ENV_PATH="${BASE_PATH}/waseda-syllabus-scraper-personal-virtualenv/"
+DB_NAME="test"
+DB_PREV_NAME="${DB_NAME}_prev"
+API_PATH="/Users/oscar/WebDev/wasetime-api/api/static/${YEAR}/"
+
+# Don't for get spaces after '[' and before ']'! [ condition ]
+if [ "$DEPLOY" = "deploy" ]; then
+    SCRIPT_PATH="/home/deploy/waseda-syllabus-scraper/server/"
+    VIRTUAL_ENV_PATH="/home/deploy/deploy-virtual-env/"
+    PROJECT_PATH="/home/deploy/waseda-syllabus-scraper/"
+    DB_NAME="syllabus"
+    DB_PREV_NAME="${DB_NAME}_prev"
+    API_PATH="/var/www/api/static/${YEAR}/"
+fi
+
+
+
 school_ALL="ALL"
 school_PSE="PSE"
 school_LAW="LAW"
@@ -182,22 +203,3 @@ raw_entire_year_courses_CIE=$(            concat_variables ${raw} ${entire_year_
 raw_entire_year_courses_GEC=$(            concat_variables ${raw} ${entire_year_courses_GEC})
 
 
-YEAR=${academic_year}-${next_academic_year}
-SCRIPT_PATH="/Users/oscar/PythonProjects/waseda-syllabus-scraper/server/"
-VIRTUAL_ENV_PATH="/Users/oscar/PythonProjects/waseda-syllabus-scraper-personal-virtualenv/"
-PROJECT_PATH="/Users/oscar/PythonProjects/waseda-syllabus-scraper/"
-DB_NAME="test"
-DB_PREV_NAME="${DB_NAME}_prev"
-API_PATH="/Users/oscar/WebDev/wasetime-api/api/static/${YEAR}/"
-
-# Don't for get spaces after '[' and before ']'! [ condition ]
-if [ "$DEPLOY" = "deploy" ]; then
-    SCRIPT_PATH="/home/deploy/waseda-syllabus-scraper/server/"
-    VIRTUAL_ENV_PATH="/home/deploy/deploy-virtual-env/"
-    PROJECT_PATH="/home/deploy/waseda-syllabus-scraper/"
-    DB_NAME="syllabus"
-    DB_PREV_NAME="${DB_NAME}_prev"
-    API_PATH="/var/www/api/static/${YEAR}/"
-fi
-
-echo ${raw_entire_year_courses_ALL}
