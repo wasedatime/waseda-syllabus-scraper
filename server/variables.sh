@@ -13,8 +13,8 @@ get_academic_year() {
 }
 
 raw="raw_"
-# year=$(date +'%Y') be careful for January, February.
 academic_year=$(get_academic_year)
+next_academic_year=$((academic_year + 1))
 entire_academic_year="entire_${academic_year}"
 
 school_PSE="PSE"
@@ -83,7 +83,7 @@ entire_year_courses_sss="${entire_academic_year}_courses_sss"
 entire_year_courses_cjl="${entire_academic_year}_courses_cjl"
 entire_year_courses_sports_sci="${entire_academic_year}_courses_sports_sci"
 
-YEAR=${academic_year}-$((academic_year++))
+YEAR=${academic_year}-${next_academic_year}
 SCRIPT_PATH="/Users/oscar/PythonProjects/waseda-syllabus-scraper/server/"
 VIRTUAL_ENV_PATH="/Users/oscar/PythonProjects/waseda-syllabus-scraper-personal-virtualenv/"
 PROJECT_PATH="/Users/oscar/PythonProjects/waseda-syllabus-scraper/"
