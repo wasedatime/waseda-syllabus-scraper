@@ -19,20 +19,33 @@ scrape () {
     -d "$1" -s "$2" -t "$3" -k "$4" -b "$5" -c "$6"
 }
 
-# Arguments: displayed_language, schools, teaching_language, single_keyword, database, collection
+academics_to_scrape=( $(jq -r '.[]' ${DATA_PATH}academics_to_scrape.json ) )
 
-scrape "en" ${schools_sci_eng} "all" "" ${DB_NAME} ${raw_entire_year_courses_sci_eng} \
-&& scrape "en" ${schools_sci_eng} "jp" "" ${DB_NAME} ${raw_entire_year_courses_sci_eng} \
-&& scrape "en" ${schools_sci_eng} "en" "" ${DB_NAME} ${raw_entire_year_courses_sci_eng} \
-&& scrape "en" ${schools_sci_eng} "all" "IPSE" ${DB_NAME} ${raw_entire_year_courses_sci_eng} \
-&& scrape "en" ${schools_sci_eng} "all" "English-based Undergraduate Program" ${DB_NAME} ${raw_entire_year_courses_sci_eng} \
-&& scrape "en" ${school_pse} "all" "" ${DB_NAME} ${raw_entire_year_courses_pse} \
-&& scrape "en" ${school_pse} "en" "" ${DB_NAME} ${raw_entire_year_courses_pse} \
-&& scrape "en" ${school_pse} "jp" "" ${DB_NAME} ${raw_entire_year_courses_pse} \
-&& scrape "en" ${school_sils} "all" "" ${DB_NAME} ${raw_entire_year_courses_sils} \
-&& scrape "en" ${school_sils} "en" "" ${DB_NAME} ${raw_entire_year_courses_sils} \
-&& scrape "en" ${school_sils} "jp" "" ${DB_NAME} ${raw_entire_year_courses_sils} \
-&& scrape "en" ${school_sss} "all" "" ${DB_NAME} ${raw_entire_year_courses_sss} \
-&& scrape "en" ${school_sss} "en" "" ${DB_NAME} ${raw_entire_year_courses_sss} \
-&& scrape "en" ${school_sss} "jp" "" ${DB_NAME} ${raw_entire_year_courses_sss} \
-&& scrape "en" ${school_cjl} "jp" "" ${DB_NAME} ${raw_entire_year_courses_cjl}
+for e in "${academics_to_scrape[@]}"
+do
+    # raw_entire_year_courses_school_name is a dynamic variable.
+    # Its value it the 'variable name' of the current school name 'e'.
+    # E.g., if e is 'PSE', the value of raw_entire_year_courses_school_name is raw_entire_year_courses_PSE.
+    raw_entire_year_courses_school_name=raw_entire_year_courses_${e}
+
+    # School FSE, ASE, CSE has special keywords IPSE and English-based Undergraduate Program.
+    if [ "$e" = "FSE" ] || [ "$e" = "ASE" ] || [ "$e" = "CSE" ]; then
+        # ! mark is used for indirect expansion.
+        # This allows bash to use the value of the variable raw_entire_year_courses_school_name as a variable,
+        # and then expand it so that its value is used in the rest of substitution.
+        # E.g., if echo ${raw_entire_year_courses_school_name} is raw_entire_year_courses_PSE
+        # echo ${!raw_entire_year_courses_school_name} is the 'value' of ${raw_entire_year_courses_PSE}
+
+        # Arguments: displayed_language, school, teaching_language, single_keyword, database, collection
+        scrape "en" ${e} "all" "" ${DB_NAME} ${!raw_entire_year_courses_school_name} \
+        && scrape "en" ${e} "en" "" ${DB_NAME} ${!raw_entire_year_courses_school_name} \
+        && scrape "en" ${e} "jp" "" ${DB_NAME} ${!raw_entire_year_courses_school_name} \
+        && scrape "en" ${e} "all" "IPSE" ${DB_NAME} ${!raw_entire_year_courses_school_name} \
+        && scrape "en" ${e} "all" "English-based Undergraduate Program" ${DB_NAME} ${!raw_entire_year_courses_school_name}
+    else
+        scrape "en" ${e} "all" "" ${DB_NAME} ${!raw_entire_year_courses_school_name} \
+        && scrape "en" ${e} "en" "" ${DB_NAME} ${!raw_entire_year_courses_school_name} \
+        && scrape "en" ${e} "jp" "" ${DB_NAME} ${!raw_entire_year_courses_school_name} \
+        && scrape "jp" ${e} "all" "" ${DB_NAME} ${!raw_entire_year_courses_school_name}
+    fi
+done
