@@ -41,8 +41,8 @@ if [ "$DEPLOY" = "deploy" ]; then
     API_PATH="/var/www/api/static/${YEAR}/"
 fi
 
-# Read school names from academics.json
-academic_array=( $(jq -r '.[]' ${DATA_PATH}academics.json ) )
+# Read school codes from the TOP level keys in academics.json
+academic_array=( $(jq -r '.[] | keys[]' ${DATA_PATH}academics.json ) )
 
 # Declare dynamic variables and values for schools, e.g. school_PSE="PSE"
 for i in "${academic_array[@]}"
@@ -82,8 +82,6 @@ for i in "${academic_array[@]}"
 do
     declare entire_year_courses_${i}=$(concat_variables ${entire_academic_year} ${courses} ${i})
 done
-
-
 
 #entire_year_courses_all="${entire_academic_year}_courses_all"
 #entire_year_courses_sci_eng="${entire_academic_year}_courses_sci_eng"
