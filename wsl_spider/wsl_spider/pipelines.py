@@ -99,19 +99,16 @@ class RenameCourseTermPipeline(object):
 
 
 class RenameCourseSchoolPipeline(object):
-    schoolMap = {
-        'Schl of Fund Sci/Eng': 'FSE',
-        'Schl Cre Sci/Eng': 'CSE',
-        'Schl Adv Sci/Eng': 'ASE',
-        'Schl Political Sci/Econo': 'PSE',
-        'SILS': 'SILS',
-        'Schl Social Sci': 'SSS',
-        'CJL': 'CJL',
-        'Schl Sport Sci': 'SPS'
-    }
+    school_name_to_code_map = {}
+
+    def open_spider(self, spider):
+        for k, v in spider.academics_json.items():
+            # Invert code and school_name from academics_json
+            self.school_name_to_code_map[v['jp']] = k
+            self.school_name_to_code_map[v['en']] = k
 
     def process_item(self, item, spider):
-        item['school'] = self.schoolMap[item['school']]
+        item['school'] = self.school_name_to_code_map[item['school']]
         return item
 
 
