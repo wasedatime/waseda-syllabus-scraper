@@ -17,7 +17,7 @@ scrape () {
     # Wrap the argument in quotes to tell the shell to ignore spaces in it
     # Arguments: displayed_language, school, teaching_language, single_keyword, database, collection, path for academics.json
     "${VIRTUAL_ENV_PATH}bin/python3" "${PROJECT_PATH}wsl_spider/wsl_spider/run_search.py" \
-    -d "$1" -s "$2" -t "$3" -k "$4" -b "$5" -c "$6" -p "${DATA_PATH}academics.json"
+    -y "$1" -d "$2" -s "$3" -t "$4" -k "$5" -b "$6" -c "$7" -p "${DATA_PATH}academics.json"
 }
 
 academics_to_scrape=( $(jq -r '.[]' ${DATA_PATH}academics_to_scrape.json ) )
@@ -38,15 +38,15 @@ do
         # echo ${!raw_entire_year_courses_school_name} is the 'value' of ${raw_entire_year_courses_PSE}
 
         # Arguments: displayed_language, school, teaching_language, single_keyword, database, collection
-        scrape "en" ${e} "all" "" ${DB_NAME} ${!raw_entire_year_courses_school_name} \
-        && scrape "en" ${e} "en" "" ${DB_NAME} ${!raw_entire_year_courses_school_name} \
-        && scrape "en" ${e} "jp" "" ${DB_NAME} ${!raw_entire_year_courses_school_name} \
-        && scrape "en" ${e} "all" "IPSE" ${DB_NAME} ${!raw_entire_year_courses_school_name} \
-        && scrape "en" ${e} "all" "English-based Undergraduate Program" ${DB_NAME} ${!raw_entire_year_courses_school_name}
+        scrape ${academic_year} "en" ${e} "all" "" ${DB_NAME} ${!raw_entire_year_courses_school_name} \
+        && scrape ${academic_year} "en" ${e} "en" "" ${DB_NAME} ${!raw_entire_year_courses_school_name} \
+        && scrape ${academic_year} "en" ${e} "jp" "" ${DB_NAME} ${!raw_entire_year_courses_school_name} \
+        && scrape ${academic_year} "en" ${e} "all" "IPSE" ${DB_NAME} ${!raw_entire_year_courses_school_name} \
+        && scrape ${academic_year} "en" ${e} "all" "English-based Undergraduate Program" ${DB_NAME} ${!raw_entire_year_courses_school_name}
     else
-        scrape "en" ${e} "all" "" ${DB_NAME} ${!raw_entire_year_courses_school_name} \
-        && scrape "en" ${e} "en" "" ${DB_NAME} ${!raw_entire_year_courses_school_name} \
-        && scrape "en" ${e} "jp" "" ${DB_NAME} ${!raw_entire_year_courses_school_name} \
-        && scrape "jp" ${e} "all" "" ${DB_NAME} ${!raw_entire_year_courses_school_name}
+        scrape ${academic_year} "en" ${e} "all" "" ${DB_NAME} ${!raw_entire_year_courses_school_name} \
+        && scrape ${academic_year} "en" ${e} "en" "" ${DB_NAME} ${!raw_entire_year_courses_school_name} \
+        && scrape ${academic_year} "en" ${e} "jp" "" ${DB_NAME} ${!raw_entire_year_courses_school_name} \
+        && scrape ${academic_year} "jp" ${e} "all" "" ${DB_NAME} ${!raw_entire_year_courses_school_name}
     fi
 done
