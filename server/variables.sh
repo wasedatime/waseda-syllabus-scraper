@@ -21,7 +21,7 @@ YEAR=${academic_year}-${next_academic_year}
 BASE_PATH="/Users/oscar/PythonProjects/"
 PROJECT_PATH="${BASE_PATH}waseda-syllabus-scraper/"
 SCRIPT_PATH="${PROJECT_PATH}server/"
-DATA_PATH="${PROJECT_PATH}/data/"
+DATA_PATH="${PROJECT_PATH}data/"
 VIRTUAL_ENV_PATH="${BASE_PATH}/waseda-syllabus-scraper-personal-virtualenv/"
 
 DB_NAME="test"
