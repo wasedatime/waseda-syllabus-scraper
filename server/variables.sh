@@ -42,7 +42,7 @@ if [ "$DEPLOY" = "deploy" ]; then
 fi
 
 # Read school codes from the TOP level keys in academics.json
-academics=( $(jq -r '.[] | keys[]' ${DATA_PATH}academics.json ) )
+academics=( $(jq -r '. | keys_unsorted | .[]' ${DATA_PATH}academics.json ) )
 
 # Declare dynamic variables and values for schools, e.g. school_PSE="PSE"
 for e in "${academics[@]}"
@@ -72,15 +72,15 @@ concat_variables() {
 courses="courses"
 
 # Raw collections in mongodb
-for i in "${academics[@]}"
+for e in "${academics[@]}"
 do
-    declare raw_entire_year_courses_${i}=$(concat_variables "raw" ${entire_academic_year} ${courses} ${i})
+    declare raw_entire_year_courses_${e}=$(concat_variables "raw" ${entire_academic_year} ${courses} ${e})
 done
 
 # Refined collections in mongodb
-for i in "${academics[@]}"
+for e in "${academics[@]}"
 do
-    declare entire_year_courses_${i}=$(concat_variables ${entire_academic_year} ${courses} ${i})
+    declare entire_year_courses_${e}=$(concat_variables ${entire_academic_year} ${courses} ${e})
 done
 
 #entire_year_courses_all="${entire_academic_year}_courses_all"
