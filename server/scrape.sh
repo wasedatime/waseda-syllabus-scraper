@@ -15,8 +15,9 @@ cd "${PROJECT_PATH}wsl_spider"
 scrape () {
     # Use absolute path to execute run_search.py in a virtual environment
     # Wrap the argument in quotes to tell the shell to ignore spaces in it
+    # Arguments: displayed_language, school, teaching_language, single_keyword, database, collection, path for academics.json
     "${VIRTUAL_ENV_PATH}bin/python3" "${PROJECT_PATH}wsl_spider/wsl_spider/run_search.py" \
-    -d "$1" -s "$2" -t "$3" -k "$4" -b "$5" -c "$6"
+    -d "$1" -s "$2" -t "$3" -k "$4" -b "$5" -c "$6" -p "${DATA_PATH}academics.json"
 }
 
 academics_to_scrape=( $(jq -r '.[]' ${DATA_PATH}academics_to_scrape.json ) )
