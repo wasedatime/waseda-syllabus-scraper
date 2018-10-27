@@ -83,46 +83,26 @@ Remember that you will need to start the database before scraping so that the sc
 
 ### Customize your scraper
 
-#### Target Year, Semester, and School
+#### variables
 
-You can specify the courses of a particular semester and school you want to scrape
-inside [search.py](wsl_spider/wsl_spider/spiders/search.py)
+#### Schools
 
-```python
-# Change the target semester, school, and other parameters here.
-lang = 'eng' # or 'jp' 
-year = 2018
-term = 'all' # or 'full_year', 'spring_summer', 'fall_winter', 'others'
-# You can scrape multiple schools by adding them into the list schools
-schools = [fund_sci_eng, cre_sci_eng, adv_sci_eng]
-# Besides the three schools above, we currently support 
-# art_architecture, sports_sci, sils, poli_sci, and all_school for every school 
-```
+All the schools are listed in [data/academics.json](data/academics.json).
+You can specify the schools you want to scrape in [data/academics_to_scrape.json](data/academics_to_scrape.json).
 
-#### Export collection name
-
-At last, if needed feel free to change the name of output MongoDB database and collection 
-inside [settings.py](wsl_spider/wsl_spider/settings.py).
-
-```python
-# Change the name of the output database here
-MONGO_DB = "syllabus"
-# Change the name of the output collection here
-# spring 2018
-year = '2018'
-term = 'spr_'
-yearTerm = term + year
-raw = 'raw_'
-MONGO_COLLECTION = raw + yearTerm + "_courses_all"
-```
 
 ### Start scraping
 
 Type the following command inside your terminal
 
 ```
-python3 run_search.py
+bash scrape.sh
 ```
+
+#### For Pycharm Users
+
+Remember to set the environment variable `PYTHONIOENCODING=UTF-8` in PyCharm so that 
+the utf-8 characters are displayed properly instead of `u\xxx`
 
 Depending on the target you selected,
 the scraping process may take a few minutes.
