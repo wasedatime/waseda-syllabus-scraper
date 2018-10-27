@@ -79,9 +79,11 @@ class RenameCourseTermPipeline(object):
         '通年': terms['fullYear'],
         'full year': terms['fullYear'],
 
-        '集中講義（春学期）': terms['intensiveSpring'],
+        # '集中講義（春学期）': terms['intensiveSpring'],
+        '集中講義(春学期)': terms['intensiveSpring'],
         'an intensive course(spring)': terms['intensiveSpring'],
-        '集中講義（秋学期）': terms['intensiveFall'],
+        # '集中講義（秋学期）': terms['intensiveFall'],
+        '集中講義(秋学期)': terms['intensiveFall'],
         'an intensive course(fall)': terms['intensiveFall'],
         '集中（春・秋学期）': terms['intensiveSpringFall'],
         'an intensive course(spring and fall)': terms['intensiveSpringFall'],
@@ -94,7 +96,12 @@ class RenameCourseTermPipeline(object):
     }
 
     def process_item(self, item, spider):
-        item['term'] = self.termMap[item['term']]
+        term = item['term']
+        try:
+            item['term'] = self.termMap[term]
+        except KeyError:
+            print(term)
+            logging.log(logging.ERROR, "Cannot map term: {}".format(term))
         return item
 
 
@@ -173,6 +180,10 @@ class MongoPipeline(object):
         self.col.update_one({'_id': item_id}, {"$set": {'title_jp': item_title_jp}})
         logging.log(logging.INFO, "Add title_jp '{}' for id {} in collection {}".format(item_title_jp, item_id, self.col.name))
 
+    def add_item_instructor_jp(self, item_instructor_jp, item_id):
+        self.col.update_one({'_id': item_id}, {"$set": {'instructor_jp': item_instructor_jp}})
+        logging.log(logging.INFO, "Add instructor_jp '{}' for id {} in collection {}".format(item_instructor_jp, item_id, self.col.name))
+
     def process_item(self, item, spider):
         try:
             self.col.insert_one(dict(item))
@@ -181,12 +192,14 @@ class MongoPipeline(object):
             logging.log(logging.WARNING, "Duplicate Key Course.")
             item_id = item['_id']
             item_title = item['title']
-            item_lang = item['lang']
             if spider.display_lang == "jp":
+                item_instructor = item['instructor']
                 self.add_item_title_jp(item_title, item_id)
+                self.add_item_instructor_jp(item_instructor, item_id)
             elif "keywords" in item:
                 self.update_item_keyword(item_title, item_id, item['keywords'])
             elif item['lang'] != "others":
+                item_lang = item['lang']
                 self.update_item_lang(item_title, item_id, item_lang)
 
         return item
