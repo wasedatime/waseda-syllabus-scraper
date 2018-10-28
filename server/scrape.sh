@@ -2,15 +2,7 @@
 
 source variables.sh
 
-# drop database_prev
-mongo ${DB_PREV_NAME} --eval "printjson(db.dropDatabase())"
-# copy database to database_prev (back up)
-mongo ${DB_NAME} --eval "printjson(db.copyDatabase('${DB_NAME}', '${DB_PREV_NAME}'))"
-# drop database
-mongo ${DB_NAME} --eval "printjson(db.dropDatabase())"
-
-# Change directory for Scrapy to detect scrapy.cfg properly. Or else it returns no active project
-cd "${PROJECT_PATH}wsl_spider"
+academics_to_scrape=( $(jq -r '.[]' ${DATA_PATH}academics_to_scrape.json ) )
 
 scrape () {
     # Use absolute path to execute run_search.py in a virtual environment
@@ -20,7 +12,13 @@ scrape () {
     -y "$1" -d "$2" -s "$3" -t "$4" -k "$5" -b "$6" -c "$7" -p "${DATA_PATH}academics.json"
 }
 
-academics_to_scrape=( $(jq -r '.[]' ${DATA_PATH}academics_to_scrape.json ) )
+# drop database_prev
+echo "Dropping database_prev"
+mongo ${DB_PREV_NAME} --eval "printjson(db.dropDatabase())"
+# copy database to database_prev (back up)
+echo "Copying current database to database_prev"
+mongo ${DB_NAME} --eval "printjson(db.copyDatabase('${DB_NAME}', '${DB_PREV_NAME}'))"
+
 
 for e in "${academics_to_scrape[@]}"
 do
@@ -29,13 +27,25 @@ do
     # E.g., if e is 'PSE', the value of raw_entire_year_courses_school_name is raw_entire_year_courses_PSE.
     raw_entire_year_courses_school_name=raw_entire_year_courses_${e}
 
+    # ! mark is used for indirect expansion.
+    # This allows bash to use the value of the variable raw_entire_year_courses_school_name as a variable,
+    # and then expand it so that its value is used in the rest of substitution.
+    # E.g., if echo ${raw_entire_year_courses_school_name} is raw_entire_year_courses_PSE
+    # echo ${!raw_entire_year_courses_school_name} is the 'value' of ${raw_entire_year_courses_PSE}
+    echo "Dropping collection ${!raw_entire_year_courses_school_name} in current database"
+    mongo ${DB_NAME} --eval "printjson(db.${!raw_entire_year_courses_school_name}.drop())"
+done
+
+
+# Change directory for Scrapy to detect scrapy.cfg properly. Or else it returns no active project
+cd "${PROJECT_PATH}wsl_spider"
+
+for e in "${academics_to_scrape[@]}"
+do
+    raw_entire_year_courses_school_name=raw_entire_year_courses_${e}
+
     # School FSE, ASE, CSE has special keywords IPSE and English-based Undergraduate Program.
     if [ "$e" = "FSE" ] || [ "$e" = "ASE" ] || [ "$e" = "CSE" ]; then
-        # ! mark is used for indirect expansion.
-        # This allows bash to use the value of the variable raw_entire_year_courses_school_name as a variable,
-        # and then expand it so that its value is used in the rest of substitution.
-        # E.g., if echo ${raw_entire_year_courses_school_name} is raw_entire_year_courses_PSE
-        # echo ${!raw_entire_year_courses_school_name} is the 'value' of ${raw_entire_year_courses_PSE}
 
         # Arguments: displayed_language, school, teaching_language, single_keyword, database, collection
         scrape ${academic_year} "en" ${e} "all" "" ${DB_NAME} ${!raw_entire_year_courses_school_name} \
