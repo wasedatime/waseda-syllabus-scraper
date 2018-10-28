@@ -43,67 +43,6 @@ class FilterByYearPipeline(object):
             return item
 
 
-class RenameCourseTermPipeline(object):
-    terms = {
-        'spring': 'Spring',
-        'summer': 'Summer',
-        'fall': 'Fall',
-        'winter': 'Winter',
-
-        'springQuarter': 'Spring Quarter',
-        'summerQuarter': 'Summer Quarter',
-        'fallQuarter': 'Fall Quarter',
-        'winterQuarter': 'Winter Quarter',
-        'fullYear': 'Full Year',
-
-        'intensiveSpring': 'Intensive: Spring',
-        'intensiveFall': 'Intensive: Fall',
-        'intensiveSpringFall': 'Intensive: Spring & Fall',
-
-    }
-
-    termMap = {
-        '秋学期': terms['fall'],
-        'fall semester': terms['fall'],
-        '春学期': terms['spring'],
-        'spring semester': terms['spring'],
-
-        '春クォーター': terms['springQuarter'],
-        'spring quarter': terms['springQuarter'],
-        '夏クォーター': terms['summerQuarter'],
-        'summer quarter': terms['summerQuarter'],
-        '秋クォーター': terms['fallQuarter'],
-        'fall quarter': terms['fallQuarter'],
-        '冬クォーター': terms['winterQuarter'],
-        'winter quarter': terms['winterQuarter'],
-        '通年': terms['fullYear'],
-        'full year': terms['fullYear'],
-
-        # '集中講義（春学期）': terms['intensiveSpring'],
-        '集中講義(春学期)': terms['intensiveSpring'],
-        'an intensive course(spring)': terms['intensiveSpring'],
-        # '集中講義（秋学期）': terms['intensiveFall'],
-        '集中講義(秋学期)': terms['intensiveFall'],
-        'an intensive course(fall)': terms['intensiveFall'],
-        '集中（春・秋学期）': terms['intensiveSpringFall'],
-        'an intensive course(spring and fall)': terms['intensiveSpringFall'],
-
-        # Due to Waseda's inconsistent data in SSS.
-        '夏季集中': 'Summer',
-        'summer': 'Summer',
-        'spring': 'Spring',
-        'spring semester and summer': 'Spring'
-    }
-
-    def process_item(self, item, spider):
-        term = item['term']
-        try:
-            item['term'] = self.termMap[term]
-        except KeyError:
-            logging.log(logging.ERROR, "Cannot map term: {}".format(term))
-        return item
-
-
 class RenameCourseSchoolPipeline(object):
     school_name_to_code_map = {}
 
@@ -171,7 +110,7 @@ class MongoPipeline(object):
         self.col.update_one({'_id': item_id}, {"$addToSet": {'keywords': {"$each": keywords}}})
         logging.log(logging.INFO, "Add program '{}' to {} in collection {}".format(keywords, item_title, self.col.name))
 
-    def update_item_lang(self, item_title, item_id, lang):
+    def set_item_lang(self, item_title, item_id, lang):
         self.col.update_one({'_id': item_id}, {"$set": {'lang': lang}})
         logging.log(logging.INFO, "Set lang '{}' for {} in collection {}".format(lang, item_title, self.col.name))
 
@@ -183,6 +122,10 @@ class MongoPipeline(object):
         self.col.update_one({'_id': item_id}, {"$set": {'instructor_jp': item_instructor_jp}})
         logging.log(logging.INFO, "Add instructor_jp '{}' for id {} in collection {}".format(item_instructor_jp, item_id, self.col.name))
 
+    def set_item_term_jp(self, item_term, item_id):
+        self.col.update_one({'_id': item_id}, {"$set": {'term': item_term}})
+        logging.log(logging.INFO, "Set term '{}' for id {} in collection {}".format(item_term, item_id, self.col.name))
+
     def process_item(self, item, spider):
         try:
             self.col.insert_one(dict(item))
@@ -193,12 +136,14 @@ class MongoPipeline(object):
             item_title = item['title']
             if spider.display_lang == "jp":
                 item_instructor = item['instructor']
+                item_term = item['term']
                 self.add_item_title_jp(item_title, item_id)
                 self.add_item_instructor_jp(item_instructor, item_id)
+                self.set_item_term_jp(item_term, item_id)
             elif "keywords" in item:
                 self.update_item_keyword(item_title, item_id, item['keywords'])
             elif item['lang'] != "others":
                 item_lang = item['lang']
-                self.update_item_lang(item_title, item_id, item_lang)
+                self.set_item_lang(item_title, item_id, item_lang)
 
         return item
