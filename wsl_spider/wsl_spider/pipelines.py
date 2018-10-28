@@ -100,7 +100,6 @@ class RenameCourseTermPipeline(object):
         try:
             item['term'] = self.termMap[term]
         except KeyError:
-            print(term)
             logging.log(logging.ERROR, "Cannot map term: {}".format(term))
         return item
 
