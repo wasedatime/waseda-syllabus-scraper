@@ -84,12 +84,13 @@ class RenameCourseTermPipeline(object):
 
     def process_item(self, item, spider):
         term = item['term']
-        try:
-            item['term'] = self.termMap[term]
-        except KeyError:
-            title = item['title']
-            school = item['school']
-            logging.log(logging.ERROR, "Cannot map term: {} for title: {} in school: {}".format(term, title, school))
+        if spider.display_lang == "jp":
+            try:
+                item['term'] = self.termMap[term]
+            except KeyError:
+                title = item['title']
+                school = item['school']
+                logging.log(logging.ERROR, "Cannot map term: {} for title: {} in school: {}".format(term, title, school))
         return item
 
 
