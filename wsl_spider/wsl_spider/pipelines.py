@@ -43,6 +43,56 @@ class FilterByYearPipeline(object):
             return item
 
 
+class RenameCourseTermPipeline(object):
+    terms = {
+        'springSem': 'springSem',
+        'fallSem': 'fallSem',
+
+        'springQuart': 'springQuart',
+        'summerQuart': 'summerQuart',
+        'fallQuart': 'fallQuart',
+        'winterQuart': 'winterQuart',
+        'fullYear': 'fullYear',
+
+        'intensiveSpringSem': 'intensiveSpringSem',
+        'intensiveFallSem': 'intensiveFallSem',
+        'intensiveSpringFallSem': 'intensiveSpringFallSem',
+
+        'intensiveSpring': 'intensiveSpring',
+        'intensiveSummer': 'intensiveSummer',
+        'springSummer': 'springSummer'
+    }
+
+    termMap = {
+        '春学期': terms['springSem'],
+        '秋学期': terms['fallSem'],
+
+        '春クォーター': terms['springQuart'],
+        '夏クォーター': terms['summerQuart'],
+        '秋クォーター': terms['fallQuart'],
+        '冬クォーター': terms['winterQuart'],
+        '通年': terms['fullYear'],
+
+        '集中講義(春学期)': terms['intensiveSpringSem'],
+        '集中講義(秋学期)': terms['intensiveFallSem'],
+        '集中(春・秋学期)': terms['intensiveSpringFallSem'],
+
+        '春季集中': terms['intensiveSpring'],
+        '夏季集中': terms['intensiveSummer'],
+        '春夏期': terms['springSummer']
+    }
+
+    def process_item(self, item, spider):
+        term = item['term']
+        try:
+            item['term'] = self.termMap[term]
+        except KeyError:
+            title = item['title']
+            school = item['school']
+            logging.log(logging.ERROR, "Cannot map term: {} for title: {} in school: {}".format(term, title, school))
+        return item
+
+
 class RenameCourseSchoolPipeline(object):
     school_name_to_code_map = {}
 
