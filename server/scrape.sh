@@ -2,8 +2,6 @@
 
 source variables.sh
 
-academics_to_scrape=( $(jq -r '.[]' ${DATA_PATH}academics_to_scrape.json ) )
-
 scrape () {
     # Use absolute path to execute run_search.py in a virtual environment
     # Wrap the argument in quotes to tell the shell to ignore spaces in it

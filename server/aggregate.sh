@@ -2,8 +2,6 @@
 
 source variables.sh
 
-academics_to_scrape=( $(jq -r '.[]' ${DATA_PATH}academics_to_scrape.json ) )
-
 # Generate academicCollections.js dynamically from academics_to_scrape.json
 raw_entire_year_courses_academics=()
 entire_year_courses_academics=()

@@ -42,6 +42,8 @@ JS_PATH="${PROJECT_PATH}js/"
 
 # Read school codes from the TOP level keys in academics.json
 academics=( $(jq -r '. | keys_unsorted | .[]' ${DATA_PATH}academics.json ) )
+# Academics to scrape is specified by the user in academics_to_scrape.json
+academics_to_scrape=( $(jq -r '.[]' ${DATA_PATH}academics_to_scrape.json ) )
 
 # Declare dynamic variables and values for schools, e.g. school_PSE="PSE"
 for e in "${academics[@]}"
