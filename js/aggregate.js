@@ -1,5 +1,3 @@
-// TODO Remove start time and end time. Use periods instead?
-// TODO title=>t year=>y term=>m instructor=>i school=>s links=>ks occurences=>os
 // TODO Filter courses => IPSE, PSE, SILS check box? select one at a time.
 
 /*
