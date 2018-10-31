@@ -24,13 +24,13 @@ for e in "${academics_to_scrape[@]}"
 do
     # raw_entire_year_courses_school_name is a dynamic variable.
     # Its value it the 'variable name' of the current school name 'e'.
-    # E.g., if e is 'PSE', the value of raw_entire_year_courses_school_name is raw_entire_year_courses_PSE.
+    # E.g., if e is 'PSE', the value of raw_entire_year_courses_school_name is name ${raw_entire_year_courses_PSE}
     raw_entire_year_courses_school_name=raw_entire_year_courses_${e}
 
     # ! mark is used for indirect expansion.
     # This allows bash to use the value of the variable raw_entire_year_courses_school_name as a variable,
     # and then expand it so that its value is used in the rest of substitution.
-    # E.g., if echo ${raw_entire_year_courses_school_name} is raw_entire_year_courses_PSE
+    # E.g., if echo ${raw_entire_year_courses_school_name} is the 'name' of ${raw_entire_year_courses_PSE}
     # echo ${!raw_entire_year_courses_school_name} is the 'value' of ${raw_entire_year_courses_PSE}
     echo "Dropping collection ${!raw_entire_year_courses_school_name} in current database"
     mongo ${DB_NAME} --eval "printjson(db.${!raw_entire_year_courses_school_name}.drop())"
