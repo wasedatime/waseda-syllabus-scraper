@@ -18,8 +18,8 @@ done
 
 raw_entire_year_courses_academics_json=$(printf '%s\n' "${raw_entire_year_courses_academics[@]}" | jq -R . | jq -s .)
 entire_year_courses_academics_json=$(printf '%s\n' "${entire_year_courses_academics[@]}" | jq -R . | jq -s .)
-raw_entire_year_courses_academics_js="var academicCollectionsToAggregate = ${raw_entire_year_courses_academics_json};"
-entire_year_courses_academics_js="var academicCollectionsToExport = ${entire_year_courses_academics_json};"
+raw_entire_year_courses_academics_js="var rawEntireYearCoursesAcademics = ${raw_entire_year_courses_academics_json};"
+entire_year_courses_academics_js="var entireYearCoursesAcademics = ${entire_year_courses_academics_json};"
 raw_entire_year_courses_all_js="var rawEntireYearCoursesAll = \"${raw_entire_year_courses_all}\";"
 entire_year_courses_all_js="var entireYearCoursesAll = \"${entire_year_courses_all}\";"
 
