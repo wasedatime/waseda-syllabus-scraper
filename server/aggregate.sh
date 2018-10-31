@@ -17,10 +17,15 @@ do
 done
 
 raw_entire_year_courses_academics_json=$(printf '%s\n' "${raw_entire_year_courses_academics[@]}" | jq -R . | jq -s .)
-raw_entire_year_courses_academics_js="var academicCollectionsToAggregate = ${raw_entire_year_courses_academics_json};"
 entire_year_courses_academics_json=$(printf '%s\n' "${entire_year_courses_academics[@]}" | jq -R . | jq -s .)
+raw_entire_year_courses_academics_js="var academicCollectionsToAggregate = ${raw_entire_year_courses_academics_json};"
 entire_year_courses_academics_js="var academicCollectionsToExport = ${entire_year_courses_academics_json};"
-printf "${raw_entire_year_courses_academics_js}\n${entire_year_courses_academics_js}"> "${JS_PATH}academicCollections.js"
+raw_entire_year_courses_all_js="var rawEntireYearCoursesAll = \"${raw_entire_year_courses_all}\";"
+entire_year_courses_all_js="var entireYearCoursesAll = \"${entire_year_courses_all}\";"
+
+academic_collections_js="${raw_entire_year_courses_academics_js}\n${entire_year_courses_academics_js}"
+academic_collections_js="${academic_collections_js}\n${raw_entire_year_courses_all_js}\n${entire_year_courses_all_js}"
+printf "${academic_collections_js}" > "${JS_PATH}academicCollections.js"
 
 # Drop collections
 for e in "${academics_to_scrape[@]}"
