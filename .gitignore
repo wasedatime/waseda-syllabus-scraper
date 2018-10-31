@@ -23,3 +23,4 @@ lib/
 credentials.md
 
 server/export_prod.sh
+js/academicCollections.js
