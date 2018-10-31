@@ -49,13 +49,6 @@ do
     declare school_${e}=${e}
 done
 
-#schools_sci_eng="fund_sci_eng,cre_sci_eng,adv_sci_eng"
-#school_pse="poli_sci"
-#school_sils="sils"
-#school_sss="sss"
-#school_cjl="cjl"
-#school_sports_sci="sports_sci"
-
 concat_variables() {
     argument_array=( "$@" )
     argument_array_length=${#argument_array[@]}
@@ -75,25 +68,11 @@ for e in "${academics[@]}"
 do
     declare raw_entire_year_courses_${e}=$(concat_variables "raw" ${entire_academic_year} ${courses} ${e})
 done
+raw_entire_year_courses_all=$(concat_variables "raw" ${entire_academic_year} ${courses} "all")
 
 # Refined collections in mongodb
 for e in "${academics[@]}"
 do
     declare entire_year_courses_${e}=$(concat_variables ${entire_academic_year} ${courses} ${e})
 done
-
-#entire_year_courses_all="${entire_academic_year}_courses_all"
-#entire_year_courses_sci_eng="${entire_academic_year}_courses_sci_eng"
-#entire_year_courses_pse="${entire_academic_year}_courses_pse"
-#entire_year_courses_sils="${entire_academic_year}_courses_sils"
-#entire_year_courses_sss="${entire_academic_year}_courses_sss"
-#entire_year_courses_cjl="${entire_academic_year}_courses_cjl"
-#entire_year_courses_sports_sci="${entire_academic_year}_courses_sports_sci"
-
-#raw_entire_year_courses_all="${raw}${entire_academic_year}_all"
-#raw_entire_year_courses_sci_eng="${raw}${entire_academic_year}_courses_sci_eng"
-#raw_entire_year_courses_pse="${raw}${entire_academic_year}_courses_pse"
-#raw_entire_year_courses_sils="${raw}${entire_academic_year}_courses_sils"
-#raw_entire_year_courses_sss="${raw}${entire_academic_year}_courses_sss"
-#raw_entire_year_courses_cjl="${raw}${entire_academic_year}_courses_cjl"
-#raw_entire_year_courses_sports_sci="${raw}${entire_academic_year}_courses_sports_sci"
+entire_year_courses_all=$(concat_variables ${entire_academic_year} ${courses} "all")
