@@ -44,19 +44,16 @@ for e in "${academics_to_scrape[@]}"
 do
     raw_entire_year_courses_academic=raw_entire_year_courses_${e}
 
-    # School FSE, ASE, CSE has special keywords IPSE and English-based Undergraduate Program.
-    if [ "$e" = "FSE" ] || [ "$e" = "ASE" ] || [ "$e" = "CSE" ]; then
+    # Arguments: displayed_language, school, teaching_language, single_keyword, database, collection
+    scrape ${academic_year} "en" ${e} "all" "" ${DB_NAME} ${!raw_entire_year_courses_academic} \
+    && scrape ${academic_year} "en" ${e} "en" "" ${DB_NAME} ${!raw_entire_year_courses_academic} \
+    && scrape ${academic_year} "en" ${e} "jp" "" ${DB_NAME} ${!raw_entire_year_courses_academic} \
+    && if [ "$e" = "FSE" ] || [ "$e" = "ASE" ] || [ "$e" = "CSE" ]; then
 
-        # Arguments: displayed_language, school, teaching_language, single_keyword, database, collection
-        scrape ${academic_year} "en" ${e} "all" "" ${DB_NAME} ${!raw_entire_year_courses_academic} \
-        && scrape ${academic_year} "en" ${e} "en" "" ${DB_NAME} ${!raw_entire_year_courses_academic} \
-        && scrape ${academic_year} "en" ${e} "jp" "" ${DB_NAME} ${!raw_entire_year_courses_academic} \
-        && scrape ${academic_year} "en" ${e} "all" "IPSE" ${DB_NAME} ${!raw_entire_year_courses_academic} \
+        # School FSE, ASE, CSE has special keywords IPSE and English-based Undergraduate Program.
+        scrape ${academic_year} "en" ${e} "all" "IPSE" ${DB_NAME} ${!raw_entire_year_courses_academic} \
         && scrape ${academic_year} "en" ${e} "all" "English-based Undergraduate Program" ${DB_NAME} ${!raw_entire_year_courses_academic}
-    else
-        scrape ${academic_year} "en" ${e} "all" "" ${DB_NAME} ${!raw_entire_year_courses_academic} \
-        && scrape ${academic_year} "en" ${e} "en" "" ${DB_NAME} ${!raw_entire_year_courses_academic} \
-        && scrape ${academic_year} "en" ${e} "jp" "" ${DB_NAME} ${!raw_entire_year_courses_academic} \
-        && scrape ${academic_year} "jp" ${e} "all" "" ${DB_NAME} ${!raw_entire_year_courses_academic}
-    fi
+
+    fi \
+    && scrape ${academic_year} "jp" ${e} "all" "" ${DB_NAME} ${!raw_entire_year_courses_academic}
 done
