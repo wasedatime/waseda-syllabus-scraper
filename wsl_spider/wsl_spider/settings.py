@@ -14,6 +14,8 @@ BOT_NAME = 'wsl_spider'
 SPIDER_MODULES = ['wsl_spider.spiders']
 NEWSPIDER_MODULE = 'wsl_spider.spiders'
 
+LOG_LEVEL = 'ERROR'
+
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENT = (
