@@ -30,14 +30,15 @@ class DuplicatesPipeline(object):
 class FilterByYearPipeline(object):
 
     drop_item_msg = "Year below lower bound course, year:{}, title: {}, instructor: {}"
+    year_lower_bound = -1
 
-    def __init__(self):
-        self.lower_bound_year = 2017
+    def open_spider(self, spider):
+        self.year_lower_bound = spider.year_lower_bound
 
     def process_item(self, item, spider):
         # Take the first occurrence of the course
-        item_year = int(item['year'])
-        if item_year <= self.lower_bound_year:
+        item_year = item['year']
+        if item_year <= self.year_lower_bound:
             raise DropItem(self.drop_item_msg.format(item_year, item['title'], item['instructor']))
         else:
             return item

@@ -53,7 +53,7 @@ class SearchSpider(Spider):
         # Change the target semester, school, and other parameters here.
         self.year_str = kwargs.get('academic_year')
         self.year = int(self.year_str)
-        self.year_lower_bound = str(self.year - 1)
+        self.year_lower_bound = self.year - 1
         self.display_lang = kwargs.get('display_lang')
         self.schools = kwargs.get('schools').split(',')
         self.teaching_lang = kwargs.get('teaching_lang')
@@ -99,7 +99,7 @@ class SearchSpider(Spider):
         reached_empty_page = False if c_infos != [] else True
         for c_info in c_infos:
             year = c_info.xpath('td[1]/text()').extract_first()
-            if year <= self.year_lower_bound:
+            if int(year) <= self.year_lower_bound:
                 reached_lower_bound_year = True
             onclick_url = c_info.xpath('td[3]/a/@onclick').extract()
 
@@ -182,7 +182,7 @@ class SearchSpider(Spider):
 
         if reached_lower_bound_year or reached_empty_page:
             # finish scraping one target url. Remove it from list
-            msg = self.reach_lower_bound_year_msg.format(self.year_lower_bound) \
+            msg = self.reach_lower_bound_year_msg.format(str(self.year_lower_bound)) \
                 if reached_lower_bound_year else self.reach_empty_page_msg
             logging.log(logging.INFO, msg)
             logging.log(logging.INFO, "Finish scraping url {}".format(self.current_url))
