@@ -273,12 +273,11 @@ entireYearCoursesAcademics.forEach(function(entireYearCoursesAcademic) {
   var result = removeIfNotExist(entireYearCoursesAcademic, entireYearCoursesAll);
   print("Remove documents in " + entireYearCoursesAll + " which does not exist in  " + entireYearCoursesAcademic)
   printjson(result)
-  
+
 });
 
-//TODO Need to remove non-existing documents in 'All'
+sortEntireYearCoursesAcademic(entireYearCoursesAll);
 
-// sortEntireYearCoursesAcademic(entireYearCoursesAll);
 
 // // Export classrooms from courses and sort by building number and name
 // db[coursesSciEng].aggregate([
