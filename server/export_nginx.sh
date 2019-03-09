@@ -17,3 +17,6 @@ done \
 
 echo "Exporting collection stats to API folder"
 mongoexport --db ${DB_NAME} -c stats --out "${API_PATH}scraper_stats/index.json"
+
+chmod 755 ${API_PATH}
+chmod 755 "${API_PATH}scraper_stats"
