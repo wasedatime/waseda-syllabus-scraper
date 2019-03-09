@@ -73,6 +73,13 @@ class SearchSpider(Spider):
 
         self.term = 'all'
 
+        if self.display_lang == 'en':
+            self.undecided_string = 'undecided'
+        elif self.display_lang == 'jp':
+            self.undecided_string = '未定'
+        else:
+            raise Exception("display_lang '%s' is not supported." % self.display_lang)
+
         self.start_school = self.schools[0]
         self.current_school = self.start_school
 
@@ -96,16 +103,20 @@ class SearchSpider(Spider):
                 reached_lower_bound_year = True
             onclick_url = c_info.xpath('td[3]/a/@onclick').extract()
 
+            title = self.correct_nbsp_in_list(c_info.xpath('td[3]/a/text()').extract())
+            instructor = self.correct_nbsp_in_list(c_info.xpath('td[4]/text()').extract())
+            school = self.correct_nbsp_in_list(c_info.xpath('td[5]/text()').extract())
+            term = self.correct_nbsp_in_list(c_info.xpath('td[6]/text()').extract())
+
             cl = CourseLoader(selector=c_info)
             cl.add_value(field_name='_id', value=onclick_url)
             cl.add_value(field_name='year', value=year)
             cl.add_value(field_name='keywords', value=self.keyword)
             cl.add_value(field_name='lang', value=self.lang)
-
-            cl.add_xpath(field_name='title', xpath='td[3]/a/text()')
-            cl.add_xpath(field_name='instructor', xpath='td[4]/text()')
-            cl.add_xpath(field_name='school', xpath='td[5]/text()')
-            cl.add_xpath(field_name='term', xpath='td[6]/text()')
+            cl.add_value(field_name='title', value=title)
+            cl.add_value(field_name='instructor', value=instructor)
+            cl.add_value(field_name='school', value=school)
+            cl.add_value(field_name='term', value=term)
 
             day_periods = c_info.xpath('td[7]/text()').extract()
             locations = c_info.xpath('td[8]/text()').extract()
@@ -187,6 +198,12 @@ class SearchSpider(Spider):
         else:
             self.increment_page_in_url_by(1)
             yield Request(self.current_url, callback=self.parse, dont_filter=True)
+
+    def correct_nbsp(self, string):
+        return self.undecided_string if string == u'\xa0' else string
+
+    def correct_nbsp_in_list(self, ls):
+        return [self.correct_nbsp(s) for s in ls]
 
     def period_to_minutes(self, period):
         p_t_m = {
