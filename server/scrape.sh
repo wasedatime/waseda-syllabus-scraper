@@ -18,6 +18,9 @@ echo "Copying current database to database_prev"
 mongo ${DB_NAME} --eval "printjson(db.copyDatabase('${DB_NAME}', '${DB_PREV_NAME}'))"
 
 
+# Change directory for Scrapy to detect scrapy.cfg properly. Or else it returns no active project
+cd "${PROJECT_PATH}wsl_spider"
+
 for e in "${academics_to_scrape[@]}"
 do
     # raw_entire_year_courses_academic is a dynamic variable.
@@ -30,17 +33,6 @@ do
     # and then expand it so that its value is used in the rest of substitution.
     # E.g., if echo ${raw_entire_year_courses_academic} is the 'name' of ${raw_entire_year_courses_PSE}
     # echo ${!raw_entire_year_courses_academic} is the 'value' of ${raw_entire_year_courses_PSE}
-    echo "Dropping collection ${!raw_entire_year_courses_academic} in current database"
-    mongo ${DB_NAME} --eval "printjson(db.${!raw_entire_year_courses_academic}.drop())"
-done
-
-
-# Change directory for Scrapy to detect scrapy.cfg properly. Or else it returns no active project
-cd "${PROJECT_PATH}wsl_spider"
-
-for e in "${academics_to_scrape[@]}"
-do
-    raw_entire_year_courses_academic=raw_entire_year_courses_${e}
 
     # Arguments: displayed_language, school, teaching_language, single_keyword, database, collection
     scrape ${academic_year} "en" ${e} "all" "" ${DB_NAME} ${!raw_entire_year_courses_academic} \
