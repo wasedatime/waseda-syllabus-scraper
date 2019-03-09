@@ -19,5 +19,5 @@ elif [ $TRAVIS_BRANCH == 'staging' ] ; then
     git status
     git push deploy staging --force
 else
-    echo "Not deploying, since this branch isn't master."
+    echo "Not deploying, since this branch isn't master or staging."
 fi
