@@ -9,11 +9,14 @@ productionHostName = "WasedaTimeProduction";
 stagingHostName = "WasedaTimeStaging";
 
 // Load the correct academicCollections.js file.
-if (hostName.toString() === productionHostName || hostName.toString() === stagingHostName) {
-  load('/home/deploy/waseda-syllabus-scraper/js/academicCollections.js');
+if (
+  hostName.toString() === productionHostName ||
+  hostName.toString() === stagingHostName
+) {
+  load("/home/deploy/waseda-syllabus-scraper/js/academicCollections.js");
 } else {
   load(
-    '/Users/oscar/PythonProjects/waseda-syllabus-scraper/js/academicCollections.js'
+    "/Users/oscar/PythonProjects/waseda-syllabus-scraper/js/academicCollections.js"
   );
 }
 
@@ -27,16 +30,16 @@ function copyTo(origin, destination) {
 }
 
 function correctInvalidClassrooms(object, rawEntireYearCoursesAcademic) {
-    /**
-     * Corrects the invalid classroom names in collection rawEntireYearCoursesAcademic.
-     */
+  /**
+   * Corrects the invalid classroom names in collection rawEntireYearCoursesAcademic.
+   */
   return db.getCollection(rawEntireYearCoursesAcademic).findAndModify({
-    query: { 'occurrences.classroom': object.invalidClassroom },
+    query: { "occurrences.classroom": object.invalidClassroom },
     update: {
       $set: {
-        'occurrences.$.location': object.newLocation,
-        'occurrences.$.building': object.newBuilding,
-        'occurrences.$.classroom': object.newClassroom
+        "occurrences.$.location": object.newLocation,
+        "occurrences.$.building": object.newBuilding,
+        "occurrences.$.classroom": object.newClassroom
       }
     }
   });
@@ -47,123 +50,123 @@ function correctInvalidClassrooms(object, rawEntireYearCoursesAcademic) {
 var invalidClassroomsAndCorrections = [
   //Nishiwaseda campus
   {
-    invalidClassroom: '61号館2階',
-    newLocation: '61-2F',
-    newBuilding: '61',
-    newClassroom: '2F'
+    invalidClassroom: "61号館2階",
+    newLocation: "61-2F",
+    newBuilding: "61",
+    newClassroom: "2F"
   },
   {
-    invalidClassroom: '61号館BF',
-    newLocation: '61-BF',
-    newBuilding: '61',
-    newClassroom: 'BF'
+    invalidClassroom: "61号館BF",
+    newLocation: "61-BF",
+    newBuilding: "61",
+    newClassroom: "BF"
   },
   {
-    invalidClassroom: 'Business Design & Management labo 61-2F',
-    newLocation: '61-2F Business Design & Management lab',
-    newBuilding: '61',
-    newClassroom: '2F Business Design & Management lab'
+    invalidClassroom: "Business Design & Management labo 61-2F",
+    newLocation: "61-2F Business Design & Management lab",
+    newBuilding: "61",
+    newClassroom: "2F Business Design & Management lab"
   },
   {
-    invalidClassroom: 'foyer 50-301',
-    newLocation: '50-301',
-    newBuilding: '50',
-    newClassroom: '301'
+    invalidClassroom: "foyer 50-301",
+    newLocation: "50-301",
+    newBuilding: "50",
+    newClassroom: "301"
   },
   {
-    invalidClassroom: 'Seminar room 3 50-304',
-    newLocation: '50-304',
-    newBuilding: '50',
-    newClassroom: '304'
+    invalidClassroom: "Seminar room 3 50-304",
+    newLocation: "50-304",
+    newBuilding: "50",
+    newClassroom: "304"
   },
   {
-    invalidClassroom: '255B教室',
-    newLocation: '61-255B',
-    newBuilding: '61',
-    newClassroom: '255B'
+    invalidClassroom: "255B教室",
+    newLocation: "61-255B",
+    newBuilding: "61",
+    newClassroom: "255B"
   },
   {
-    invalidClassroom: '711教室',
-    newLocation: '51-711',
-    newBuilding: '51',
-    newClassroom: '711'
+    invalidClassroom: "711教室",
+    newLocation: "51-711",
+    newBuilding: "51",
+    newClassroom: "711"
   },
   {
-    invalidClassroom: '3F 社工演習室',
-    newLocation: '58-3F',
-    newBuilding: '58',
-    newClassroom: '3F'
+    invalidClassroom: "3F 社工演習室",
+    newLocation: "58-3F",
+    newBuilding: "58",
+    newClassroom: "3F"
   },
   {
-    invalidClassroom: '801教室',
-    newLocation: '51-801',
-    newBuilding: '51',
-    newClassroom: '801'
+    invalidClassroom: "801教室",
+    newLocation: "51-801",
+    newBuilding: "51",
+    newClassroom: "801"
   },
   //Main Campus
   {
     invalidClassroom:
-      '201(Center for Teaching,Learning, and Technology Active Learning)',
-    newLocation: '3-201',
-    newBuilding: '3',
-    newClassroom: '201'
+      "201(Center for Teaching,Learning, and Technology Active Learning)",
+    newLocation: "3-201",
+    newBuilding: "3",
+    newClassroom: "201"
   },
   {
     invalidClassroom:
-      '202(Center for Teaching,Learning, and Technology Active Learning)',
-    newLocation: '3-202',
-    newBuilding: '3',
-    newClassroom: '202'
+      "202(Center for Teaching,Learning, and Technology Active Learning)",
+    newLocation: "3-202",
+    newBuilding: "3",
+    newClassroom: "202"
   },
   {
     invalidClassroom:
-      '203(Center for Teaching,Learning, and Technology Active Learning)',
-    newLocation: '3-203',
-    newBuilding: '3',
-    newClassroom: '203'
+      "203(Center for Teaching,Learning, and Technology Active Learning)",
+    newLocation: "3-203",
+    newBuilding: "3",
+    newClassroom: "203"
   },
   {
-    invalidClassroom: '806共同利用研究室7',
-    newLocation: '14-806',
-    newBuilding: '14',
-    newClassroom: '806'
+    invalidClassroom: "806共同利用研究室7",
+    newLocation: "14-806",
+    newBuilding: "14",
+    newClassroom: "806"
   },
   {
-    invalidClassroom: '504(コンピュータ教室)科学技術計算',
-    newLocation: '14-504',
-    newBuilding: '14',
-    newClassroom: '504'
+    invalidClassroom: "504(コンピュータ教室)科学技術計算",
+    newLocation: "14-504",
+    newBuilding: "14",
+    newClassroom: "504"
   },
   {
-    invalidClassroom: '408(コンピュータ教室)',
-    newLocation: '16-408',
-    newBuilding: '16',
-    newClassroom: '408'
+    invalidClassroom: "408(コンピュータ教室)",
+    newLocation: "16-408",
+    newBuilding: "16",
+    newClassroom: "408"
   }
 ];
 
 //実習室
 var trainingRooms = [
-  '909',
-  '910',
-  '912',
-  '913',
-  '914',
-  '915',
-  '916',
-  '917',
-  '918',
-  '1103',
-  '1104',
-  '1115',
-  '1116'
+  "909",
+  "910",
+  "912",
+  "913",
+  "914",
+  "915",
+  "916",
+  "917",
+  "918",
+  "1103",
+  "1104",
+  "1115",
+  "1116"
 ];
 
 var invalidTrainingRoomsAndCorrections = trainingRooms.map(function(room) {
   return {
-    invalidClassroom: room.concat('実習室'),
-    newLocation: '3-'.concat(room),
-    newBuilding: '3',
+    invalidClassroom: room.concat("実習室"),
+    newLocation: "3-".concat(room),
+    newBuilding: "3",
     newClassroom: room
   };
 });
@@ -187,69 +190,12 @@ rawEntireYearCoursesAcademics.forEach(function(rawEntireYearCoursesAcademic) {
   });
 });
 
-function groupMultipleSchools(
-  rawEntireYearCoursesAcademic,
-  entireYearCoursesAcademic
-) {
-  var tempCollection = 'temp';
-  // Export distinct courses by grouping multiple schools in one array
-  db[rawEntireYearCoursesAcademic].aggregate([
-    {
-      $group: {
-        _id: {
-          year: '$year',
-          term: '$term',
-          title: '$title',
-          title_jp: '$title_jp',
-          instructor: '$instructor',
-          instructor_jp: '$instructor_jp',
-          occurrences: '$occurrences',
-          keywords: '$keywords',
-          lang: '$lang'
-        },
-        keys: {
-          $push: {
-            school: '$school',
-            key: '$_id'
-          }
-        }
-      }
-    },
-    {
-      $project: {
-        _id: 0,
-        year: '$_id.year',
-        term: '$_id.term',
-        title: '$_id.title',
-        title_jp: '$_id.title_jp',
-        instructor: '$_id.instructor',
-        instructor_jp: '$_id.instructor_jp',
-        occurrences: '$_id.occurrences',
-        keywords: '$_id.keywords',
-        lang: '$_id.lang',
-        keys: '$keys'
-      }
-    },
-    { $out: tempCollection }
-  ]);
-
-  // Reassign _id value of every docs to first key (pKey in official syllabus) and insert to a new collection
-  db[tempCollection].find().forEach(function(course) {
-    // Taking the first key as _id
-    course._id = course.keys[0].key.toString();
-    db[entireYearCoursesAcademic].insert(course);
-  });
-
-  // Drop temporary collection
-  db[tempCollection].drop();
-}
-
-// Need to transform school:String field to schools:Array
+//TODO remove unnecessary copyTo. We don't need raw collections since we don't do grouping anymore.
 rawEntireYearCoursesAcademics.forEach(function(
   rawEntireYearCoursesAcademic,
   index
 ) {
-  groupMultipleSchools(
+  copyTo(
     rawEntireYearCoursesAcademic,
     entireYearCoursesAcademics[index]
   );
@@ -263,16 +209,76 @@ function sortEntireYearCoursesAcademic(entireYearCoursesAcademic) {
   ]);
 }
 
-entireYearCoursesAcademics.forEach(function(entireYearCoursesAcademic) {
-  copyTo(entireYearCoursesAcademic, entireYearCoursesAll);
-});
-
-// Sort collections
+// Sort aggregated collections
 entireYearCoursesAcademics.forEach(function(entireYearCoursesAcademic) {
   sortEntireYearCoursesAcademic(entireYearCoursesAcademic);
 });
 
-sortEntireYearCoursesAcademic(entireYearCoursesAll);
+function upsertAllTo(source, destination) {
+  /**
+   * For each document in source collection, replace the corresponding one
+   * with the same _id in destination collection. If there are no document with same _id, insert the document.
+   */
+  var total_result = {
+    totalCount: 0,
+    matchedCount: 0,
+    modifiedCount: 0,
+    upsertedCount: 0
+  };
+  db[source].find().forEach(function(doc) {
+    try {
+      var result = db[destination].updateOne(
+        { "_id" : doc._id },
+        {$set: doc},
+        {upsert : true}
+      );
+      total_result['totalCount'] += 1;
+      total_result['matchedCount'] += result['matchedCount'];
+      total_result['modifiedCount'] += result['modifiedCount'];
+      if (result['upsertedCount'] !== undefined) {
+        total_result['upsertedCount'] += result['upsertedCount'];
+      }
+    } catch (e) {
+      print(e)
+    }
+  });
+  return total_result
+}
+
+function removeIfNotExist(source, destination) {
+  var total_result = {
+    totalCount: 0,
+    removedCount: 0
+  };
+  var source_docs = db[source].find().limit(1).toArray();
+  var source_doc = source_docs[0];
+  db[destination].find({"school": source_doc.school}).forEach(function(doc) {
+    var foundDoc = db[source].findOne({"_id": doc._id});
+    if (foundDoc === null) {
+      var result = db[destination].remove({"_id": doc._id});
+      total_result['removedCount'] += result['nRemoved'];
+    }
+    total_result['totalCount'] += 1;
+  });
+  return total_result;
+}
+
+entireYearCoursesAcademics.forEach(function(entireYearCoursesAcademic) {
+  var result = upsertAllTo(entireYearCoursesAcademic, entireYearCoursesAll);
+  print("Upsert documents in " + entireYearCoursesAcademic + " to " + entireYearCoursesAll)
+  printjson(result)
+});
+
+entireYearCoursesAcademics.forEach(function(entireYearCoursesAcademic) {
+  var result = removeIfNotExist(entireYearCoursesAcademic, entireYearCoursesAll);
+  print("Remove documents in " + entireYearCoursesAll + " which does not exist in  " + entireYearCoursesAcademic)
+  printjson(result)
+  
+});
+
+//TODO Need to remove non-existing documents in 'All'
+
+// sortEntireYearCoursesAcademic(entireYearCoursesAll);
 
 // // Export classrooms from courses and sort by building number and name
 // db[coursesSciEng].aggregate([
