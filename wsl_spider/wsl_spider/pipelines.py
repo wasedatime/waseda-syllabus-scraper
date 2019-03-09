@@ -60,7 +60,10 @@ class RenameCourseTermPipeline(object):
 
         'intensiveSpring': 'intensiveSpring',
         'intensiveSummer': 'intensiveSummer',
-        'springSummer': 'springSummer'
+        'intensiveFall': 'intensiveFall',
+        'intensiveWinter': 'intensiveWinter',
+        'springSummer': 'springSummer',
+        'fallWinter': 'fallWinter'
     }
 
     termMap = {
@@ -79,7 +82,10 @@ class RenameCourseTermPipeline(object):
 
         '春季集中': terms['intensiveSpring'],
         '夏季集中': terms['intensiveSummer'],
-        '春夏期': terms['springSummer']
+        '秋季集中': terms['intensiveFall'],
+        '冬季集中': terms['intensiveWinter'],
+        '春夏期': terms['springSummer'],
+        '秋冬期': terms['fallWinter']
     }
 
     def process_item(self, item, spider):
