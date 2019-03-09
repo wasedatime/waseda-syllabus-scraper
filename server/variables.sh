@@ -21,7 +21,7 @@ YEAR=${academic_year}-${next_academic_year}
 BASE_PATH="/Users/oscar/PythonProjects/"
 VIRTUAL_ENV_PATH="${BASE_PATH}/waseda-syllabus-scraper-personal-virtualenv/"
 
-DB_NAME="test"
+DB_NAME="syllabus-dev"
 DB_PREV_NAME="${DB_NAME}_prev"
 API_PATH="/Users/oscar/WebDev/wasetime-api/api/static/${YEAR}/"
 
