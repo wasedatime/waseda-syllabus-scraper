@@ -10,5 +10,6 @@ cron_job() {
 
 cron_job "scrape.sh" \
 && cron_job "aggregate.sh" \
-&& cron_job "export_nginx.sh"
+&& cron_job "export_nginx.sh" \
+&& cron_job "clean_up.sh"
 
