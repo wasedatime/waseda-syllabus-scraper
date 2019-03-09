@@ -205,8 +205,7 @@ function groupMultipleSchools(
           instructor_jp: '$instructor_jp',
           occurrences: '$occurrences',
           keywords: '$keywords',
-          lang: '$lang',
-          code: '$code'
+          lang: '$lang'
         },
         keys: {
           $push: {

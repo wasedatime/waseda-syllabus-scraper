@@ -94,15 +94,14 @@ class SearchSpider(Spider):
             year = c_info.xpath('td[1]/text()').extract_first()
             if year <= self.year_lower_bound:
                 reached_lower_bound_year = True
-            cl = CourseLoader(selector=c_info)
-
             onclick_url = c_info.xpath('td[3]/a/@onclick').extract()
+
+            cl = CourseLoader(selector=c_info)
             cl.add_value(field_name='_id', value=onclick_url)
             cl.add_value(field_name='year', value=year)
             cl.add_value(field_name='keywords', value=self.keyword)
             cl.add_value(field_name='lang', value=self.lang)
 
-            cl.add_xpath(field_name='code', xpath='td[2]/text()')
             cl.add_xpath(field_name='title', xpath='td[3]/a/text()')
             cl.add_xpath(field_name='instructor', xpath='td[4]/text()')
             cl.add_xpath(field_name='school', xpath='td[5]/text()')

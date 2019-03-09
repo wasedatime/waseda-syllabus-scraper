@@ -60,7 +60,6 @@ class Course(Item):
     keywords = Field()
     lang = Field()
     occurrences = Field()
-    code = Field()
 
 
 class Occurrence(Item):
@@ -103,9 +102,6 @@ class CourseLoader(ItemLoader):
 
     _id_in = MapCompose(str.strip, normalize_characters, onclick_url_to_id)
     _id_out = TakeFirst()
-
-    code_in = MapCompose(str.strip, normalize_characters)
-    code_out = TakeFirst()
 
 
 class OccurrenceLoader(ItemLoader):
