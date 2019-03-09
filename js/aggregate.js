@@ -1,12 +1,15 @@
 /*
 Important: _id of a course is determined by its pKey in the syllabus database.
-When grouping courses, e.g., combining FSE, ADV, CRE schools together for a single course,
+When grouping courses, e.g., combining FSE, ASE, CSE schools together for a single course,
 we select the first pKey (here the FSE pKey) as the _id for the new grouped course.
 */
 
 hostName = db.hostInfo().system.hostname;
+productionHostName = "WasedaTimeProduction";
+stagingHostName = "WasedaTimeStaging";
 
-if (hostName.toString() === 'WaseTime') {
+// Load the correct academicCollections.js file.
+if (hostName.toString() === productionHostName || hostName.toString() === stagingHostName) {
   load('/home/deploy/waseda-syllabus-scraper/js/academicCollections.js');
 } else {
   load(
@@ -15,12 +18,18 @@ if (hostName.toString() === 'WaseTime') {
 }
 
 function copyTo(origin, destination) {
+    /**
+     * Copies the origin collection to the destination collection.
+     */
   db[origin].find().forEach(function(doc) {
     db[destination].insert(doc);
   });
 }
 
 function correctInvalidClassrooms(object, rawEntireYearCoursesAcademic) {
+    /**
+     * Corrects the invalid classroom names in collection rawEntireYearCoursesAcademic.
+     */
   return db.getCollection(rawEntireYearCoursesAcademic).findAndModify({
     query: { 'occurrences.classroom': object.invalidClassroom },
     update: {
@@ -159,6 +168,7 @@ var invalidTrainingRoomsAndCorrections = trainingRooms.map(function(room) {
   };
 });
 
+// Get all invalid classroom and corrections.
 invalidClassroomsAndCorrections = invalidClassroomsAndCorrections.concat(
   invalidTrainingRoomsAndCorrections
 );
@@ -246,10 +256,6 @@ rawEntireYearCoursesAcademics.forEach(function(
   );
 });
 
-entireYearCoursesAcademics.forEach(function(entireYearCoursesAcademic) {
-  copyTo(entireYearCoursesAcademic, entireYearCoursesAll);
-});
-
 function sortEntireYearCoursesAcademic(entireYearCoursesAcademic) {
   // Sort entireYearCoursesAcademic collection by title then instructor
   db[entireYearCoursesAcademic].aggregate([
@@ -262,9 +268,11 @@ entireYearCoursesAcademics.forEach(function(entireYearCoursesAcademic) {
   copyTo(entireYearCoursesAcademic, entireYearCoursesAll);
 });
 
+// Sort collections
 entireYearCoursesAcademics.forEach(function(entireYearCoursesAcademic) {
   sortEntireYearCoursesAcademic(entireYearCoursesAcademic);
 });
+
 sortEntireYearCoursesAcademic(entireYearCoursesAll);
 
 // // Export classrooms from courses and sort by building number and name
