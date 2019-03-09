@@ -11,7 +11,9 @@ do
     entire_year_courses_academic=entire_year_courses_${e}
     echo "Exporting collection ${!entire_year_courses_academic} to API folder"
     export_courses ${!entire_year_courses_academic} ${e}
-done
+done \
+&& echo "Exporting collection ${entire_year_courses_all} to API folder" \
+&& export_courses ${entire_year_courses_all} "all"
 
 echo "Exporting collection stats to API folder"
 mongoexport --db ${DB_NAME} -c stats --out "${API_PATH}scraper_stats/index.json"
