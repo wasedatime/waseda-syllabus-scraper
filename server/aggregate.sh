@@ -25,7 +25,7 @@ academic_collections_js="${raw_entire_year_courses_academics_js}\n${entire_year_
 academic_collections_js="${academic_collections_js}\n${raw_entire_year_courses_all_js}\n${entire_year_courses_all_js}"
 printf "${academic_collections_js}" > "${JS_PATH}academicCollections.js"
 
-# Drop collections
+# Drop previously aggregated collections
 for e in "${academics_to_scrape[@]}"
 do
     entire_year_courses_academic=entire_year_courses_${e}
