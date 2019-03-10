@@ -1,7 +1,7 @@
 #!/bin/bash
 
 source variables.sh
-echo "Clean up database..."
+echo "Clean up raw collections in database..."
 for e in "${academics_to_scrape[@]}"
 do
     raw_entire_year_courses_academic=raw_entire_year_courses_${e}
