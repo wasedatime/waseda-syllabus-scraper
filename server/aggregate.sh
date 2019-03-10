@@ -25,11 +25,13 @@ academic_collections_js="${raw_entire_year_courses_academics_js}\n${entire_year_
 academic_collections_js="${academic_collections_js}\n${raw_entire_year_courses_all_js}\n${entire_year_courses_all_js}"
 printf "${academic_collections_js}" > "${JS_PATH}academicCollections.js"
 
-# Drop previously aggregated collections
+# Drop previously aggregated collections, then start aggregating
 for e in "${academics_to_scrape[@]}"
 do
     entire_year_courses_academic=entire_year_courses_${e}
     echo "Dropping aggregated collection ${!entire_year_courses_academic} in database ${DB_NAME}"
     mongo ${DB_NAME} --eval "printjson(db.${!entire_year_courses_academic}.drop())"
 done \
+&& mongo ${DB_NAME} --eval "printjson(db.entire_2019_courses_SCI_ENG.drop())" \
+&& mongo ${DB_NAME} --eval "printjson(db.entire_2019_courses_all.drop())" \
 && mongo "localhost:27017/${DB_NAME}" "${PROJECT_PATH}js/aggregate.js"

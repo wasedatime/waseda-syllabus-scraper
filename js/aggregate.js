@@ -20,6 +20,21 @@ if (
   );
 }
 
+var raw_entire_2019_courses_SCI_ENG = "raw_entire_2019_courses_SCI_ENG";
+var entire_2019_courses_SCI_ENG = "entire_2019_courses_SCI_ENG";
+
+var raw_entire_2019_courses_SCI_ENG_collections = [
+  "raw_entire_2019_courses_FSE",
+  "raw_entire_2019_courses_ASE",
+  "raw_entire_2019_courses_CSE"
+];
+
+var entire_2019_courses_SCI_ENG_collections = [
+  "entire_2019_courses_FSE",
+  "entire_2019_courses_ASE",
+  "entire_2019_courses_CSE"
+];
+
 function copyTo(origin, destination) {
     /**
      * Copies the origin collection to the destination collection.
@@ -190,12 +205,90 @@ rawEntireYearCoursesAcademics.forEach(function(rawEntireYearCoursesAcademic) {
   });
 });
 
-//TODO remove unnecessary copyTo. We don't need raw collections since we don't do grouping anymore.
+function groupMultipleSchools(
+  rawEntireYearCoursesAcademic,
+  entireYearCoursesAcademic
+) {
+  var tempCollection = 'temp';
+  // Export distinct courses by grouping multiple schools in one array
+  db[rawEntireYearCoursesAcademic].aggregate([
+    {
+      $group: {
+        _id: {
+          year: '$year',
+          term: '$term',
+          title: '$title',
+          title_jp: '$title_jp',
+          instructor: '$instructor',
+          instructor_jp: '$instructor_jp',
+          occurrences: '$occurrences',
+          keywords: '$keywords',
+          lang: '$lang'
+        },
+        keys: {
+          $push: {
+            school: '$school',
+            key: '$_id'
+          }
+        }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        year: '$_id.year',
+        term: '$_id.term',
+        title: '$_id.title',
+        title_jp: '$_id.title_jp',
+        instructor: '$_id.instructor',
+        instructor_jp: '$_id.instructor_jp',
+        occurrences: '$_id.occurrences',
+        keywords: '$_id.keywords',
+        lang: '$_id.lang',
+        keys: '$keys'
+      }
+    },
+    { $out: tempCollection }
+  ]);
+
+  // Reassign _id value of every docs to first key (pKey in official syllabus) and insert to a new collection
+  db[tempCollection].find().forEach(function(course) {
+    // Taking the first key as _id
+    course._id = course.keys[0].key.toString();
+    db[entireYearCoursesAcademic].insert(course);
+  });
+
+  // Drop temporary collection
+  db[tempCollection].drop();
+}
+
+// Copy FSE CSE ASE to SCI_ENG
+rawEntireYearCoursesAcademics.forEach(function(
+  rawEntireYearCoursesAcademic
+) {
+  if (raw_entire_2019_courses_SCI_ENG_collections.includes(rawEntireYearCoursesAcademic)) {
+    copyTo(rawEntireYearCoursesAcademic, raw_entire_2019_courses_SCI_ENG)
+  }
+});
+
+
+// Remove FSE CSE ASE collection names
+var rawEntireYearCoursesAcademics = rawEntireYearCoursesAcademics.filter(function(rawEntireYearCoursesAcademic){
+  return !raw_entire_2019_courses_SCI_ENG_collections.includes(rawEntireYearCoursesAcademic)
+});
+var entireYearCoursesAcademics = entireYearCoursesAcademics.filter(function(entireYearCoursesAcademic){
+  return !entire_2019_courses_SCI_ENG_collections.includes(entireYearCoursesAcademic)
+});
+
+// Add SCI_ENG collection name
+rawEntireYearCoursesAcademics.push(raw_entire_2019_courses_SCI_ENG);
+entireYearCoursesAcademics.push(entire_2019_courses_SCI_ENG);
+
 rawEntireYearCoursesAcademics.forEach(function(
   rawEntireYearCoursesAcademic,
   index
 ) {
-  copyTo(
+  groupMultipleSchools(
     rawEntireYearCoursesAcademic,
     entireYearCoursesAcademics[index]
   );
@@ -252,7 +345,7 @@ function removeIfNotExist(source, destination) {
   };
   var source_docs = db[source].find().limit(1).toArray();
   var source_doc = source_docs[0];
-  db[destination].find({"school": source_doc.school}).forEach(function(doc) {
+  db[destination].find().forEach(function(doc) {
     var foundDoc = db[source].findOne({"_id": doc._id});
     if (foundDoc === null) {
       var result = db[destination].remove({"_id": doc._id});
@@ -269,12 +362,12 @@ entireYearCoursesAcademics.forEach(function(entireYearCoursesAcademic) {
   printjson(result)
 });
 
-entireYearCoursesAcademics.forEach(function(entireYearCoursesAcademic) {
-  var result = removeIfNotExist(entireYearCoursesAcademic, entireYearCoursesAll);
-  print("Remove documents in " + entireYearCoursesAll + " which does not exist in  " + entireYearCoursesAcademic)
-  printjson(result)
-
-});
+// entireYearCoursesAcademics.forEach(function(entireYearCoursesAcademic) {
+//   var result = removeIfNotExist(entireYearCoursesAcademic, entireYearCoursesAll);
+//   print("Remove documents in " + entireYearCoursesAll + " which does not exist in  " + entireYearCoursesAcademic)
+//   printjson(result)
+//
+// });
 
 sortEntireYearCoursesAcademic(entireYearCoursesAll);
 
