@@ -186,6 +186,17 @@ var invalidTrainingRoomsAndCorrections = trainingRooms.map(function(room) {
   };
 });
 
+rawEntireYearCoursesAcademics.forEach(function(rawEntireYearCoursesAcademic) {
+  db[rawEntireYearCoursesAcademic].find().forEach(function(doc) {
+    var field_count = Object.keys(doc).length;
+    if (field_count < 10) {
+      var doc_title = doc.title;
+      db[rawEntireYearCoursesAcademic].remove({"_id": doc._id});
+      print(rawEntireYearCoursesAcademic + ": Remove " + doc_title + " because field count is " + field_count)
+    }
+  });
+});
+
 // Get all invalid classroom and corrections.
 invalidClassroomsAndCorrections = invalidClassroomsAndCorrections.concat(
   invalidTrainingRoomsAndCorrections
