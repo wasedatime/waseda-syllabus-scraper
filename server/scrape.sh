@@ -10,14 +10,6 @@ scrape () {
     -y "$1" -d "$2" -s "$3" -t "$4" -k "$5" -b "$6" -c "$7" -p "${DATA_PATH}academics.json"
 }
 
-# drop database_prev
-echo "Dropping database_prev"
-mongo ${DB_PREV_NAME} --eval "printjson(db.dropDatabase())"
-# copy database to database_prev (back up)
-echo "Copying current database to database_prev"
-mongo ${DB_NAME} --eval "printjson(db.copyDatabase('${DB_NAME}', '${DB_PREV_NAME}'))"
-
-
 # Change directory for Scrapy to detect scrapy.cfg properly. Or else it returns no active project
 cd "${PROJECT_PATH}wsl_spider"
 
