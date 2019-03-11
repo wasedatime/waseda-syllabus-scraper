@@ -8,5 +8,4 @@ do
     echo "Dropping raw collection ${!raw_entire_year_courses_academic} in database ${DB_NAME}"
     mongo ${DB_NAME} --eval "printjson(db.${!raw_entire_year_courses_academic}.drop())"
 done \
-&& mongo ${DB_NAME} --eval "printjson(db.raw_entire_year_courses_SCI_ENG.drop())" \
 && echo "Clean up finished."
