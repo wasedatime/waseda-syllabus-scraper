@@ -1,6 +1,6 @@
 # Waseda Syllabus Scraper
 
-[![Build Status](https://travis-ci.org/OscarWang114/waseda-syllabus-scraper.svg?branch=master)](https://travis-ci.org/OscarWang114/waseda-syllabus-scraper)
+[![Build Status](https://travis-ci.com/wasedatime/waseda-syllabus-scraper.svg?branch=master)](https://travis-ci.com/wasedatime/waseda-syllabus-scraper)
 
 This is a web scraper built to scrape course information from the [Syllabus Search Database at Waseda University](https://www.wsl.waseda.jp/syllabus/JAA101.php?pLng=en).
 
@@ -8,9 +8,10 @@ This is a web scraper built to scrape course information from the [Syllabus Sear
 
 ### Prerequisites
 
-* [Python 3](https://www.python.org/downloads/), version 3.6.2 and above.
-* pip3 (package manager for Python3) 9.0.1 and above.
-* [MongoDB shell](https://docs.mongodb.com/getting-started/shell/installation/) 3.6.0 and above.
+* [Python 3](https://www.python.org/downloads/), version >= 3.6.2.
+* pip3 (package manager for Python3)
+* [jq](https://stedolan.github.io/jq/download/)
+* [MongoDB shell](https://docs.mongodb.com/getting-started/shell/installation/) version >= 3.6.0.
 * [Robo 3T](https://robomongo.org/) (Optional but recommended)
 
 ### Installing
@@ -44,20 +45,20 @@ pip3 install virtualenv
 Create a folder that will be used as a virtual environment for this project.
 
 ```
-mkdir my-virtual-env
+mkdir wsl-scraper-venv
 ```
 
 Initialize and activate the environment.
 
 ```
-virtualenv my-virtual-env
-source my-virtual-env/bin/activate
+virtualenv wsl-scraper-venv
+source wsl-scraper-venv/bin/activate
 ```
 
 Clone this project into the virtual environment folder, and install dev dependencies.
 
 ```
-cd my-virtual-env
+cd wsl-scraper-venv
 git clone https://github.com/wasetime/waseda-syllabus-scraper.git
 pip3 install -r requirements-dev.txt
 ```
@@ -72,13 +73,7 @@ mongo --version
 
 You should see an output like MongoDB shell version v3.6.0.
 
-Run the following command to start the daemon database process.
-
-```
-mongod
-```
-
-Remember that you will need to start the database before scraping so that the scraped data can be exported to MongoDB.
+Remember that you **must start the database process** before scraping so that the scraped data can be exported to MongoDB.
 
 
 ### Customize your scraper
@@ -96,6 +91,7 @@ You can specify the schools you want to scrape in [data/academics_to_scrape.json
 Type the following command inside your terminal
 
 ```
+cd server
 bash scrape.sh
 ```
 
