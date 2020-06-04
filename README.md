@@ -1,6 +1,6 @@
 # Waseda Syllabus Scraper
 
-[![Build Status](https://travis-ci.org/OscarWang114/waseda-syllabus-scraper.svg?branch=master)](https://travis-ci.org/OscarWang114/waseda-syllabus-scraper)
+[![Build Status](https://travis-ci.com/wasedatime/waseda-syllabus-scraper.svg?branch=master)](https://travis-ci.com/wasedatime/waseda-syllabus-scraper)
 
 This is a web scraper built to scrape course information from the [Syllabus Search Database at Waseda University](https://www.wsl.waseda.jp/syllabus/JAA101.php?pLng=en).
 
