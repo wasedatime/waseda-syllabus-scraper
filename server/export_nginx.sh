@@ -13,7 +13,7 @@ do
     export_courses ${!entire_year_courses_academic} ${e}
 done \
 && echo "Exporting collection entire_courses_SCI_ENG to API folder" \
-&& export_courses "entire_courses_SCI_ENG" "SCI_ENG" \
+&& export_courses ${entire_year_courses_SCI_ENG} "SCI_ENG" \
 && echo "Exporting collection ${entire_year_courses_all} to API folder" \
 && export_courses ${entire_year_courses_all} "all"
 
