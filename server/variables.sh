@@ -70,6 +70,7 @@ for e in "${academics[@]}"
 do
     declare raw_entire_year_courses_${e}=$(concat_variables "raw" ${entire_academic_year} ${courses} ${e})
 done
+raw_entire_year_courses_SCI_ENG=$(concat_variables "raw" ${entire_academic_year} ${courses} "SCI_ENG")
 raw_entire_year_courses_all=$(concat_variables "raw" ${entire_academic_year} ${courses} "all")
 
 # Refined collections in mongodb
@@ -77,4 +78,5 @@ for e in "${academics[@]}"
 do
     declare entire_year_courses_${e}=$(concat_variables ${entire_academic_year} ${courses} ${e})
 done
+entire_year_courses_SCI_ENG=$(concat_variables ${entire_academic_year} ${courses} "SCI_ENG")
 entire_year_courses_all=$(concat_variables ${entire_academic_year} ${courses} "all")

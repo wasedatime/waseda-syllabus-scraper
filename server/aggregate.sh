@@ -32,7 +32,7 @@ do
     echo "Dropping aggregated collection ${!entire_year_courses_academic} in database ${DB_NAME}"
     mongo ${DB_NAME} --eval "printjson(db.${!entire_year_courses_academic}.drop())"
 done \
-&& mongo ${DB_NAME} --eval "printjson(db.raw_entire_2019_courses_SCI_ENG.drop())" \
-&& mongo ${DB_NAME} --eval "printjson(db.entire_2019_courses_SCI_ENG.drop())" \
-&& mongo ${DB_NAME} --eval "printjson(db.entire_2019_courses_all.drop())" \
+&& mongo ${DB_NAME} --eval "printjson(db.raw_entire_${academic_year}_courses_SCI_ENG.drop())" \
+&& mongo ${DB_NAME} --eval "printjson(db.entire_${academic_year}_courses_SCI_ENG.drop())" \
+&& mongo ${DB_NAME} --eval "printjson(db.entire_${academic_year}_courses_all.drop())" \
 && mongo "localhost:27017/${DB_NAME}" "${PROJECT_PATH}js/aggregate.js"

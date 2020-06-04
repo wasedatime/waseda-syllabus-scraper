@@ -20,19 +20,33 @@ if (
   );
 }
 
-var raw_entire_2019_courses_SCI_ENG = "raw_entire_2019_courses_SCI_ENG";
-var entire_2019_courses_SCI_ENG = "entire_2019_courses_SCI_ENG";
+function getAcademicYear() {
+  var currentDate = new Date();
+  var academicYear = currentDate.getFullYear();
 
-var raw_entire_2019_courses_SCI_ENG_collections = [
-  "raw_entire_2019_courses_FSE",
-  "raw_entire_2019_courses_ASE",
-  "raw_entire_2019_courses_CSE"
+  // Minus one year if it January or February
+  // Note that January is 0, February is 1
+  if (currentDate.getMonth() === 0 || currentDate.getMonth() === 1) {
+    academicYear -= 1;
+  }
+  return academicYear
+}
+
+var academicYear = getAcademicYear().toString();
+
+var raw_entire_courses_SCI_ENG = "raw_entire_" + academicYear + "_courses_SCI_ENG";
+var entire_courses_SCI_ENG = "entire_" + academicYear + "_courses_SCI_ENG";
+
+var raw_entire_courses_SCI_ENG_collections = [
+  "raw_entire_" + academicYear + "_courses_FSE",
+  "raw_entire_" + academicYear + "_courses_ASE",
+  "raw_entire_" + academicYear + "_courses_CSE"
 ];
 
-var entire_2019_courses_SCI_ENG_collections = [
-  "entire_2019_courses_FSE",
-  "entire_2019_courses_ASE",
-  "entire_2019_courses_CSE"
+var entire_courses_SCI_ENG_collections = [
+  "entire_" + academicYear + "_courses_FSE",
+  "entire_" + academicYear + "_courses_ASE",
+  "entire_" + academicYear + "_courses_CSE"
 ];
 
 function copyTo(origin, destination) {
@@ -277,23 +291,23 @@ function groupMultipleSchools(
 rawEntireYearCoursesAcademics.forEach(function(
   rawEntireYearCoursesAcademic
 ) {
-  if (raw_entire_2019_courses_SCI_ENG_collections.includes(rawEntireYearCoursesAcademic)) {
-    copyTo(rawEntireYearCoursesAcademic, raw_entire_2019_courses_SCI_ENG)
+  if (raw_entire_courses_SCI_ENG_collections.includes(rawEntireYearCoursesAcademic)) {
+    copyTo(rawEntireYearCoursesAcademic, raw_entire_courses_SCI_ENG)
   }
 });
 
 
 // Remove FSE CSE ASE collection names
 var rawEntireYearCoursesAcademics = rawEntireYearCoursesAcademics.filter(function(rawEntireYearCoursesAcademic){
-  return !raw_entire_2019_courses_SCI_ENG_collections.includes(rawEntireYearCoursesAcademic)
+  return !raw_entire_courses_SCI_ENG_collections.includes(rawEntireYearCoursesAcademic)
 });
 var entireYearCoursesAcademics = entireYearCoursesAcademics.filter(function(entireYearCoursesAcademic){
-  return !entire_2019_courses_SCI_ENG_collections.includes(entireYearCoursesAcademic)
+  return !entire_courses_SCI_ENG_collections.includes(entireYearCoursesAcademic)
 });
 
 // Add SCI_ENG collection name
-rawEntireYearCoursesAcademics.push(raw_entire_2019_courses_SCI_ENG);
-entireYearCoursesAcademics.push(entire_2019_courses_SCI_ENG);
+rawEntireYearCoursesAcademics.push(raw_entire_courses_SCI_ENG);
+entireYearCoursesAcademics.push(entire_courses_SCI_ENG);
 
 rawEntireYearCoursesAcademics.forEach(function(
   rawEntireYearCoursesAcademic,
