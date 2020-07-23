@@ -103,6 +103,7 @@ class SearchSpider(Spider):
                 reached_lower_bound_year = True
             onclick_url = c_info.xpath('td[3]/a/@onclick').extract()
 
+            code = self.correct_nbsp_in_list(c_info.xpath('td[2]/text()').extract())
             title = self.correct_nbsp_in_list(c_info.xpath('td[3]/a/text()').extract())
             instructor = self.correct_nbsp_in_list(c_info.xpath('td[4]/text()').extract())
             school = self.correct_nbsp_in_list(c_info.xpath('td[5]/text()').extract())
@@ -113,6 +114,7 @@ class SearchSpider(Spider):
             cl.add_value(field_name='year', value=year)
             cl.add_value(field_name='keywords', value=self.keyword)
             cl.add_value(field_name='lang', value=self.lang)
+            cl.add_value(field_name='code', value=code)
             cl.add_value(field_name='title', value=title)
             cl.add_value(field_name='instructor', value=instructor)
             cl.add_value(field_name='school', value=school)

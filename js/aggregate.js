@@ -242,6 +242,7 @@ function groupMultipleSchools(
         _id: {
           year: '$year',
           term: '$term',
+          code: '$code',
           title: '$title',
           title_jp: '$title_jp',
           instructor: '$instructor',
@@ -263,6 +264,7 @@ function groupMultipleSchools(
         _id: 0,
         year: '$_id.year',
         term: '$_id.term',
+        code: '$_id.code',
         title: '$_id.title',
         title_jp: '$_id.title_jp',
         instructor: '$_id.instructor',

@@ -52,6 +52,7 @@ def create_keyword_list(keyword):
 
 class Course(Item):
     _id = Field()
+    code = Field()
     title = Field()
     instructor = Field()
     year = Field()
@@ -76,6 +77,9 @@ class Occurrence(Item):
 class CourseLoader(ItemLoader):
     default_item_class = Course
     default_output_processor = TakeFirst()
+
+    code_in = MapCompose(str.strip, normalize_characters)
+    code_out = TakeFirst()
 
     title_in = MapCompose(str.strip, normalize_characters)
     title_out = TakeFirst()
