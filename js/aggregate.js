@@ -207,8 +207,12 @@ rawEntireYearCoursesAcademics.forEach(function(rawEntireYearCoursesAcademic) {
     if (field_count < 11) {
       var doc_title = doc.title;
       db[rawEntireYearCoursesAcademic].remove({"_id": doc._id});
-      print(rawEntireYearCoursesAcademic + ": Remove " + doc_title + " because field count is " + field_count)
-      print(Object.entries(doc))
+      print(rawEntireYearCoursesAcademic + ": Remove " + doc_title + " because field count is " + field_count);
+      print(Object.keys(doc));
+      var vals = Object.keys(doc).map(function(key) {
+        return doc[key];
+      });
+      print(vals);
     }
   });
 });
