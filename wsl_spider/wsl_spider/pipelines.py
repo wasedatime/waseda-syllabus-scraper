@@ -201,9 +201,9 @@ class MongoPipeline(object):
                 self.add_item_title_jp(item_title, item_id)
                 self.add_item_instructor_jp(item_instructor, item_id)
                 self.set_item_term_jp(item_term, item_id)
-            elif "keywords" in item:
+            if "keywords" in item:
                 self.update_item_keyword(item_title, item_id, item['keywords'])
-            elif item['lang'] != "others":
+            if item['lang'] != "others":
                 item_lang = item['lang']
                 self.set_item_lang(item_title, item_id, item_lang)
 

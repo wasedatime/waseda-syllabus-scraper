@@ -30,12 +30,18 @@ do
     scrape ${academic_year} "en" ${e} "all" "" ${DB_NAME} ${!raw_entire_year_courses_academic} \
     && scrape ${academic_year} "en" ${e} "en" "" ${DB_NAME} ${!raw_entire_year_courses_academic} \
     && scrape ${academic_year} "en" ${e} "jp" "" ${DB_NAME} ${!raw_entire_year_courses_academic} \
+    && scrape ${academic_year} "jp" ${e} "all" "" ${DB_NAME} ${!raw_entire_year_courses_academic} \
     && if [ "$e" = "FSE" ] || [ "$e" = "ASE" ] || [ "$e" = "CSE" ]; then
 
         # School FSE, ASE, CSE has special keywords IPSE and English-based Undergraduate Program.
         scrape ${academic_year} "en" ${e} "all" "IPSE" ${DB_NAME} ${!raw_entire_year_courses_academic} \
-        && scrape ${academic_year} "en" ${e} "all" "English-based Undergraduate Program" ${DB_NAME} ${!raw_entire_year_courses_academic}
+        && scrape ${academic_year} "en" ${e} "en" "IPSE" ${DB_NAME} ${!raw_entire_year_courses_academic} \
+        && scrape ${academic_year} "en" ${e} "jp" "IPSE" ${DB_NAME} ${!raw_entire_year_courses_academic} \
+        && scrape ${academic_year} "jp" ${e} "all" "IPSE" ${DB_NAME} ${!raw_entire_year_courses_academic} \
+        && scrape ${academic_year} "en" ${e} "all" "English-based Undergraduate Program" ${DB_NAME} ${!raw_entire_year_courses_academic} \
+        && scrape ${academic_year} "en" ${e} "en" "English-based Undergraduate Program" ${DB_NAME} ${!raw_entire_year_courses_academic} \
+        && scrape ${academic_year} "en" ${e} "jp" "English-based Undergraduate Program" ${DB_NAME} ${!raw_entire_year_courses_academic} \
+        && scrape ${academic_year} "jp" ${e} "all" "English-based Undergraduate Program" ${DB_NAME} ${!raw_entire_year_courses_academic}
 
-    fi \
-    && scrape ${academic_year} "jp" ${e} "all" "" ${DB_NAME} ${!raw_entire_year_courses_academic}
+    fi
 done
