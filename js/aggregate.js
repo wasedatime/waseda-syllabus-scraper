@@ -200,6 +200,7 @@ var invalidTrainingRoomsAndCorrections = trainingRooms.map(function(room) {
   };
 });
 
+// Remove docs with incorrect field count
 rawEntireYearCoursesAcademics.forEach(function(rawEntireYearCoursesAcademic) {
   db[rawEntireYearCoursesAcademic].find().forEach(function(doc) {
     var field_count = Object.keys(doc).length;
@@ -328,6 +329,28 @@ function sortEntireYearCoursesAcademic(entireYearCoursesAcademic) {
     { $out: entireYearCoursesAcademic }
   ]);
 }
+
+var springSems = new Set(['springSem', 'springQuart', 'summerQuart', 'intensiveSpringSem', 'intensiveSpring', 'intensiveSummer', 'springSummer']);
+var fallSems = new Set(['fallSem', 'fallQuart', 'winterQuart', 'intensiveFallSem', 'intensiveFall', 'intensiveWinter', 'fallWinter']);
+var filterOut = "spring";
+// Remove docs with unneeded term (semester)
+entireYearCoursesAcademics.forEach(function(entireYearCoursesAcademic) {
+  db[entireYearCoursesAcademic].find().forEach(function(doc) {
+    var doc_term = doc.term;
+    var doc_title = doc.title;
+    if (filterOut === "spring") {
+      if (springSems.has(doc_term)) {
+        db[entireYearCoursesAcademic].remove({"_id": doc._id});
+        print(entireYearCoursesAcademic + ": Remove " + doc_title + " because the term is spring")
+      }
+    } else {
+      if (fallSems.has(doc_term)) {
+        db[entireYearCoursesAcademic].remove({"_id": doc._id});
+        print(entireYearCoursesAcademic + ": Remove " + doc_title + " because the term is fall")
+      }
+    }
+  });
+});
 
 // Sort aggregated collections
 entireYearCoursesAcademics.forEach(function(entireYearCoursesAcademic) {
