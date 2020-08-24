@@ -413,8 +413,8 @@ function removeIfNotExist(source, destination) {
 
 entireYearCoursesAcademics.forEach(function(entireYearCoursesAcademic) {
   var result = upsertAllTo(entireYearCoursesAcademic, entireYearCoursesAll);
-  print("Upsert documents in " + entireYearCoursesAcademic + " to " + entireYearCoursesAll)
-  printjson(result)
+  print("Upsert documents in " + entireYearCoursesAcademic + " to " + entireYearCoursesAll);
+  printjson(result);
 });
 
 // entireYearCoursesAcademics.forEach(function(entireYearCoursesAcademic) {
@@ -425,6 +425,58 @@ entireYearCoursesAcademics.forEach(function(entireYearCoursesAcademic) {
 // });
 
 sortEntireYearCoursesAcademic(entireYearCoursesAll);
+
+
+function addHasEvalsKey(collection) {
+  var total_result = {
+    totalCount: 0,
+    silsSeminarCount: 0,
+    hasEvalsCount: 0
+  };
+
+  db[collection].find().forEach(function (course) {
+
+    var course_id = course["_id"];
+    var title = course["title"];
+    title = title.toLowerCase();
+    var schools = course["keys"].map(function (obj) {
+      return obj["school"]
+    });
+
+    var course_key_length = 10;
+    if (schools.includes("SILS") && title.includes("seminar")) {
+      // SILS seminar
+      course_key_length = 12;
+      total_result["silsSeminarCount"] += 1;
+    }
+
+    var course_key = course_id.slice(0, course_key_length);
+
+    var course_evals = db.getSiblingDB("course_evals").getCollection("test").find({"course_key": course_key}).toArray();
+
+    var has_evals = false;
+    if (course_evals.length !== 0) {
+      has_evals = true;
+      print(entireYearCoursesAll + ": Course " + title + " has evaluations.");
+      total_result["hasEvalsCount"] += 1;
+    }
+
+    try {
+      db[collection].updateOne(
+        {"_id": course_id},
+        {$set: {"has_evals": has_evals}},
+        {upsert: false}
+      );
+      total_result['totalCount'] += 1;
+    } catch (e) {
+      print(e)
+    }
+  });
+  return total_result;
+}
+
+var addHasEvalsKeyResult = addHasEvalsKey(entireYearCoursesAll);
+printjson(addHasEvalsKeyResult);
 
 
 // // Export classrooms from courses and sort by building number and name
