@@ -430,7 +430,7 @@ sortEntireYearCoursesAcademic(entireYearCoursesAll);
 function addHasEvalsKey(collection) {
   var total_result = {
     totalCount: 0,
-    silsSeminarCount: 0,
+    silsOrPseSeminarCount: 0,
     hasEvalsCount: 0
   };
 
@@ -438,16 +438,17 @@ function addHasEvalsKey(collection) {
 
     var course_id = course["_id"];
     var title = course["title"];
-    title = title.toLowerCase();
     var schools = course["keys"].map(function (obj) {
       return obj["school"]
     });
 
     var course_key_length = 10;
-    if (schools.includes("SILS") && title.includes("seminar")) {
-      // SILS seminar
+    var is_SILS_or_PSE = (schools.includes("SILS") || schools.includes("PSE"));
+    title = title.toLowerCase();
+    if (is_SILS_or_PSE && title.includes("seminar")) {
+      // SILS and PSE seminars
       course_key_length = 12;
-      total_result["silsSeminarCount"] += 1;
+      total_result["silsOrPseSeminarCount"] += 1;
     }
 
     var course_key = course_id.slice(0, course_key_length);
