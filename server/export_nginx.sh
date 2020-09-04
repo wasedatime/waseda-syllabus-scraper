@@ -16,7 +16,7 @@ done \
 && export_courses ${entire_year_courses_SCI_ENG} "SCI_ENG" \
 && echo "Exporting collection ${entire_year_courses_all} to API folder" \
 && export_courses ${entire_year_courses_all} "all" \
-&& export_courses ${entire_year_courses_all} "all_min"
+&& export_courses ${entire_year_courses_all_min} "all_min"
 
 echo "Exporting collection stats to API folder"
 mongoexport --db ${DB_NAME} -c stats --out "${API_PATH}scraper_stats/index.json"
