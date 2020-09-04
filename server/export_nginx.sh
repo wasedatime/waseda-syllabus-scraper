@@ -16,6 +16,7 @@ done \
 && export_courses ${entire_year_courses_SCI_ENG} "SCI_ENG" \
 && echo "Exporting collection ${entire_year_courses_all} to API folder" \
 && export_courses ${entire_year_courses_all} "all" \
+&& echo "Exporting collection ${entire_year_courses_all_min} to API folder" \
 && export_courses ${entire_year_courses_all_min} "all_min"
 
 echo "Exporting collection stats to API folder"
