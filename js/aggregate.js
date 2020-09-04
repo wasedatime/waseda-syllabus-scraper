@@ -503,6 +503,10 @@ function minifyKeys(source, destination) {
       minDoc['y'] = doc['year'];
       minDoc['e'] = doc['has_evals'];
 
+      if (doc.hasOwnProperty('keywords')) {
+        minDoc['kws'] = doc['keywords']
+      }
+
       minDoc['os'] = [];
       minDoc['ks'] = [];
 
