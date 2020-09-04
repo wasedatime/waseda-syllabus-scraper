@@ -339,23 +339,23 @@ var springSems = new Set(['springSem', 'springQuart', 'summerQuart', 'intensiveS
 var fallSems = new Set(['fallSem', 'fallQuart', 'winterQuart', 'intensiveFallSem', 'intensiveFall', 'intensiveWinter', 'fallWinter']);
 var filterOut = "spring";
 // Remove docs with unneeded term (semester)
-entireYearCoursesAcademics.forEach(function(entireYearCoursesAcademic) {
-  db[entireYearCoursesAcademic].find().forEach(function(doc) {
-    var doc_term = doc.term;
-    var doc_title = doc.title;
-    if (filterOut === "spring") {
-      if (springSems.has(doc_term)) {
-        db[entireYearCoursesAcademic].remove({"_id": doc._id});
-        print(entireYearCoursesAcademic + ": Remove " + doc_title + " because the term is spring")
-      }
-    } else {
-      if (fallSems.has(doc_term)) {
-        db[entireYearCoursesAcademic].remove({"_id": doc._id});
-        print(entireYearCoursesAcademic + ": Remove " + doc_title + " because the term is fall")
-      }
-    }
-  });
-});
+// entireYearCoursesAcademics.forEach(function(entireYearCoursesAcademic) {
+//   db[entireYearCoursesAcademic].find().forEach(function(doc) {
+//     var doc_term = doc.term;
+//     var doc_title = doc.title;
+//     if (filterOut === "spring") {
+//       if (springSems.has(doc_term)) {
+//         db[entireYearCoursesAcademic].remove({"_id": doc._id});
+//         print(entireYearCoursesAcademic + ": Remove " + doc_title + " because the term is spring")
+//       }
+//     } else {
+//       if (fallSems.has(doc_term)) {
+//         db[entireYearCoursesAcademic].remove({"_id": doc._id});
+//         print(entireYearCoursesAcademic + ": Remove " + doc_title + " because the term is fall")
+//       }
+//     }
+//   });
+// });
 
 // Sort aggregated collections
 entireYearCoursesAcademics.forEach(function(entireYearCoursesAcademic) {
@@ -479,6 +479,77 @@ function addHasEvalsKey(collection) {
 var addHasEvalsKeyResult = addHasEvalsKey(entireYearCoursesAll);
 printjson(addHasEvalsKeyResult);
 
+
+function minifyKeys(source, destination) {
+
+  var total_result = {
+    totalCount: 0,
+    matchedCount: 0,
+    modifiedCount: 0,
+    upsertedCount: 0
+  };
+
+  db[source].find().forEach(function (doc) {
+    try {
+      var minDoc = {};
+
+      minDoc['t'] = doc['title'];
+      minDoc['tj'] = doc['title_jp'];
+      minDoc['i'] = doc['instructor'];
+      minDoc['ij'] = doc['instructor_jp'];
+      minDoc['l'] = doc['lang'];
+      minDoc['c'] = doc['code'];
+      minDoc['tm'] = doc['term'];
+      minDoc['y'] = doc['year'];
+      minDoc['e'] = doc['has_evals'];
+
+      minDoc['os'] = [];
+      minDoc['ks'] = [];
+
+      var os = doc['occurrences'];
+      var ks = doc['keys'];
+
+      for (var i=0; i < os.length; i++) {
+        var minDocO = {};
+        minDocO['d'] = os[i]['day'];
+        minDocO['s'] = os[i]['start_period'];
+        minDocO['e'] = os[i]['end_period'];
+        minDocO['b'] = os[i]['building'];
+        minDocO['c'] = os[i]['classroom'];
+        minDocO['l'] = os[i]['location'];
+
+        minDoc['os'][i] = minDocO;
+      }
+
+      for (i=0; i < ks.length; i++) {
+        var minDocK = {};
+        minDocK['s'] = ks[i]['school'];
+        minDocK['k'] = ks[i]['key'];
+
+        minDoc['ks'][i] = minDocK;
+      }
+
+      var result = db[destination].updateOne(
+        { "_id" : doc._id },
+        {$set: minDoc},
+        {upsert : true}
+      );
+
+      total_result['totalCount'] += 1;
+      total_result['matchedCount'] += result['matchedCount'];
+      total_result['modifiedCount'] += result['modifiedCount'];
+      if (result['upsertedCount'] !== undefined) {
+        total_result['upsertedCount'] += result['upsertedCount'];
+      }
+    } catch (e) {
+      print(e)
+    }
+  });
+}
+
+var minifyResult = minifyKeys(entireYearCoursesAll, entireYearCoursesAllMin);
+print("minify keys in documents in " + entireYearCoursesAll + " and store in " + entireYearCoursesAllMin);
+printjson(minifyResult);
 
 // // Export classrooms from courses and sort by building number and name
 // db[coursesSciEng].aggregate([

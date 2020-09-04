@@ -80,3 +80,4 @@ do
 done
 entire_year_courses_SCI_ENG=$(concat_variables ${entire_academic_year} ${courses} "SCI_ENG")
 entire_year_courses_all=$(concat_variables ${entire_academic_year} ${courses} "all")
+entire_year_courses_all_min=$(concat_variables ${entire_academic_year} ${courses} "all" "_min")

@@ -63,6 +63,8 @@ var termYearCoursesSils = termYear + suffixCoursesSils;
 var termYearCoursesSss = termYear + suffixCoursesSss;
 var termYearCoursesCjl = termYear + suffixCoursesCjl;
 
+var entireYearCoursesAllMin =  entireYearCoursesAll + "_min";
+
 // var classroomsSciEngTemp = termYear + '_classrooms_sci_eng_all' + suffixTemp;
 // var classroomsSciEng = termYear + '_classrooms_sci_eng_all';
 //
