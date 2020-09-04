@@ -545,6 +545,8 @@ function minifyKeys(source, destination) {
       print(e)
     }
   });
+
+  return total_result;
 }
 
 var minifyResult = minifyKeys(entireYearCoursesAll, entireYearCoursesAllMin);
