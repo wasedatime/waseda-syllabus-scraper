@@ -200,13 +200,19 @@ var invalidTrainingRoomsAndCorrections = trainingRooms.map(function(room) {
   };
 });
 
+// Remove docs with incorrect field count
 rawEntireYearCoursesAcademics.forEach(function(rawEntireYearCoursesAcademic) {
   db[rawEntireYearCoursesAcademic].find().forEach(function(doc) {
     var field_count = Object.keys(doc).length;
-    if (field_count < 10) {
+    if (field_count < 11) {
       var doc_title = doc.title;
       db[rawEntireYearCoursesAcademic].remove({"_id": doc._id});
-      print(rawEntireYearCoursesAcademic + ": Remove " + doc_title + " because field count is " + field_count)
+      print(rawEntireYearCoursesAcademic + ": Remove " + doc_title + " because field count is " + field_count);
+      print(Object.keys(doc));
+      var vals = Object.keys(doc).map(function(key) {
+        return doc[key];
+      });
+      print(vals);
     }
   });
 });
@@ -242,6 +248,7 @@ function groupMultipleSchools(
         _id: {
           year: '$year',
           term: '$term',
+          code: '$code',
           title: '$title',
           title_jp: '$title_jp',
           instructor: '$instructor',
@@ -263,6 +270,7 @@ function groupMultipleSchools(
         _id: 0,
         year: '$_id.year',
         term: '$_id.term',
+        code: '$_id.code',
         title: '$_id.title',
         title_jp: '$_id.title_jp',
         instructor: '$_id.instructor',
@@ -327,6 +335,28 @@ function sortEntireYearCoursesAcademic(entireYearCoursesAcademic) {
   ]);
 }
 
+var springSems = new Set(['springSem', 'springQuart', 'summerQuart', 'intensiveSpringSem', 'intensiveSpring', 'intensiveSummer', 'springSummer']);
+var fallSems = new Set(['fallSem', 'fallQuart', 'winterQuart', 'intensiveFallSem', 'intensiveFall', 'intensiveWinter', 'fallWinter']);
+var filterOut = "spring";
+// Remove docs with unneeded term (semester)
+// entireYearCoursesAcademics.forEach(function(entireYearCoursesAcademic) {
+//   db[entireYearCoursesAcademic].find().forEach(function(doc) {
+//     var doc_term = doc.term;
+//     var doc_title = doc.title;
+//     if (filterOut === "spring") {
+//       if (springSems.has(doc_term)) {
+//         db[entireYearCoursesAcademic].remove({"_id": doc._id});
+//         print(entireYearCoursesAcademic + ": Remove " + doc_title + " because the term is spring")
+//       }
+//     } else {
+//       if (fallSems.has(doc_term)) {
+//         db[entireYearCoursesAcademic].remove({"_id": doc._id});
+//         print(entireYearCoursesAcademic + ": Remove " + doc_title + " because the term is fall")
+//       }
+//     }
+//   });
+// });
+
 // Sort aggregated collections
 entireYearCoursesAcademics.forEach(function(entireYearCoursesAcademic) {
   sortEntireYearCoursesAcademic(entireYearCoursesAcademic);
@@ -383,8 +413,8 @@ function removeIfNotExist(source, destination) {
 
 entireYearCoursesAcademics.forEach(function(entireYearCoursesAcademic) {
   var result = upsertAllTo(entireYearCoursesAcademic, entireYearCoursesAll);
-  print("Upsert documents in " + entireYearCoursesAcademic + " to " + entireYearCoursesAll)
-  printjson(result)
+  print("Upsert documents in " + entireYearCoursesAcademic + " to " + entireYearCoursesAll);
+  printjson(result);
 });
 
 // entireYearCoursesAcademics.forEach(function(entireYearCoursesAcademic) {
@@ -396,6 +426,136 @@ entireYearCoursesAcademics.forEach(function(entireYearCoursesAcademic) {
 
 sortEntireYearCoursesAcademic(entireYearCoursesAll);
 
+
+function addHasEvalsKey(collection) {
+  var total_result = {
+    totalCount: 0,
+    silsOrPseSeminarCount: 0,
+    hasEvalsCount: 0
+  };
+
+  db[collection].find().forEach(function (course) {
+
+    var course_id = course["_id"];
+    var title = course["title"];
+    var schools = course["keys"].map(function (obj) {
+      return obj["school"]
+    });
+
+    var course_key_length = 10;
+    var is_SILS_or_PSE = (schools.includes("SILS") || schools.includes("PSE"));
+    title = title.toLowerCase();
+    if (is_SILS_or_PSE && title.includes("seminar")) {
+      // SILS and PSE seminars
+      course_key_length = 12;
+      total_result["silsOrPseSeminarCount"] += 1;
+    }
+
+    var course_key = course_id.slice(0, course_key_length);
+
+    var course_evals = db.getSiblingDB("course_evals").getCollection("test").find({"course_key": course_key}).toArray();
+
+    var has_evals = false;
+    if (course_evals.length !== 0) {
+      has_evals = true;
+      print(entireYearCoursesAll + ": Course " + title + " has evaluations.");
+      total_result["hasEvalsCount"] += 1;
+    }
+
+    try {
+      db[collection].updateOne(
+        {"_id": course_id},
+        {$set: {"has_evals": has_evals}},
+        {upsert: false}
+      );
+      total_result['totalCount'] += 1;
+    } catch (e) {
+      print(e)
+    }
+  });
+  return total_result;
+}
+
+var addHasEvalsKeyResult = addHasEvalsKey(entireYearCoursesAll);
+printjson(addHasEvalsKeyResult);
+
+
+function minifyKeys(source, destination) {
+
+  var total_result = {
+    totalCount: 0,
+    matchedCount: 0,
+    modifiedCount: 0,
+    upsertedCount: 0
+  };
+
+  db[source].find().forEach(function (doc) {
+    try {
+      var minDoc = {};
+
+      minDoc['t'] = doc['title'];
+      minDoc['tj'] = doc['title_jp'];
+      minDoc['i'] = doc['instructor'];
+      minDoc['ij'] = doc['instructor_jp'];
+      minDoc['l'] = doc['lang'];
+      minDoc['c'] = doc['code'];
+      minDoc['tm'] = doc['term'];
+      minDoc['y'] = doc['year'];
+      minDoc['e'] = doc['has_evals'];
+
+      if (doc.hasOwnProperty('keywords')) {
+        minDoc['kws'] = doc['keywords']
+      }
+
+      minDoc['os'] = [];
+      minDoc['ks'] = [];
+
+      var os = doc['occurrences'];
+      var ks = doc['keys'];
+
+      for (var i=0; i < os.length; i++) {
+        var minDocO = {};
+        minDocO['d'] = os[i]['day'];
+        minDocO['s'] = os[i]['start_period'];
+        minDocO['e'] = os[i]['end_period'];
+        minDocO['b'] = os[i]['building'];
+        minDocO['c'] = os[i]['classroom'];
+        minDocO['l'] = os[i]['location'];
+
+        minDoc['os'][i] = minDocO;
+      }
+
+      for (i=0; i < ks.length; i++) {
+        var minDocK = {};
+        minDocK['s'] = ks[i]['school'];
+        minDocK['k'] = ks[i]['key'];
+
+        minDoc['ks'][i] = minDocK;
+      }
+
+      var result = db[destination].updateOne(
+        { "_id" : doc._id },
+        {$set: minDoc},
+        {upsert : true}
+      );
+
+      total_result['totalCount'] += 1;
+      total_result['matchedCount'] += result['matchedCount'];
+      total_result['modifiedCount'] += result['modifiedCount'];
+      if (result['upsertedCount'] !== undefined) {
+        total_result['upsertedCount'] += result['upsertedCount'];
+      }
+    } catch (e) {
+      print(e)
+    }
+  });
+
+  return total_result;
+}
+
+var minifyResult = minifyKeys(entireYearCoursesAll, entireYearCoursesAllMin);
+print("minify keys in documents in " + entireYearCoursesAll + " and store in " + entireYearCoursesAllMin);
+printjson(minifyResult);
 
 // // Export classrooms from courses and sort by building number and name
 // db[coursesSciEng].aggregate([

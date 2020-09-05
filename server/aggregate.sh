@@ -20,9 +20,11 @@ raw_entire_year_courses_academics_js="var rawEntireYearCoursesAcademics = ${raw_
 entire_year_courses_academics_js="var entireYearCoursesAcademics = ${entire_year_courses_academics_json};"
 raw_entire_year_courses_all_js="var rawEntireYearCoursesAll = \"${raw_entire_year_courses_all}\";"
 entire_year_courses_all_js="var entireYearCoursesAll = \"${entire_year_courses_all}\";"
+entire_year_courses_all_js_min="var entireYearCoursesAllMin = \"${entire_year_courses_all_min}\";"
 
 academic_collections_js="${raw_entire_year_courses_academics_js}\n${entire_year_courses_academics_js}"
 academic_collections_js="${academic_collections_js}\n${raw_entire_year_courses_all_js}\n${entire_year_courses_all_js}"
+academic_collections_js="${academic_collections_js}\n${entire_year_courses_all_js_min}"
 printf "${academic_collections_js}" > "${JS_PATH}academicCollections.js"
 
 # Drop previously aggregated collections, then start aggregating
