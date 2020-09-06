@@ -500,7 +500,8 @@ function minifyKeys(source, destination) {
       minDoc['l'] = doc['lang'];
       minDoc['c'] = doc['code'];
       minDoc['tm'] = doc['term'];
-      minDoc['y'] = doc['year'];
+      // Need this or else it will be stored as float in MongoDB
+      minDoc['y'] = NumberInt(doc['year']);
       minDoc['e'] = doc['has_evals'];
 
       if (doc.hasOwnProperty('keywords')) {
@@ -515,9 +516,9 @@ function minifyKeys(source, destination) {
 
       for (var i=0; i < os.length; i++) {
         var minDocO = {};
-        minDocO['d'] = os[i]['day'];
-        minDocO['s'] = os[i]['start_period'];
-        minDocO['e'] = os[i]['end_period'];
+        minDocO['d'] = NumberInt(os[i]['day']);
+        minDocO['s'] = NumberInt(os[i]['start_period']);
+        minDocO['e'] = NumberInt(os[i]['end_period']);
         minDocO['b'] = os[i]['building'];
         minDocO['c'] = os[i]['classroom'];
         minDocO['l'] = os[i]['location'];
